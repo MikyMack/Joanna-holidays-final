@@ -149,7 +149,7 @@ textarea:invalid {
   .container-sm,
   .container-xl,
   .container-xxl {
-    max-width: 360px;
+    max-width: 90%;
   }
 }
 
@@ -3991,7 +3991,13 @@ picture.jarallax-img img {
 }
 
 .premier-destination-card.slide-expand {
-  width: 450px !important;
+  width: 100% !important;
+}
+
+@media only screen and (min-width: 576px) {
+  .premier-destination-card.slide-expand {
+    width: 450px !important;
+  }
 }
 
 @media only screen and (min-width:1200px) {
@@ -9568,4 +9574,47 @@ textarea.form-control {
 /* Reduce gap between slides */
 .testimonialSwiper .swiper-wrapper {
   gap: 0 !important;
+}
+
+.floating-contact-icons {
+    position: fixed;
+    right: 18px;
+    bottom: 78px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.floating-contact-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    font-size: 28px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transition: background 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+}
+.floating-contact-icons a.call-icon {
+    background: #2b479e;
+}
+.floating-contact-icons a:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    opacity: 0.92;
+}
+@media (max-width: 576px) {
+    .floating-contact-icons {
+        right: 15px;
+        bottom: 70px;
+        gap: 10px;
+    }
+    .floating-contact-icons a {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
 }

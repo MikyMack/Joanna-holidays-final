@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="joanna Holidays">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KV49GR89');</script>
+    <!-- End Google Tag Manager -->
+    <!-- Title & Favicon -->
+    <title>Joanna Holidays | Gallery</title>
+    <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="/css/tabler-icons.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="/css/nice-select2.css">
+    <link rel="stylesheet" href="/css/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/venobox.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KV49GR89"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- Search Form Overlay -->
+    <div class="search-bg-overlay" id="searchOverlay"></div>
+
+    <!-- Search Form Popup -->
+    <div class="search-form-popup">
+        <h2 class="mb-5 display-6 fw-bold text-white">How can I help you, Today?</h2>
+        <button type="button" class="close-btn" id="searchClose" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+        <form class="search-form" id="searchForm">
+            <input type="search" name="search" class="form-control" placeholder="Search..." required minlength="3">
+            <button type="submit" class="btn btn-success d-none"><i class="ti ti-search"></i></button>
+          </form>
+          <script>
+            document.getElementById('searchForm').addEventListener('submit', function (e) {
+              e.preventDefault();
+              const input = this.querySelector('input[name="search"]');
+              const query = input.value.trim();
+          
+              if (query.length >= 3) {
+                // Redirect to /packages with search query
+                const encoded = encodeURIComponent(query);
+                window.location.href = `/packages?search=${encoded}`;
+              } else {
+                alert('Please enter at least 3 characters to search.');
+              }
+            });
+          </script>
+    </div>
+
+    <!-- Header Area-->
+    <header class="header-area style-three">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-xl">
+                <!-- Navbar Brand -->
+                <a class="navbar-brand" href="/">
+                    <img src="/img/joanna/joannalogo.png" alt="joanna" class="joannalogo">
+                </a>
+
+                <!-- Navbar Toggler -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#touriaNav"
+                    aria-controls="touriaNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="ti ti-menu-deep"></i>
+                </button>
+
+                <!-- Navbar Nav -->
+                <div class="collapse justify-content-xl-end navbar-collapse" id="touriaNav">
+                    <ul class="navbar-nav align-items-xl-center navbar-nav-scroll">
+                        <!-- Home -->
+                        <li class="touria-dd">
+                            <a href="/">Home </a>
+                        </li>
+                        <!-- Packages (Dynamic) -->
+                        <li class="touria-dd">
+                            <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
+                            <ul class="touria-dd-menu">
+                                <% categories.forEach(category=> {
+                                    const hasSubCategories = category.subCategories && category.subCategories.length >
+                                    0;
+                                    const hasDirectPackages = category.directPackages && category.directPackages.length
+                                    > 0;
+                                    %>
+                                    <% if (hasSubCategories || hasDirectPackages) { %>
+                                        <li class="touria-dd">
+                                            <a href="/packages?category=<%= category._id %>">
+                                                <%= category.name %>
+                                                    <% if (hasSubCategories || hasDirectPackages) { %>
+                                                        <i class="ti ti-chevron-right"></i>
+                                                        <% } %>
+                                            </a>
+                                            <ul class="touria-dd-menu">
+                                                <% category.subCategories &&
+                                                    category.subCategories.forEach(subCategory=> { %>
+                                                    <li>
+                                                        <a href="/package-details?subCategory=<%= subCategory._id %>">
+                                                            <%= subCategory.name %>
+                                                        </a>
+                                                    </li>
+                                                    <% }) %>
+                                                        <% category.directPackages &&
+                                                            category.directPackages.forEach(pkg=> { %>
+                                                            <li>
+                                                                <a href="/package/<%= pkg._id %>">
+                                                                    <%= pkg.destination %>
+                                                                </a>
+                                                            </li>
+                                                            <% }) %>
+                                            </ul>
+                                        </li>
+                                        <% } else { %>
+                                            <li>
+                                                <a href="/packages?category=<%= category._id %>">
+                                                    <%= category.name %>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                                                <% }) %>
+                            </ul>
+                        </li>
+                        <!-- About Us -->
+                        <li class="touria-dd">
+                            <a href="/about">About Us</a>
+                        </li>
+                        <!-- Tours -->
+                        <!-- Gallery -->
+                        <li class="touria-dd">
+                            <a href="/gallery">Gallery</a>
+                        </li>
+                        <!-- Blog -->
+                        <li class="touria-dd">
+                            <a href="/blogs">Blogs</a>
+
+                        </li>
+                        <!-- Contact -->
+                        <li>
+                            <a href="/contact" class="sub-menu-item">Contact Us</a>
+                        </li>
+                    </ul>
+
+                    <!-- Header Navigation -->
+                    <div class="header-navigation d-flex flex-wrap align-items-center gap-3 mt-4 mt-xl-0">
+                        <!-- Search Button -->
+                        <div class="header-search-btn" id="searchButton">
+                            <button class="btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                                    fill="none">
+                                    <rect width="20" height="20" fill="#F7F7F7" />
+                                    <path
+                                        d="M14.0772 14.0987L16.6438 16.6654M15.833 9.58203C15.833 11.2396 15.1745 12.8293 14.0024 14.0014C12.8303 15.1736 11.2406 15.832 9.58301 15.832C7.9254 15.832 6.33569 15.1736 5.16359 14.0014C3.99149 12.8293 3.33301 11.2396 3.33301 9.58203C3.33301 7.92443 3.99149 6.33472 5.16359 5.16261C6.33569 3.99051 7.9254 3.33203 9.58301 3.33203C11.2406 3.33203 12.8303 3.99051 14.0024 5.16261C15.1745 6.33472 15.833 7.92443 15.833 9.58203Z"
+                                        stroke="#161920" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                        </div>
+                        <!-- Get A Quote -->
+                        <a class="btn btn-success" href="/contact">Enquire <i class="icon-arrow-right"></i></a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="breadcrumb-section bg-img jarallax" data-jarallax data-speed="0.6"
+        style="background-image: url('/img/joanna/bg9.jpg');">
+        <div class="container">
+            <!-- Breadcrumb Content -->
+            <div class="breadcrumb-content">
+                <div class="divider"></div>
+                <h2>Gallery</h2>
+                <ul class="list-unstyled">
+                    <li><a href="/">Home</a></li>
+                    <li>Gallery</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+    </div>
+
+    <section class="gallery-section py-5" style="background: #f8fafc;">
+        <div class="container">
+            <!-- Tab Buttons -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-auto">
+                    <button id="imagesTabBtn" type="button" class="btn btn-danger me-2"
+                        onclick="showGalleryTab('images')">Images</button>
+                    <button id="videosTabBtn" type="button" class="btn btn-outline-secondary"
+                        onclick="showGalleryTab('videos')">Videos</button>
+                </div>
+            </div>
+
+            <!-- Images Tab -->
+            <div id="imagesTab" class="tab-pane">
+                <div class="row g-3 g-md-4">
+                    <% if (gallery && gallery.length> 0) { %>
+                        <% gallery.forEach(function(item, idx) { %>
+                            <div class="col-6 col-md-4">
+                                <div class="gallery-img-card rounded shadow-sm overflow-hidden position-relative"
+                                    style="background: #fff;">
+                                    <a class="d-block gallery-lightbox-trigger" href="javascript:void(0);"
+                                        data-img="<%= item.imageUrl %>" data-title="<%= item.title || '' %>"
+                                        aria-label="Open image preview">
+                                        <img src="<%= item.imageUrl %>"
+                                            class="img-fluid w-100 h-100 object-fit-cover gallery-img"
+                                            alt="<%= item.title || 'Gallery Image' %>" loading="lazy"
+                                            style="aspect-ratio: 1/1; object-fit: cover;">
+                                    </a>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <div class="col-12 text-center text-muted py-5">No images found.</div>
+                                    <% } %>
+                </div>
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-4 gap-2">
+                    <% if (currentPage> 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>&limit=12" class="btn btn-outline-dark">Previous</a>
+                        <% } %>
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <a href="?page=<%= i %>&limit=12"
+                                    class="btn <%= currentPage === i ? 'btn-danger text-white' : 'btn-outline-dark' %>">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+                                    <% if (currentPage < totalPages) { %>
+                                        <a href="?page=<%= currentPage + 1 %>&limit=12"
+                                            class="btn btn-outline-dark">Next</a>
+                                        <% } %>
+                </div>
+            </div>
+
+            <!-- Videos Tab -->
+            <div id="videosTab" class="tab-pane d-none">
+                <div class="row g-4">
+                    <% if (videos && videos.length> 0) { %>
+                        <% videos.forEach(function(video) { %>
+                            <div class="col-12 col-md-4">
+                                <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm bg-black">
+                                    <iframe
+                                        src="https://www.youtube.com/embed/<%= (video.youtubeLink.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&\n?#]+)/) || [])[1] %>"
+                                        title="<%= video.title || 'YouTube Video' %>" frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowfullscreen style="width:100%;height:100%;min-height:200px;"></iframe>
+                                </div>
+                                <% if (video.title) { %>
+                                    <div class="mt-2 text-center text-secondary fw-medium">
+                                        <%= video.title %>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <div class="col-12 text-center text-muted py-5">No videos found.</div>
+                                    <% } %>
+                </div>
+                <!-- Video Pagination -->
+                <div class="d-flex justify-content-center mt-4 gap-2">
+                    <% if (videoCurrentPage> 1) { %>
+                        <a href="?videoPage=<%= videoCurrentPage - 1 %>" class="btn btn-outline-dark">Previous</a>
+                        <% } %>
+                            <% for (let i=1; i <=videoTotalPages; i++) { %>
+                                <a href="?videoPage=<%= i %>"
+                                    class="btn <%= videoCurrentPage === i ? 'btn-danger text-white' : 'btn-outline-dark' %>">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+                                    <% if (videoCurrentPage < videoTotalPages) { %>
+                                        <a href="?videoPage=<%= videoCurrentPage + 1 %>"
+                                            class="btn btn-outline-dark">Next</a>
+                                        <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Preview Modal -->
+        <div id="galleryLightboxModal" class="gallery-lightbox-modal d-none">
+            <div class="gallery-lightbox-backdrop"></div>
+            <div class="gallery-lightbox-content">
+                <button type="button" class="gallery-lightbox-close" aria-label="Close preview">&times;</button>
+                <img id="galleryLightboxImg" src="" alt="Preview" class="img-fluid rounded shadow" />
+                <div id="galleryLightboxTitle" class="gallery-lightbox-title mt-2 text-center text-secondary"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function showGalleryTab(tab) {
+            const imagesTab = document.getElementById('imagesTab');
+            const videosTab = document.getElementById('videosTab');
+            const imagesBtn = document.getElementById('imagesTabBtn');
+            const videosBtn = document.getElementById('videosTabBtn');
+            if (tab === 'images') {
+                imagesTab.classList.remove('d-none');
+                videosTab.classList.add('d-none');
+                imagesBtn.classList.add('btn-danger');
+                imagesBtn.classList.remove('btn-outline-secondary');
+                videosBtn.classList.remove('btn-danger');
+                videosBtn.classList.add('btn-outline-secondary');
+            } else {
+                imagesTab.classList.add('d-none');
+                videosTab.classList.remove('d-none');
+                videosBtn.classList.add('btn-danger');
+                videosBtn.classList.remove('btn-outline-secondary');
+                imagesBtn.classList.remove('btn-danger');
+                imagesBtn.classList.add('btn-outline-secondary');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            showGalleryTab('images');
+
+            // Lightbox logic
+            const modal = document.getElementById('galleryLightboxModal');
+            const modalImg = document.getElementById('galleryLightboxImg');
+            const modalTitle = document.getElementById('galleryLightboxTitle');
+            const closeBtn = modal.querySelector('.gallery-lightbox-close');
+            const backdrop = modal.querySelector('.gallery-lightbox-backdrop');
+
+            // Open modal
+            document.querySelectorAll('.gallery-lightbox-trigger').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const imgSrc = el.getAttribute('data-img');
+                    const title = el.getAttribute('data-title') || '';
+                    modalImg.src = imgSrc;
+                    modalImg.alt = title || 'Preview';
+                    modalTitle.textContent = title;
+                    modal.classList.remove('d-none');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // Close modal on close button
+            closeBtn.addEventListener('click', function () {
+                modal.classList.add('d-none');
+                modalImg.src = '';
+                document.body.style.overflow = '';
+            });
+
+            // Close modal on clicking outside the image/content
+            backdrop.addEventListener('click', function () {
+                modal.classList.add('d-none');
+                modalImg.src = '';
+                document.body.style.overflow = '';
+            });
+
+            // Optional: close on ESC key
+            document.addEventListener('keydown', function (e) {
+                if (!modal.classList.contains('d-none') && (e.key === 'Escape' || e.keyCode === 27)) {
+                    modal.classList.add('d-none');
+                    modalImg.src = '';
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+    <style>
+        .gallery-img-card {
+            transition: box-shadow 0.2s;
+        }
+
+        .gallery-img-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .gallery-img {
+            transition: transform 0.4s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .gallery-img-card:hover .gallery-img {
+            transform: scale(1.07) rotate(2deg);
+        }
+
+        /* Bootstrap 5 ratio fallback for older browsers */
+        .ratio {
+            position: relative;
+            width: 100%;
+        }
+
+        .ratio-16x9 {
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .ratio-16x9 iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        @media (max-width: 767.98px) {
+
+            .gallery-section .col-md-4,
+            .gallery-section .col-4 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+
+        /* Lightbox Modal Styles */
+        .gallery-lightbox-modal {
+            position: fixed;
+            z-index: 1050;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-lightbox-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+        }
+
+        .gallery-lightbox-content {
+            position: relative;
+            z-index: 2;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+
+        .gallery-lightbox-content img {
+            max-width: 80vw;
+            max-height: 70vh;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            background: #fff;
+        }
+
+        .gallery-lightbox-close {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 2rem;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            z-index: 3;
+            transition: background 0.2s;
+        }
+
+        .gallery-lightbox-close:hover {
+            background: #f8d7da;
+            color: #b71c1c;
+        }
+
+        .gallery-lightbox-title {
+            font-size: 1rem;
+            color: #444;
+            margin-top: 0.5rem;
+            word-break: break-word;
+            max-width: 80vw;
+        }
+    </style>
+    <!-- Footer -->
+    <footer class="footer-wrapper jarallax" data-jarallax data-speed="0.6"
+        style="background-image: url('/img/bg-img/35.jpg');">
+        <!-- Plane Image -->
+        <img class="plane-img" src="/img/core-img/plane2.png" alt="">
+
+        <!-- Tree Image -->
+        <img class="tree-img" src="/img/core-img/tree.png" alt="">
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="footer-top-content">
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS (COCHIN) </h4>
+                        <a href="tel:+918086602888" target="_blank" class="mb-0 text-white">+91 8086602888</a> <br>
+                        <a href="mailto:admin@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">admin@joannaholidays.com</a>
+                    </div>
+                </div>
+
+                <div class="vr-line d-none d-md-block"></div>
+
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS (KOTTAYAM) </h4>
+                        <a href="tel:+919846226028" target="_blank" class="mb-0 text-white">+91 9846226028</a> <br>
+                        <a href="mailto:info@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">info@joannaholidays.com</a>
+                    </div>
+                </div>
+
+                <div class="vr-line d-none d-lg-block"></div>
+
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS (LONDON)</h4>
+                        <a href="tel:+447418375151" target="_blank" class="mb-0 text-white">+44 7418375151</a> <br>
+                        <a href="mailto:md@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">md@joannaholidays.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="border-top"></div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="row g-5">
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="footer-card pe-lg-5">
+                        <a href="#" class="footer-logo">
+                            <img src="/img/joanna/joannalogo.png" alt="joanna">
+                        </a>
+                        <p class="mb-0 text-white">Targeting consultation Death yet way ndulgence off under folly
+                            death wrote
+                            cause her yet way yet wayspite.</p>
+
+                        <!-- Social Nav -->
+                        <div class="social-nav">
+                            <a href="https://www.facebook.com/joannaholidays1/" target="_blank"><i
+                                    class="ti ti-brand-facebook"></i></a>
+                            <a href="https://wa.me/+918086602888" target="_blank"><i
+                                    class="ti ti-brand-whatsapp"></i></a>
+                            <a href="tel:+918086602888" target="_blank"><i class="ti ti-phone"></i></a>
+                            <a href="https://www.instagram.com/joannaholidays/?hl=en" target="_blank"><i
+                                    class="ti ti-brand-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Quick Links</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="footer-nav">
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/">Packages</a></li>
+                            <li><a href="/about">About Us</a></li>
+                            <li><a href="/gallery">Gallery</a></li>
+                            <li><a href="/contact">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Popular Destinations</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="footer-nav">
+                            <li><a href="/packages">India</a></li>
+                            <li><a href="/packages">China</a></li>
+                            <li><a href="/packages">Malaysia</a></li>
+                            <li><a href="/packages">Kenya</a></li>
+                            <li><a href="/packages">Europe</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Gallery Post</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="gallery-post list-unstyled">
+                            <li><a href="/gallery"><img src="/img/bg-img/36.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/37.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/38.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/39.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/40.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/41.jpg" alt="joanna"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="border-top"></div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="copyright-wrapper">
+            <div class="container">
+                <div class="row align-items-center">
+                    <!-- Copyright -->
+                    <div class="col-12">
+                        <p class="mb-3 mb-md-0 copyright text-center">
+                            Copyright © <span id="year"></span> <span style="color: #ed1c24;">Joanna Holidays Pvt
+                                Ltd.</span>
+                            Designed &amp; Developed by <a href="#" target="_blank" rel="noopener"
+                                style="color: antiquewhite;">Harsh Adz Creators</a>.
+                            All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll To Top -->
+    <button id="scrollTopButton" class="touria-scrolltop scrolltop-hide">
+        <i class="icon-arrow-up"></i>
+    </button>
+
+    <!-- All JavaScript Files -->
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/slideToggle.min.js"></script>
+    <script src="/js/swiper-bundle.min.js"></script>
+    <script src="/js/jarallax.min.js"></script>
+    <script src="/js/index.js"></script>
+    <script src="/js/imagesloaded.pkgd.min.js"></script>
+    <script src="/js/isotope.pkgd.min.js"></script>
+    <script src="/js/flatpickr.min.js"></script>
+    <script src="/js/nice-select2.js"></script>
+    <script src="/js/venobox.min.js"></script>
+    <script src="/js/wow.min.js"></script>
+    <script src="/js/active.js"></script>
+    <script async src="//www.instagram.com/embed.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+</body>
+
+
+</html>

@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="description" content="Joanna Holidays">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KV49GR89');</script>
+    <!-- End Google Tag Manager -->
+   <!-- Title & Favicon -->
+   <title>Package Details | Joanna Holidays</title>
+   <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
+
+   <!-- Stylesheet -->
+   <link rel="stylesheet" href="/css/animate.css">
+   <link rel="stylesheet" href="/css/tabler-icons.min.css">
+   <link rel="stylesheet" href="/css/bootstrap.min.css">
+   <link rel="stylesheet" href="/css/swiper-bundle.min.css">
+   <link rel="stylesheet" href="/css/nice-select2.css">
+   <link rel="stylesheet" href="/css/flatpickr.min.css">
+   <link rel="stylesheet" href="/css/venobox.min.css">
+   <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KV49GR89"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+   <!-- Search Form Overlay -->
+   <div class="search-bg-overlay" id="searchOverlay"></div>
+
+   <!-- Search Form Popup -->
+   <div class="search-form-popup">
+      <h2 class="mb-5 display-6 fw-bold text-white">How can I help you, Today?</h2>
+      <button type="button" class="close-btn" id="searchClose" aria-label="Close">
+         <i class="ti ti-x"></i>
+      </button>
+      <form class="search-form" id="searchForm">
+        <input type="search" name="search" class="form-control" placeholder="Search..." required minlength="3">
+        <button type="submit" class="btn btn-success d-none"><i class="ti ti-search"></i></button>
+      </form>
+      <script>
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          const input = this.querySelector('input[name="search"]');
+          const query = input.value.trim();
+      
+          if (query.length >= 3) {
+            // Redirect to /packages with search query
+            const encoded = encodeURIComponent(query);
+            window.location.href = `/packages?search=${encoded}`;
+          } else {
+            alert('Please enter at least 3 characters to search.');
+          }
+        });
+      </script>
+   </div>
+
+   <!-- Header Area-->
+   <header class="header-area style-three">
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-xl">
+            <!-- Navbar Brand -->
+            <a class="navbar-brand" href="/">
+                <img src="/img/joanna/joannalogo.png" alt="joanna" class="joannalogo">
+            </a>
+
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#touriaNav"
+                aria-controls="touriaNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="ti ti-menu-deep"></i>
+            </button>
+
+            <!-- Navbar Nav -->
+            <div class="collapse justify-content-xl-end navbar-collapse" id="touriaNav">
+                <ul class="navbar-nav align-items-xl-center navbar-nav-scroll">
+                    <!-- Home -->
+                    <li class="touria-dd">
+                        <a href="/">Home </a>
+                    </li>
+                    <!-- Packages (Dynamic) -->
+                    <li class="touria-dd">
+                        <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
+                        <ul class="touria-dd-menu">
+                            <% categories.forEach(category=> {
+                                const hasSubCategories = category.subCategories && category.subCategories.length >
+                                0;
+                                const hasDirectPackages = category.directPackages && category.directPackages.length
+                                > 0;
+                                %>
+                                <% if (hasSubCategories || hasDirectPackages) { %>
+                                    <li class="touria-dd">
+                                        <a href="/packages?category=<%= category._id %>">
+                                            <%= category.name %>
+                                                <% if (hasSubCategories || hasDirectPackages) { %>
+                                                    <i class="ti ti-chevron-right"></i>
+                                                    <% } %>
+                                        </a>
+                                        <ul class="touria-dd-menu">
+                                            <% category.subCategories &&
+                                                category.subCategories.forEach(subCategory=> { %>
+                                                <li>
+                                                    <a href="/package-details?subCategory=<%= subCategory._id %>">
+                                                        <%= subCategory.name %>
+                                                    </a>
+                                                </li>
+                                                <% }) %>
+                                                    <% category.directPackages &&
+                                                        category.directPackages.forEach(pkg=> { %>
+                                                        <li>
+                                                            <a href="/package/<%= pkg._id %>">
+                                                                <%= pkg.destination %>
+                                                            </a>
+                                                        </li>
+                                                        <% }) %>
+                                        </ul>
+                                    </li>
+                                    <% } else { %>
+                                        <li>
+                                            <a href="/packages?category=<%= category._id %>">
+                                                <%= category.name %>
+                                            </a>
+                                        </li>
+                                        <% } %>
+                                            <% }) %>
+                        </ul>
+                    </li>
+                    <!-- About Us -->
+                    <li class="touria-dd">
+                        <a href="/about">About Us</a>
+                    </li>
+                    <!-- Tours -->
+                    <!-- Gallery -->
+                    <li class="touria-dd">
+                        <a href="/gallery">Gallery</a>
+                    </li>
+                    <!-- Blog -->
+                    <li class="touria-dd">
+                        <a href="/blogs">Blogs</a>
+
+                    </li>
+                    <!-- Contact -->
+                    <li>
+                        <a href="/contact" class="sub-menu-item">Contact Us</a>
+                    </li>
+                </ul>
+
+                <!-- Header Navigation -->
+                <div class="header-navigation d-flex flex-wrap align-items-center gap-3 mt-4 mt-xl-0">
+                    <!-- Search Button -->
+                    <div class="header-search-btn" id="searchButton">
+                        <button class="btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                                fill="none">
+                                <rect width="20" height="20" fill="#F7F7F7" />
+                                <path
+                                    d="M14.0772 14.0987L16.6438 16.6654M15.833 9.58203C15.833 11.2396 15.1745 12.8293 14.0024 14.0014C12.8303 15.1736 11.2406 15.832 9.58301 15.832C7.9254 15.832 6.33569 15.1736 5.16359 14.0014C3.99149 12.8293 3.33301 11.2396 3.33301 9.58203C3.33301 7.92443 3.99149 6.33472 5.16359 5.16261C6.33569 3.99051 7.9254 3.33203 9.58301 3.33203C11.2406 3.33203 12.8303 3.99051 14.0024 5.16261C15.1745 6.33472 15.833 7.92443 15.833 9.58203Z"
+                                    stroke="#161920" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Get A Quote -->
+                    <a class="btn btn-success" href="/contact">Enquire <i class="icon-arrow-right"></i></a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+   <!-- Breadcrumb Section -->
+   <div class="breadcrumb-section bg-img jarallax" data-jarallax data-speed="0.6"
+      style="background-image: url('/img/bg-img/97.jpg');">
+      <div class="container">
+         <!-- Breadcrumb Content -->
+         <div class="breadcrumb-content">
+            <div class="divider"></div>
+            <h2><%= tourPackage.title %></h2>
+            <ul class="list-unstyled">
+               <li><a href="/">Home</a></li>
+               <li><%= tourPackage.title %></li>
+            </ul>
+         </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="divider"></div>
+   </div>
+
+   <section class="position-relative py-5">
+    <div class="container position-relative">
+        <div class="row g-4">
+            <div class="col-lg-8 col-md-7">
+                <!-- Image Gallery -->
+                <div class="row g-2">
+                    <% tourPackage.images.forEach((image, index)=> { %>
+                        <div class="<%= (index === 0 || index === 3) ? 'col-md-8 col-7' : 'col-md-4 col-5' %> mb-2">
+                            <div class="position-relative overflow-hidden rounded shadow-sm">
+                                <img src="<%= image %>" class="img-fluid w-100 gallery-image" style="object-fit:cover; height: 240px; cursor:pointer;" alt="<%= tourPackage.title %>" data-image="<%= image %>">
+                                <div class="position-absolute top-0 start-0 w-100 h-100" style="background:rgba(30,41,59,0); transition: background 0.5s;" onmouseover="this.style.background='rgba(30,41,59,0.7)'" onmouseout="this.style.background='rgba(30,41,59,0)'"></div>
+                                <div class="position-absolute top-50 start-50 translate-middle text-center opacity-0" style="transition: opacity 0.5s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+                                    <a href="javascript:void(0);" class="btn btn-danger rounded-circle lightbox d-inline-flex align-items-center justify-content-center open-image-preview" data-image="<%= image %>" style="width:36px; height:36px;">
+                                        <i data-feather="camera" class="align-middle"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <!-- Image Preview Modal -->
+                <div id="imagePreviewModal" class="modal fade" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-transparent border-0">
+                      <div class="modal-body p-0 position-relative">
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 bg-white rounded-circle shadow" data-bs-dismiss="modal" aria-label="Close" style="z-index:2;width:2.5rem;height:2.5rem;opacity:0.9;"></button>
+                        <img id="modalImage" src="" alt="Preview" class="img-fluid rounded w-100" style="max-height:70vh;object-fit:contain; background:#fff;">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <script>
+                  // Use Bootstrap 5 modal
+                  document.addEventListener('DOMContentLoaded', function() {
+                    // Open modal on click of .open-image-preview or .gallery-image
+                    document.querySelectorAll('.open-image-preview, .gallery-image').forEach(function(el) {
+                      el.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var imgSrc = this.getAttribute('data-image') || this.src;
+                        var modalImg = document.getElementById('modalImage');
+                        modalImg.src = imgSrc;
+                        var modal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+                        modal.show();
+                      });
+                    });
+                  });
+                </script>
+
+                <h5 class="fs-3 fw-semibold mt-4">
+                    <%= tourPackage.title %>
+                </h5>
+                <p class="d-flex align-items-center text-secondary fw-medium mt-2">
+                    <i data-feather="map-pin" class="me-2"></i>
+                    <%= tourPackage.destination %>
+                    <% if (tourPackage.category) { %>
+                        | <i data-feather="tag" class="me-2 ms-3"></i>
+                        <%= tourPackage.category.name %>
+                    <% } %>
+                </p>
+
+                <!-- Package Details -->
+                <div class="mt-4">
+                    <ul class="row g-3">
+                        <!-- Row 1 -->
+                        <li class="col-md-6 d-flex align-items-center bg-white p-3 rounded shadow-sm flex-grow-1 min-w-200">
+                            <div class="me-3" style="width:72px;min-width:72px;">
+                                <dotlottie-wc
+                                  src="https://lottie.host/b55c83fc-7335-4497-b675-cb6c857111a8/BJcchqj73T.lottie"
+                                  style="width:72px;height:72px"
+                                  speed="1"
+                                  autoplay
+                                  loop
+                                ></dotlottie-wc>
+                            </div>
+                            <div>
+                                <p class="small text-muted mb-1">Duration</p>
+                                <p class="fw-medium text-dark mb-0">
+                                    <%= tourPackage.duration %>
+                                </p>
+                            </div>
+                        </li>
+
+                        <li class="col-md-6 d-flex align-items-center bg-white p-3 rounded shadow-sm flex-grow-1 min-w-200">
+                            <div class="me-3" style="width:72px;min-width:72px;">
+                                <dotlottie-wc
+                                  src="https://lottie.host/8dd11c18-6223-4bbf-a49a-10b22449bca9/yyTYwLWa9g.lottie"
+                                  style="width:72px;height:72px"
+                                  speed="1"
+                                  autoplay
+                                  loop
+                                ></dotlottie-wc>
+                            </div>
+                            <div>
+                                <p class="small text-muted mb-1">Type</p>
+                                <p class="fw-medium text-dark mb-0">
+                                    <%= tourPackage.tourType %>
+                                </p>
+                            </div>
+                        </li>
+
+                        <!-- Row 2 -->
+                        <li class="col-md-6 d-flex align-items-center bg-white p-3 rounded shadow-sm flex-grow-1 min-w-200">
+                            <div class="me-3" style="width:72px;min-width:72px;">
+                                <dotlottie-wc
+                                  src="https://lottie.host/55f4968e-35b5-4620-8d71-a86be3ae667a/Y3TcfLbqZG.lottie"
+                                  style="width:72px;height:72px"
+                                  speed="1"
+                                  autoplay
+                                  loop
+                                ></dotlottie-wc>
+                            </div>
+                            <div>
+                                <p class="small text-muted mb-1">Group Size</p>
+                                <p class="fw-medium text-dark mb-0">
+                                    <%= tourPackage.groupSize %> People
+                                </p>
+                            </div>
+                        </li>
+
+                        <li class="col-md-6 d-flex align-items-center bg-white p-3 rounded shadow-sm flex-grow-1 min-w-200">
+                            <div class="me-3" style="width:72px;min-width:72px;">
+                                <dotlottie-wc
+                                  src="https://lottie.host/74cf6f61-1824-4905-8e35-0b3e30f8ba92/w6QWOAjvJH.lottie"
+                                  style="width:72px;height:72px"
+                                  speed="1"
+                                  autoplay
+                                  loop
+                                ></dotlottie-wc>
+                            </div>
+                            <div>
+                                <p class="small text-muted mb-1">Tour Guide</p>
+                                <p class="fw-medium text-dark mb-0">
+                                    <%= tourPackage.tourGuide %>
+                                </p>
+                            </div>
+                        </li>
+
+                        <!-- Last item centered -->
+                        <li class="col-12 d-flex align-items-center bg-white p-3 rounded shadow-sm mx-auto mt-4 w-100" style="max-width:300px;">
+                            <div class="me-3" style="width:72px;min-width:72px;">
+                                <dotlottie-wc
+                                  src="https://lottie.host/6e37da36-9198-41ea-84ee-61edc243277c/aMeBy752o5.lottie"
+                                  style="width:72px;height:72px"
+                                  speed="1"
+                                  autoplay
+                                  loop
+                                ></dotlottie-wc>
+                            </div>
+                            <div>
+                                <p class="small text-muted mb-1">Price</p>
+                                <p class="fw-medium text-dark mb-0">
+                                    <%= tourPackage.packagePrice > 0 ? `₹ ${tourPackage.packagePrice}` : 'Custom Pricing' %>
+                                </p>
+                                <p class="small text-secondary mb-0">
+                                    <%= tourPackage.duration %>
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tour Description -->
+                <div class="mt-4">
+                    <h5 class="fs-5 fw-semibold">Tour Descriptions:</h5>
+                    <p class="text-secondary mt-3">
+                        <%= tourPackage.packageDescription %>
+                    </p>
+                </div>
+
+                <!-- Travel Plan -->
+                <div class="mt-4">
+                    <h5 class="fs-5 fw-semibold">Travel Plan:</h5>
+                    <div class="accordion mt-3" id="accordionTravelPlan">
+                        <% tourPackage.travelPlan.forEach((plan, index) => { %>
+                            <div class="accordion-item mb-2">
+                                <h2 class="accordion-header" id="heading-<%= index %>">
+                                    <button class="accordion-button <%= index !== 0 ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="collapse-<%= index %>">
+                                        Day <%= plan.day %>
+                                    </button>
+                                </h2>
+                                <div id="collapse-<%= index %>" class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>" aria-labelledby="heading-<%= index %>" data-bs-parent="#accordionTravelPlan">
+                                    <div class="accordion-body">
+                                        <p class="text-secondary mb-0">
+                                            <%= plan.description %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+
+                <!-- Included Features -->
+                <div class="mt-4">
+                    <h5 class="fs-5 fw-semibold">What's Included:</h5>
+                    <ul class="list-group list-group-flush mt-3">
+                        <% tourPackage.included.forEach(item=> { %>
+                            <li class="list-group-item">
+                                <%= item %>
+                            </li>
+                        <% }) %>
+                    </ul>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="mt-5">
+                    <h3 class="fs-2 fw-bold text-dark mb-4 d-flex align-items-center">
+                        <i data-feather="credit-card" class="me-3 text-danger"></i>
+                        Payment Details
+                    </h3>
+                    
+                    <div class="row g-4">
+                        <!-- South Indian Bank Details -->
+                        <div class="col-md-6">
+                            <div class="bg-white rounded shadow-lg p-4 border border-danger-subtle h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i data-feather="bank" class="me-3 text-danger"></i>
+                                    <h4 class="fs-5 fw-semibold text-dark mb-0">South Indian Bank</h4>
+                                </div>
+                                <ul class="list-unstyled text-secondary mb-0">
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">Account Name:</span>
+                                        <span>JOANNA HOLIDAYS PVT LTD</span>
+                                    </li>
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">Account No:</span>
+                                        <span>0025073000002951</span>
+                                    </li>
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">IFSC Code:</span>
+                                        <span>SIBL0000025</span>
+                                    </li>
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">Bank:</span>
+                                        <span>SOUTH INDIAN BANK, M.G. ROAD, ERNAKULAM</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Axis Bank Details -->
+                        <div class="col-md-6">
+                            <div class="bg-white rounded shadow-lg p-4 border border-danger-subtle h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i data-feather="bank" class="me-3 text-danger"></i>
+                                    <h4 class="fs-5 fw-semibold text-dark mb-0">Axis Bank</h4>
+                                </div>
+                                <ul class="list-unstyled text-secondary mb-0">
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">Account Name:</span>
+                                        <span>JOANNA HOLIDAYS PRIVATE LIMITED</span>
+                                    </li>
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">Account No:</span>
+                                        <span>922020025319441</span>
+                                    </li>
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">IFSC:</span>
+                                        <span>UTIB0001459</span>
+                                    </li>
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">Bank:</span>
+                                        <span>AXIS BANK LTD KOCHI</span>
+                                    </li>
+                                    <li class="d-flex align-items-center mb-2">
+                                        <span class="fw-medium text-danger me-2" style="min-width:120px;">Swift Code:</span>
+                                        <span>AXISINBB081</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking & Cancellation Policies -->
+                <div class="mt-5">
+                    <h3 class="fs-2 fw-bold text-dark mb-4 d-flex align-items-center">
+                        <i data-feather="file-text" class="me-3 text-danger"></i>
+                        Booking & Cancellation Policies
+                    </h3>
+                    
+                    <div class="bg-white rounded shadow-lg p-4 border border-danger-subtle">
+                        <ul class="list-unstyled text-secondary mb-0">
+                            <li class="d-flex align-items-start bg-white p-3 rounded shadow-sm mb-2">
+                                <span class="text-danger me-3 mt-1">
+                                    <i data-feather="alert-circle"></i>
+                                </span>
+                                <span>Advance payment will be Rs.30,000/- only and 02nd part amount should be clear before 40 days of the departure and balance amount should be settled before 20 days of the departure. The advance amount will not be refunded under any circumstances.</span>
+                            </li>
+                            <li class="d-flex align-items-start bg-white p-3 rounded shadow-sm mb-2">
+                                <span class="text-danger me-3 mt-1">
+                                    <i data-feather="clock"></i>
+                                </span>
+                                <span>40 days before the departure – 50% of the Tour cost</span>
+                            </li>
+                            <li class="d-flex align-items-start bg-white p-3 rounded shadow-sm mb-2">
+                                <span class="text-danger me-3 mt-1">
+                                    <i data-feather="alert-triangle"></i>
+                                </span>
+                                <span>Within 25 days to Departure - 100% of the Tour cost</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <h3 class="fs-2 fw-bold text-dark mb-4">Frequently Asked Questions</h3>
+
+                    <div class="accordion" id="faqAccordion">
+                        <!-- Question 1 -->
+                        <div class="accordion-item mb-2">
+                            <h2 class="accordion-header" id="faqHeading1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+                                    What makes your tour packages unique?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-secondary">
+                                    <p>Our packages are carefully curated by local experts who have decades of
+                                        combined experience. We focus on authentic experiences rather than tourist
+                                        traps, offering exclusive access to hidden gems and cultural encounters you
+                                        won't find elsewhere. Each itinerary is personally tested by our team to
+                                        ensure quality.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="accordion-item mb-2">
+                            <h2 class="accordion-header" id="faqHeading2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                                    How do you ensure safety during tours?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-secondary">
+                                    <p>Safety is our top priority. All our guides are first-aid certified, vehicles
+                                        undergo daily inspections, and we maintain 24/7 emergency support. We also
+                                        provide:</p>
+                                    <ul class="ms-4">
+                                        <li>Comprehensive travel insurance options</li>
+                                        <li>Real-time weather monitoring</li>
+                                        <li>Local emergency contacts in your itinerary</li>
+                                        <li>Regular safety briefings</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="accordion-item mb-2">
+                            <h2 class="accordion-header" id="faqHeading3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                                    What is your cancellation policy?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-secondary">
+                                    <p>We offer flexible cancellation policies because we understand plans change:
+                                    </p>
+                                    <ul class="ms-4">
+                                        <li><strong>30+ days before:</strong> Full refund (minus processing fees)
+                                        </li>
+                                        <li><strong>15-29 days before:</strong> 75% refund</li>
+                                        <li><strong>8-14 days before:</strong> 50% refund</li>
+                                        <li><strong>Within 7 days:</strong> Credit for future travel</li>
+                                    </ul>
+                                    <p class="mt-3 small text-primary">*Special COVID-19
+                                        policy: Free rescheduling up to 24 hours before departure.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="accordion-item mb-2">
+                            <h2 class="accordion-header" id="faqHeading4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+                                    How experienced are your tour guides?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-secondary">
+                                    <p>Our guides are the heart of our company. We only work with:</p>
+                                    <ul class="ms-4">
+                                        <li>Locally-born professionals with 5+ years experience</li>
+                                        <li>Multilingual experts (average 3 languages per guide)</li>
+                                        <li>Specialists in history, culture, or adventure activities</li>
+                                        <li>Personality-tested for enthusiasm and patience</li>
+                                    </ul>
+                                    <p class="mt-3">All guides complete our intensive 3-month training program and
+                                        must maintain a 95%+ satisfaction rating.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="accordion-item mb-2">
+                            <h2 class="accordion-header" id="faqHeading5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+                                    What payment methods do you accept?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-secondary">
+                                    <p>We offer multiple secure payment options:</p>
+                                    <div class="row row-cols-2 row-cols-md-4 g-2 mt-2">
+                                        <div class="col d-flex align-items-center">
+                                            <svg class="me-2" style="width:32px;height:32px;color:#0d6efd;" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+                                            </svg>
+                                            <span>Credit Cards | Debit Cards</span>
+                                        </div>
+                                        <div class="col d-flex align-items-center">
+                                            <svg class="me-2" style="width:32px;height:32px;color:#198754;" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
+                                            </svg>
+                                            <span>Upi</span>
+                                        </div>
+                                        <div class="col d-flex align-items-center">
+                                            <svg class="me-2" style="width:32px;height:32px;color:#6f42c1;" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
+                                            </svg>
+                                            <span>Bank Transfer</span>
+                                        </div>
+                                        <div class="col d-flex align-items-center">
+                                            <svg class="me-2" style="width:32px;height:32px;color:#ffc107;" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
+                                            </svg>
+                                            <span>Cash (in office)</span>
+                                        </div>
+                                    </div>
+                                    <p class="mt-3 small text-secondary">All transactions are
+                                        secured with 256-bit SSL encryption and processed through PCI-compliant
+                                        systems.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="d-flex flex-wrap justify-content-center gap-4 mt-4 pt-4 border-top">
+                        <div class="d-flex align-items-center gap-2">
+                            <svg style="width:32px;height:32px;color:#198754;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                </path>
+                            </svg>
+                            <span>Verified & Licensed</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <svg style="width:32px;height:32px;color:#0d6efd;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                </path>
+                            </svg>
+                            <span>Secure Payments</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <svg style="width:32px;height:32px;color:#6f42c1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
+                            <span>No Hidden Fees</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Sidebar -->
+            <div class="col-lg-4 col-md-5">
+                <% const isFixDeparture = tourPackage.category?.name?.toLowerCase() === 'fix departure'; %>
+                <div class="p-4 rounded shadow-sm position-sticky" style="top: 80px;">
+                    <h4 class="fw-bold mb-4 text-center text-primary">Ready to Book Your Adventure?</h4>
+                    <form id="bookingForm" class="p-4 bg-light rounded shadow-sm">
+                        <div class="mb-3">
+                          <label class="form-label fw-semibold">Full Name:</label>
+                          <input name="name" type="text" class="form-control" placeholder="Your full name" required>
+                        </div>
+                      
+                        <div class="mb-3">
+                          <label class="form-label fw-semibold">Email:</label>
+                          <input name="email" type="email" class="form-control" placeholder="Your email address" required>
+                        </div>
+                      
+                        <div class="mb-3">
+                          <label class="form-label fw-semibold">Mobile Number:</label>
+                          <input name="mobile" type="tel" class="form-control" placeholder="Your phone number" required>
+                        </div>
+                      
+                        <% if (!isFixDeparture) { %>
+                        <div class="mb-3">
+                          <label class="form-label fw-semibold">Date:</label>
+                          <input name="date" type="date" class="form-control" placeholder="Select date">
+                        </div>
+                        <% } %>
+                      
+                        <div class="row mb-3">
+                          <div class="col-6">
+                            <label class="form-label fw-semibold">Adults:</label>
+                            <input name="adults" type="number" min="1" value="1" class="form-control" required>
+                          </div>
+                          <div class="col-6">
+                            <label class="form-label fw-semibold">Children:</label>
+                            <input name="children" type="number" min="0" value="0" class="form-control">
+                          </div>
+                        </div>
+                      
+                        <div class="mb-3">
+                          <label class="form-label fw-semibold">Additional Details:</label>
+                          <textarea name="additionalDetails" class="form-control" rows="3" placeholder="Any extra info..."></textarea>
+                        </div>
+                      
+                        <input type="hidden" name="packageId" value="<%= tourPackage._id %>">
+                        <input type="hidden" name="packageName" value="<%= tourPackage.title %>">
+                        <input type="hidden" name="categoryName" value="<%= tourPackage.category?.name %>">
+                      
+                        <button type="submit" class="btn btn-danger w-100 d-flex justify-content-center align-items-center">
+                          <span id="submitText">Book Now</span>
+                          <span id="spinner" class="d-none ms-2">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          </span>
+                        </button>
+                      </form>
+                      
+                      <div id="successMessage" class="d-none mt-3 p-3 bg-success text-white rounded">
+                        Thank you for your booking! We'll contact you shortly.
+                      </div>
+                      
+                      <div id="errorMessage" class="d-none mt-3 p-3 bg-danger text-white rounded">
+                        There was an error submitting your booking. Please try again.
+                      </div>
+    
+                    <div id="message" class="mt-3 d-none p-3 rounded"></div>
+
+                    <script>
+                        document.getElementById('bookingForm').addEventListener('submit', async function (e) {
+                          e.preventDefault();
+                        
+                          const form = e.target;
+                          const submitButton = form.querySelector('button[type="submit"]');
+                          const submitText = document.getElementById('submitText');
+                          const spinner = document.getElementById('spinner');
+                          const successMessage = document.getElementById('successMessage');
+                          const errorMessage = document.getElementById('errorMessage');
+                        
+                          successMessage.classList.add('d-none');
+                          errorMessage.classList.add('d-none');
+                        
+                          submitText.textContent = 'Processing...';
+                          spinner.classList.remove('d-none');
+                          submitButton.disabled = true;
+                        
+                          try {
+                            const formData = new FormData(form);
+                        
+                            // ✅ Prepare Google Sheets payload
+                            const googleFormData = new URLSearchParams();
+                            for (const [key, value] of formData.entries()) {
+                              googleFormData.append(key, value);
+                            }
+                        
+                            // ✅ Prepare Web3Forms payload
+                            const web3Data = {
+                              access_key: '07f247a2-e4c9-4365-8acb-55700b428281',
+                              subject: 'New Tour Package Booking Request',
+                              name: formData.get('name'),
+                              email: formData.get('email'),
+                              phone: formData.get('mobile'),
+                              message: `
+                        Name: ${formData.get('name')}
+                        Email: ${formData.get('email')}
+                        Phone: ${formData.get('mobile')}
+                        Date: ${formData.get('date') || 'N/A'}
+                        Adults: ${formData.get('adults')}
+                        Children: ${formData.get('children')}
+                        Package: ${formData.get('packageName')}
+                        Category: ${formData.get('categoryName')}
+                        Package ID: ${formData.get('packageId')}
+                        Additional Details: ${formData.get('additionalDetails')}
+                              `.trim()
+                            };
+                        
+                            // 🔁 Parallel submission
+                            const googleSheetPromise = fetch('https://script.google.com/macros/s/AKfycbxwW0I65KndHHnrq16qrLIJryEFhLZU-5rMbhqvqzaBqMfEvvVrI5ghGl3tkVQJ0BNldQ/exec', {
+                              method: 'POST',
+                              body: googleFormData,
+                              redirect: 'follow'
+                            });
+                        
+                            const web3FormsPromise = fetch('https://api.web3forms.com/submit', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify(web3Data)
+                            });
+                        
+                            const [sheetResponse, web3Response] = await Promise.all([googleSheetPromise, web3FormsPromise]);
+                        
+                            const sheetResult = await sheetResponse.json();
+                            const web3Result = await web3Response.json();
+                        
+                            if (sheetResult.status === 'success' && web3Result.success) {
+                              successMessage.classList.remove('d-none');
+                              form.reset();
+                            } else {
+                              throw new Error('One of the submissions failed.');
+                            }
+                        
+                          } catch (error) {
+                            console.error('Submission error:', error);
+                            errorMessage.textContent = 'Error: ' + (error.message || 'Failed to submit');
+                            errorMessage.classList.remove('d-none');
+                          } finally {
+                            submitText.textContent = 'Book Now';
+                            spinner.classList.add('d-none');
+                            submitButton.disabled = false;
+                          }
+                        });
+                        </script>
+                        
+
+                    <div id="successMessage" class="d-none mt-3 p-3 bg-success text-white rounded">
+                        Thank you for your booking! We'll contact you shortly.
+                    </div>
+
+                    <div id="errorMessage" class="d-none mt-3 p-3 bg-danger text-white rounded">
+                        There was an error submitting your booking. Please try again.
+                    </div>
+
+                    <div class="mt-4">
+                        <h5 class="fs-5 fw-medium">Tour Location</h5>
+                        <div class="mt-2">
+                            <% if (tourPackage.locationHref) { %>
+                                <a href="<%= tourPackage.locationHref %>" target="_blank"
+                                    class="d-flex align-items-center justify-content-center w-100 rounded bg-light" style="height:300px;">
+                                    <div class="text-center">
+                                        <i data-feather="map" style="width:48px;height:48px;" class="text-danger mb-2"></i>
+                                        <p class="mt-2 text-secondary">View on Google Maps</p>
+                                    </div>
+                                </a>
+                            <% } else { %>
+                                <div class="d-flex align-items-center justify-content-center w-100 rounded bg-light" style="height:300px;">
+                                    <p class="text-secondary">Location not available</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+   <!-- Footer -->
+   <footer class="footer-wrapper jarallax" data-jarallax data-speed="0.6"
+        style="background-image: url('/img/bg-img/35.jpg');">
+        <!-- Plane Image -->
+        <img class="plane-img" src="/img/core-img/plane2.png" alt="">
+
+        <!-- Tree Image -->
+        <img class="tree-img" src="/img/core-img/tree.png" alt="">
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="footer-top-content">
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS (COCHIN) </h4>
+                        <a href="tel:+918086602888" target="_blank" class="mb-0 text-white">+91 8086602888</a> <br>
+                        <a href="mailto:admin@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">admin@joannaholidays.com</a>
+                    </div>
+                </div>
+
+                <div class="vr-line d-none d-md-block"></div>
+
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS (KOTTAYAM) </h4>
+                        <a href="tel:+919846226028" target="_blank" class="mb-0 text-white">+91 9846226028</a> <br>
+                        <a href="mailto:info@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">info@joannaholidays.com</a>
+                    </div>
+                </div>
+
+                <div class="vr-line d-none d-lg-block"></div>
+
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS (LONDON)</h4>
+                        <a href="tel:+447418375151" target="_blank" class="mb-0 text-white">+44 7418375151</a> <br>
+                        <a href="mailto:md@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">md@joannaholidays.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="border-top"></div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="row g-5">
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="footer-card pe-lg-5">
+                        <a href="#" class="footer-logo">
+                            <img src="/img/joanna/joannalogo.png" alt="joanna">
+                        </a>
+                        <p class="mb-0 text-white">Targeting consultation Death yet way ndulgence off under folly
+                            death wrote
+                            cause her yet way yet wayspite.</p>
+
+                        <!-- Social Nav -->
+                        <div class="social-nav">
+                            <a href="https://www.facebook.com/joannaholidays1/" target="_blank"><i
+                                    class="ti ti-brand-facebook"></i></a>
+                            <a href="https://wa.me/+918086602888" target="_blank"><i
+                                    class="ti ti-brand-whatsapp"></i></a>
+                            <a href="tel:+918086602888" target="_blank"><i class="ti ti-phone"></i></a>
+                            <a href="https://www.instagram.com/joannaholidays/?hl=en" target="_blank"><i
+                                    class="ti ti-brand-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Quick Links</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="footer-nav">
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/">Packages</a></li>
+                            <li><a href="/about">About Us</a></li>
+                            <li><a href="/gallery">Gallery</a></li>
+                            <li><a href="/contact">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Popular Destinations</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="footer-nav">
+                            <li><a href="/packages">India</a></li>
+                            <li><a href="/packages">China</a></li>
+                            <li><a href="/packages">Malaysia</a></li>
+                            <li><a href="/packages">Kenya</a></li>
+                            <li><a href="/packages">Europe</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Gallery Post</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="gallery-post list-unstyled">
+                            <li><a href="/gallery"><img src="/img/bg-img/36.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/37.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/38.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/39.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/40.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/bg-img/41.jpg" alt="joanna"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="border-top"></div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="copyright-wrapper">
+            <div class="container">
+                <div class="row align-items-center">
+                    <!-- Copyright -->
+                    <div class="col-12">
+                        <p class="mb-3 mb-md-0 copyright text-center">
+                            Copyright © <span id="year"></span> <span style="color: #ed1c24;">Joanna Holidays Pvt
+                                Ltd.</span>
+                            Designed &amp; Developed by <a href="#" target="_blank" rel="noopener"
+                                style="color: antiquewhite;">Harsh Adz Creators</a>.
+                            All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+   <!-- Scroll To Top -->
+   <button id="scrollTopButton" class="touria-scrolltop scrolltop-hide">
+      <i class="icon-arrow-up"></i>
+   </button>
+   <script
+   src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js"
+   type="module"
+ ></script>
+   <!-- All JavaScript Files-->
+   <script src="/js/bootstrap.bundle.min.js"></script>
+   <script src="/js/slideToggle.min.js"></script>
+   <script src="/js/swiper-bundle.min.js"></script>
+   <script src="/js/jarallax.min.js"></script>
+   <script src="/js/index.js"></script>
+ 
+   <script src="/js/imagesloaded.pkgd.min.js"></script>
+   <script src="/js/isotope.pkgd.min.js"></script>
+   <script src="/js/flatpickr.min.js"></script>
+   <script src="/js/nice-select2.js"></script>
+   <script src="/js/venobox.min.js"></script>
+   <script src="/js/wow.min.js"></script>
+   <script src="/js/active.js"></script>
+</body>
+
+</html>

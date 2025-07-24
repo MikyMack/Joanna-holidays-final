@@ -94,7 +94,7 @@
                     <ul class="navbar-nav align-items-xl-center navbar-nav-scroll">
                         <!-- Home -->
                         <li class="touria-dd">
-                            <a href="/">Home </a>
+                            <a href="/" style="color: #334ea2;">Home </a>
                         </li>
                         <!-- Packages (Dynamic) -->
                         <li class="touria-dd">
@@ -326,11 +326,10 @@
                                         <!-- Date Range -->
                                         <div class="col-md-6 col-lg-3">
                                             <div class="form-floating position-relative">
-
-                                                <input type="date" name="date" class="form-control form-control-lg ps-4"
-                                                    id="search-date" placeholder="Select Date">
-                                                <label for="search-date" class="d-flex align-items-center gap-2 ps-4">
-                                                    <span>Select Date</span>
+                                                <input type="month" name="month" class="form-control form-control-lg ps-4"
+                                                    id="search-month" placeholder="Select Month">
+                                                <label for="search-month" class="d-flex align-items-center gap-2 ps-4">
+                                                    <span>Select Month</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -441,9 +440,9 @@
         </div>
 
         <div class="container position-relative" style="z-index:1;">
-            <div class="row g-4 g-md-5 align-items-end" style="position:relative;">
-                <div class="col-12 col-sm-6" style="position:relative;">
-                    <div class="section-heading d-flex align-items-center" style="width:100%; position:relative;">
+            <div class="row g-4 g-md-5 align-items-end justify-content-center" style="position:relative;">
+                <div class="col-12 col-sm-8 col-md-7 col-lg-6" style="position:relative; margin-left:auto; margin-right:auto;">
+                    <div class="section-heading d-flex align-items-center justify-content-center" style="width:100%; position:relative;">
                         <div>
                             <span class="sub-title text-info">Popular Tour Types</span>
                             <h2 class="mb-0 d-inline-block" style="vertical-align:middle;">International & Domestic</h2>
@@ -466,62 +465,127 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-12 col-sm-6">
-                    <div class="premier-destination-navigation justify-content-sm-end">
-                        <div class="premier-destination-button-prev">
-                            <i class="icon-arrow-left"></i>
-                        </div>
-                        <div class="premier-destination-button-next">
-                            <i class="icon-arrow-right"></i>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="divider-sm"></div>
 
-            <div class="swiper premier-destination-swiper">
-                <div class="swiper-wrapper">
+            <!-- Desktop grid: 4 per row, centered -->
+            <div class="d-none d-sm-block">
+                <div class="row g-4 justify-content-center">
                     <% categories.forEach(function(category, idx) { %>
-                        <div class="swiper-slide premier-destination-card<%= idx === 0 ? ' slide-expand' : '' %>"
-                            style="background-image: url('<%= category.imageUrl %>');">
-                            <!-- Project Content -->
-                            <div class="premier-destination-content">
-                                <a href="/packages?category=<%= category._id %>" class="text-white"
-                                    style="font-size: xx-large;">
-                                    <%= category.name %>
-                                </a>
-                                <% if (category.startingPrice) { %>
-                                    <p class="mb-0 text-white">
-                                        Starting From <span class="text-info">$<%= category.startingPrice %></span>
-                                    </p>
+                        <div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center">
+                            <div class="card h-100 shadow-sm border-0 position-relative premier-destination-card"
+                                style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:220px;">
+                                <div class="position-absolute top-0 start-0 w-100 h-100"
+                                     style="background:rgba(0,0,0,0.35); border-radius:1rem 1rem 1rem 1rem;"></div>
+                                <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative" style="z-index:2; min-height:140px;">
+                                    <div>
+                                        <a href="/packages?category=<%= category._id %>" class="text-white fw-bold" style="font-size:1.25rem; text-shadow:0 2px 8px #000; text-transform: uppercase;">
+                                            <%= category.name %>
+                                        </a>
+                                    </div>
+                                    <% if (category.startingPrice) { %>
+                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000;">
+                                            Starting From <span class="text-info">$<%= category.startingPrice %></span>
+                                        </p>
                                     <% } else { %>
-                                        <p class="mb-0 text-white">
-                                            <% if (category.locationCount> 0) { %>
+                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000;">
+                                            <% if (category.locationCount > 0) { %>
                                                 <span class="text-info">
-                                                    <%= category.locationCount %> Packages Available
+                                                    <%= category.locationCount %> Packages
                                                 </span>
+                                            <% } else { %>
+                                                <span class="text-success">Currently Unavailable</span>
+                                            <% } %>
+                                        </p>
+                                    <% } %>
+                                    <a href="/packages?category=<%= category._id %>" class="btn btn-sm btn-light mt-2 px-3 shadow" style="font-weight:600;">
+                                        <i class="ti ti-plane-tilt"></i> View Packages
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+
+            <!-- Mobile Swiper Slider: 1.2 cards per view, balance slider, centered -->
+            <div class="d-block d-sm-none">
+                <div class="swiper premier-destination-mobile-swiper">
+                    <div class="swiper-wrapper">
+                        <% categories.forEach(function(category, idx) { %>
+                            <div class="swiper-slide d-flex justify-content-center" style="max-width: 85vw;">
+                                <div class="card h-100 shadow-sm border-0 position-relative premier-destination-card"
+                                    style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:200px;">
+                                    <div class="position-absolute top-0 start-0 w-100 h-100"
+                                         style="background:rgba(0,0,0,0.35); border-radius:1rem 1rem 1rem 1rem;"></div>
+                                    <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative" style="z-index:2; min-height:110px;">
+                                        <div>
+                                            <a href="/packages?category=<%= category._id %>" class="text-white fw-bold" style="font-size:1.1rem; text-shadow:0 2px 8px #000;">
+                                                <%= category.name %>
+                                            </a>
+                                        </div>
+                                        <% if (category.startingPrice) { %>
+                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000;">
+                                                Starting From <span class="text-info">$<%= category.startingPrice %></span>
+                                            </p>
+                                        <% } else { %>
+                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000;">
+                                                <% if (category.locationCount > 0) { %>
+                                                    <span class="text-info">
+                                                        <%= category.locationCount %> Packages Available
+                                                    </span>
                                                 <% } else { %>
                                                     <span class="text-danger">Currently Unavailable</span>
-                                                    <% } %>
-                                        </p>
+                                                <% } %>
+                                            </p>
                                         <% } %>
+                                        <a href="/packages?category=<%= category._id %>" class="btn btn-sm btn-light mt-2 px-3 shadow" style="font-weight:600;">
+                                            <i class="ti ti-plane-tilt"></i> View Packages
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <!-- Project Button -->
-                            <a href="/packages?category=<%= category._id %>" class="btn">
-                                <i class="ti ti-plane-tilt"></i>
-                            </a>
-                        </div>
                         <% }); %>
+                    </div>
+                    <!-- Mobile slider navigation -->
+                    <div class="d-flex justify-content-center mt-3">
+                        <div class="premier-destination-mobile-button-prev me-2" style="font-size:1.5rem;">
+                            <i class="icon-arrow-left"></i>
+                        </div>
+                        <div class="premier-destination-mobile-button-next ms-2" style="font-size:1.5rem;">
+                            <i class="icon-arrow-right"></i>
+                        </div>
+                    </div>
                 </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        if (window.Swiper) {
+                            new Swiper('.premier-destination-mobile-swiper', {
+                                slidesPerView: 1.2,
+                                spaceBetween: 16,
+                                navigation: {
+                                    nextEl: '.premier-destination-mobile-button-next',
+                                    prevEl: '.premier-destination-mobile-button-prev',
+                                },
+                                loop: false,
+                                centeredSlides: true,
+                                // Make sure last slide is visible as a "balance" (peek)
+                                breakpoints: {
+                                    0: { slidesPerView: 1.2, spaceBetween: 12, centeredSlides: true },
+                                    480: { slidesPerView: 1.2, spaceBetween: 16, centeredSlides: true }
+                                }
+                            });
+                        }
+                    });
+                </script>
             </div>
         </div>
         <div class="container-fluid px-0 position-relative my-5 packages-section-bg">
             <div class="packages-section-content py-5 px-2 px-md-5">
                 <div class="row pb-4 text-center">
                     <div>
-                        <span class="sub-title text-info" style="font-size: xx-large;">Popular Tour Types</span> <br>
+                        <span class="sub-title text-info" style="font-size: xx-large;">Popular Packages</span> <br>
                         <h2 class="mb-0 d-inline-block" style="vertical-align:middle;">Discover unforgettable adventures
                             with our exclusive tour packages tailored just for you!</h2>
                     </div>
@@ -868,7 +932,7 @@
                                 <div class="icon">
                                     <dotlottie-wc
                                       src="https://lottie.host/6aa3b2e1-328f-4d9c-b7a9-d7a0162ff66f/tVwUGWqEdI.lottie"
-                                      style="width: 150px; height: 150px"
+                                      class="lotties"
                                       speed="1"
                                       autoplay
                                       loop
@@ -887,7 +951,7 @@
                                 <div class="icon">
                                     <dotlottie-wc
                                       src="https://lottie.host/8f4ae714-ac93-4633-9648-ed7d973125a4/5YFzm3qFW9.lottie"
-                                      style="width: 150px; height: 150px"
+                                      class="lotties"
                                       speed="1"
                                       autoplay
                                       loop
@@ -1103,10 +1167,10 @@
                         <div class="d-flex flex-column gap-4 mb-5">
                             <!-- Safety First -->
                             <div class="about-card d-flex align-items-center gap-4">
-                                <div class="icon" style="min-width: 160px;">
+                                <div class="icon">
                                     <dotlottie-wc
                                       src="https://lottie.host/8c38aaad-da29-4404-a3f3-e9cc065cde09/Nr40N8CcUs.lottie"
-                                      style="width: 180px; height: 180px"
+                                      class="lotties"
                                       speed="1"
                                       autoplay
                                       loop
@@ -1123,10 +1187,10 @@
 
                             <!-- Adventure and Climbing -->
                             <div class="about-card d-flex align-items-center gap-4">
-                                <div class="icon" style="min-width: 160px;">
+                                <div class="icon">
                                     <dotlottie-wc
                                       src="https://lottie.host/b3f7e620-08a5-41dd-b9c4-50503f8b1789/9SJNSDeWOZ.lottie"
-                                      style="width: 180px; height: 180px"
+                                      class="lotties"
                                       speed="1"
                                       autoplay
                                       loop
@@ -1443,6 +1507,7 @@
                         <p class="mb-5 text-white wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1000ms">
                             From the snow-capped Himalayas to the sun-kissed beaches of Goa, from the vibrant festivals to the tranquil backwaters of Kerala—India is a land of endless wonders. Embark on a journey through ancient history, rich culture, and breathtaking landscapes. Let your next adventure begin here!
                         </p>
+                        <a class="btn btn-success fadeInUp" href="/packages?category=6848021b80e92de2c956dec9">Book Now</a>
                     </div>
                     <div class="divider"></div>
                 </div>
@@ -1660,7 +1725,31 @@
             </div>
         </div>
     </footer>
-
+    <!-- Mobile Bottom Navbar -->
+    <nav id="mobile-bottom-navbar" class="mobile-bottom-navbar d-md-none">
+        <a href="/packages?category=684800c980e92de2c956deba" class="nav-item" title="International">
+            <span class="iconify" data-icon="mdi:airplane" data-inline="false"></span>
+            <span class="nav-label">International</span>
+        </a>
+        <a href="/packages?category=6848021b80e92de2c956dec9" class="nav-item" title="Domestic">
+            <span class="iconify" data-icon="mdi:home-city" data-inline="false"></span>
+            <span class="nav-label">Domestic</span>
+        </a>
+        <a href="/about" class="nav-item" title="About">
+            <span class="iconify" data-icon="mdi:information" data-inline="false"></span>
+            <span class="nav-label">About</span>
+        </a>
+        <a href="/gallery" class="nav-item" title="Gallery">
+            <span class="iconify" data-icon="mdi:image-multiple" data-inline="false"></span>
+            <span class="nav-label">Gallery</span>
+        </a>
+        <a href="/contact" class="nav-item" title="Contact Us">
+            <span class="iconify" data-icon="mdi:phone" data-inline="false"></span>
+            <span class="nav-label">Contact</span>
+        </a>
+    </nav>
+    <!-- Iconify for icons -->
+    <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
     <!-- Scroll To Top -->
     <button id="scrollTopButton" class="touria-scrolltop scrolltop-hide">
         <i class="icon-arrow-up"></i>

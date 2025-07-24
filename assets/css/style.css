@@ -663,7 +663,7 @@ textarea:invalid {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 120px;
+  bottom: 6rem;
   border-radius: 50%;
   background: conic-gradient(#0d6efd var(--scroll-progress), #161922 0);
   z-index: -1;

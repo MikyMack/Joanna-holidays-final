@@ -41,6 +41,9 @@ const PackageSchema = new mongoose.Schema({
     }],
     isActive: { type: Boolean, default: true }
 }, { timestamps: true });
+// In your Package model
+PackageSchema.index({ category: 1, subCategory: 1, isActive: 1 });
+PackageSchema.index({ packagePrice: 1 });
 
 
 module.exports = mongoose.model('Package', PackageSchema);

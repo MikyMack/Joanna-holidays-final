@@ -248,10 +248,10 @@
             <!-- Videos Tab -->
             <div id="videosTab" class="tab-pane d-none">
                 <div class="row g-4">
-                    <% if (videos && videos.length> 0) { %>
+                    <% if (videos && videos.length > 0) { %>
                         <% videos.forEach(function(video) { %>
                             <div class="col-12 col-md-4">
-                                <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm bg-black">
+                                <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm bg-black w-100">
                                     <iframe
                                         src="https://www.youtube.com/embed/<%= (video.youtubeLink.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&\n?#]+)/) || [])[1] %>"
                                         title="<%= video.title || 'YouTube Video' %>" frameborder="0"
@@ -262,30 +262,39 @@
                                     <div class="mt-2 text-center text-secondary fw-medium">
                                         <%= video.title %>
                                     </div>
-                                    <% } %>
+                                <% } %>
                             </div>
-                            <% }) %>
-                                <% } else { %>
-                                    <div class="col-12 text-center text-muted py-5">No videos found.</div>
-                                    <% } %>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="col-12 text-center text-muted py-5">No videos found.</div>
+                    <% } %>
                 </div>
                 <!-- Video Pagination -->
                 <div class="d-flex justify-content-center mt-4 gap-2">
-                    <% if (videoCurrentPage> 1) { %>
+                    <% if (videoCurrentPage > 1) { %>
                         <a href="?videoPage=<%= videoCurrentPage - 1 %>" class="btn btn-outline-dark">Previous</a>
-                        <% } %>
-                            <% for (let i=1; i <=videoTotalPages; i++) { %>
-                                <a href="?videoPage=<%= i %>"
-                                    class="btn <%= videoCurrentPage === i ? 'btn-danger text-white' : 'btn-outline-dark' %>">
-                                    <%= i %>
-                                </a>
-                                <% } %>
-                                    <% if (videoCurrentPage < videoTotalPages) { %>
-                                        <a href="?videoPage=<%= videoCurrentPage + 1 %>"
-                                            class="btn btn-outline-dark">Next</a>
-                                        <% } %>
+                    <% } %>
+                    <% for (let i = 1; i <= videoTotalPages; i++) { %>
+                        <a href="?videoPage=<%= i %>"
+                            class="btn <%= videoCurrentPage === i ? 'btn-danger text-white' : 'btn-outline-dark' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                    <% if (videoCurrentPage < videoTotalPages) { %>
+                        <a href="?videoPage=<%= videoCurrentPage + 1 %>"
+                            class="btn btn-outline-dark">Next</a>
+                    <% } %>
                 </div>
             </div>
+            <style>
+                /* 1 row only one video for mobile devices, full width */
+                @media (max-width: 767.98px) {
+                    #videosTab .col-12.col-md-4 {
+                        flex: 0 0 100%;
+                        max-width: 100%;
+                    }
+                }
+            </style>
         </div>
 
         <!-- Image Preview Modal -->

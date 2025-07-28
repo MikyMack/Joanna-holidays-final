@@ -440,8 +440,8 @@
         </div>
 
         <div class="container position-relative" style="z-index:1;">
-            <div class="row g-4 g-md-5 align-items-end justify-content-center" style="position:relative;">
-                <div class="col-12 col-sm-8 col-md-7 col-lg-6" style="position:relative; margin-left:auto; margin-right:auto;">
+            <div class="row g-3 g-md-4 align-items-end justify-content-center" style="position:relative;">
+                <div class="col-12 col-sm-10 col-md-8 col-lg-7" style="position:relative; margin-left:auto; margin-right:auto;">
                     <div class="section-heading d-flex align-items-center justify-content-center" style="width:100%; position:relative;">
                         <div>
                             <span class="sub-title text-info">Popular Tour Types</span>
@@ -471,25 +471,24 @@
 
             <!-- Desktop grid: 4 per row, centered -->
             <div class="d-none d-sm-block">
-                <div class="row g-4 justify-content-center">
+                <div class="row g-3 justify-content-center">
                     <% categories.forEach(function(category, idx) { %>
                         <div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center">
                             <div class="card h-100 shadow-sm border-0 position-relative premier-destination-card"
-                                style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:220px;">
+                                style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:270px; max-width:340px; width:100%; border-radius:1.25rem;">
                                 <div class="position-absolute top-0 start-0 w-100 h-100"
-                                     style="background:rgba(0,0,0,0.35); border-radius:1rem 1rem 1rem 1rem;"></div>
-                                <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative" style="z-index:2; min-height:140px;">
-                                    <div>
-                                        <a href="/packages?category=<%= category._id %>" class="text-white fw-bold" style="font-size:1.25rem; text-shadow:0 2px 8px #000; text-transform: uppercase;">
-                                            <%= category.name %>
-                                        </a>
-                                    </div>
+                                     style="background:rgba(0,0,0,0.38); border-radius:1.25rem;"></div>
+                                <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative px-3 pb-3 pt-2" style="z-index:2; min-height:170px;">
+                                    <a href="/packages?category=<%= category._id %>" class="text-white fw-bold w-100 text-truncate"
+                                       style="font-size:1.35rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.5rem; padding:0.35rem 0.75rem; margin-bottom:0.5rem; display:inline-block; max-width:95%;">
+                                        <%= category.name %>
+                                    </a>
                                     <% if (category.startingPrice) { %>
-                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000;">
+                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem;">
                                             Starting From <span class="text-info">$<%= category.startingPrice %></span>
                                         </p>
                                     <% } else { %>
-                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000;">
+                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem;">
                                             <% if (category.locationCount > 0) { %>
                                                 <span class="text-info">
                                                     <%= category.locationCount %> Packages
@@ -514,23 +513,22 @@
                 <div class="swiper premier-destination-mobile-swiper">
                     <div class="swiper-wrapper">
                         <% categories.forEach(function(category, idx) { %>
-                            <div class="swiper-slide d-flex justify-content-center" style="max-width: 85vw;">
+                            <div class="swiper-slide d-flex justify-content-center" style="max-width: 95vw;">
                                 <div class="card h-100 shadow-sm border-0 position-relative premier-destination-card"
-                                    style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:200px;">
+                                    style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:240px; max-width:95vw; width:100%; border-radius:1.1rem;">
                                     <div class="position-absolute top-0 start-0 w-100 h-100"
-                                         style="background:rgba(0,0,0,0.35); border-radius:1rem 1rem 1rem 1rem;"></div>
-                                    <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative" style="z-index:2; min-height:110px;">
-                                        <div>
-                                            <a href="/packages?category=<%= category._id %>" class="text-white fw-bold" style="font-size:1.1rem; text-shadow:0 2px 8px #000;">
-                                                <%= category.name %>
-                                            </a>
-                                        </div>
+                                         style="background:rgba(0,0,0,0.38); border-radius:1.1rem;"></div>
+                                    <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative px-2 pb-2 pt-1" style="z-index:2; min-height:120px;">
+                                        <a href="/packages?category=<%= category._id %>" class="text-white fw-bold w-100 text-truncate"
+                                           style="font-size:1.13rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.4rem; padding:0.28rem 0.6rem; margin-bottom:0.4rem; display:inline-block; max-width:95%;">
+                                            <%= category.name %>
+                                        </a>
                                         <% if (category.startingPrice) { %>
-                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000;">
+                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.3rem; padding:0.15rem 0.5rem; font-size:0.98rem;">
                                                 Starting From <span class="text-info">$<%= category.startingPrice %></span>
                                             </p>
                                         <% } else { %>
-                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000;">
+                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.3rem; padding:0.15rem 0.5rem; font-size:0.98rem;">
                                                 <% if (category.locationCount > 0) { %>
                                                     <span class="text-info">
                                                         <%= category.locationCount %> Packages Available
@@ -562,18 +560,17 @@
                     document.addEventListener('DOMContentLoaded', function () {
                         if (window.Swiper) {
                             new Swiper('.premier-destination-mobile-swiper', {
-                                slidesPerView: 1.2,
-                                spaceBetween: 16,
+                                slidesPerView: 1.1,
+                                spaceBetween: 10,
                                 navigation: {
                                     nextEl: '.premier-destination-mobile-button-next',
                                     prevEl: '.premier-destination-mobile-button-prev',
                                 },
                                 loop: false,
                                 centeredSlides: true,
-                                // Make sure last slide is visible as a "balance" (peek)
                                 breakpoints: {
-                                    0: { slidesPerView: 1.2, spaceBetween: 12, centeredSlides: true },
-                                    480: { slidesPerView: 1.2, spaceBetween: 16, centeredSlides: true }
+                                    0: { slidesPerView: 1.1, spaceBetween: 8, centeredSlides: true },
+                                    480: { slidesPerView: 1.1, spaceBetween: 10, centeredSlides: true }
                                 }
                             });
                         }
@@ -839,7 +836,7 @@
 
                         <!-- First Image -->
                         <div class="first-img wow fadeInUp" data-wow-delay="400ms" data-wow-duration="1000ms">
-                            <img src="/img/joanna/about.jpg" alt="joanna">
+                            <img src="/img/joanna/office.jpg" alt="joanna">
                         </div>
 
                         <!-- Second Image -->

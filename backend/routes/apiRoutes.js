@@ -7,6 +7,7 @@ const bannerController = require('../controllers/bannerController');
 const testimonialController = require('../controllers/testimonialController');
 const mainBannerCtrl = require('../controllers/mainBannerController');
 const upload = require('../utils/multer');
+const { sendEmailToAdmin } = require('../utils/email');
 // Dynamic Multer middleware function
 router.get('/main', mainBannerCtrl.getAll);
 router.post('/main', upload.single('image'), mainBannerCtrl.create);
@@ -63,5 +64,20 @@ router.get('/admin-testimonials/:id', testimonialController.getTestimonialForEdi
 router.put('/admin-testimonials/:id', upload.single('image'), testimonialController.updateTestimonial);
 router.delete('/admin-testimonials/:id', testimonialController.deleteTestimonial);
 router.patch('/admin-testimonials/toggle-status/:id', testimonialController.toggleTestimonialStatus);
+
+// routes/apiRoutes.js
+router.post('/book', async (req, res) => {
+    try {
+      const booking = req.body;
+  
+      await sendEmailToAdmin(booking);
+      
+      res.status(200).json({ success: true });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Notification failed' });
+    }
+  });
+  
 
 module.exports = router;

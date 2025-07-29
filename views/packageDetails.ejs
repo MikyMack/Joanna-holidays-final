@@ -477,26 +477,14 @@
                     </h3>
                     
                     <div class="bg-white rounded shadow-lg p-4 border border-danger-subtle">
-                        <ul class="list-unstyled text-secondary mb-0">
-                            <li class="d-flex align-items-start bg-white p-3 rounded shadow-sm mb-2">
-                                <span class="text-danger me-3 mt-1">
-                                    <i data-feather="alert-circle"></i>
-                                </span>
-                                <span>Advance payment will be Rs.30,000/- only and 02nd part amount should be clear before 40 days of the departure and balance amount should be settled before 20 days of the departure. The advance amount will not be refunded under any circumstances.</span>
-                            </li>
-                            <li class="d-flex align-items-start bg-white p-3 rounded shadow-sm mb-2">
-                                <span class="text-danger me-3 mt-1">
-                                    <i data-feather="clock"></i>
-                                </span>
-                                <span>40 days before the departure – 50% of the Tour cost</span>
-                            </li>
-                            <li class="d-flex align-items-start bg-white p-3 rounded shadow-sm mb-2">
-                                <span class="text-danger me-3 mt-1">
-                                    <i data-feather="alert-triangle"></i>
-                                </span>
-                                <span>Within 25 days to Departure - 100% of the Tour cost</span>
-                            </li>
-                        </ul>
+                        <div class="d-flex align-items-start bg-white p-3 rounded shadow-sm mb-2">
+                            <span class="text-danger me-3 mt-1">
+                                <i data-feather="info"></i>
+                            </span>
+                            <span>
+                                <strong>Note:</strong> Cancellation policies may vary depending on the specific package you choose. Please contact our team to know the detailed cancellation and booking terms for your selected package.
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-5">
@@ -552,17 +540,9 @@
                             </h2>
                             <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-secondary">
-                                    <p>We offer flexible cancellation policies because we understand plans change:
+                                    <p>
+                                        Cancellation policies vary based on the package you select. For detailed information about cancellation terms for your chosen tour, please contact our team directly.
                                     </p>
-                                    <ul class="ms-4">
-                                        <li><strong>30+ days before:</strong> Full refund (minus processing fees)
-                                        </li>
-                                        <li><strong>15-29 days before:</strong> 75% refund</li>
-                                        <li><strong>8-14 days before:</strong> 50% refund</li>
-                                        <li><strong>Within 7 days:</strong> Credit for future travel</li>
-                                    </ul>
-                                    <p class="mt-3 small text-primary">*Special COVID-19
-                                        policy: Free rescheduling up to 24 hours before departure.</p>
                                 </div>
                             </div>
                         </div>
@@ -732,79 +712,64 @@
                     <script>
                         document.getElementById('bookingForm').addEventListener('submit', async function (e) {
                           e.preventDefault();
-                        
+                      
                           const form = e.target;
                           const submitButton = form.querySelector('button[type="submit"]');
                           const submitText = document.getElementById('submitText');
                           const spinner = document.getElementById('spinner');
                           const successMessage = document.getElementById('successMessage');
                           const errorMessage = document.getElementById('errorMessage');
-                        
+                      
                           successMessage.classList.add('d-none');
                           errorMessage.classList.add('d-none');
-                        
+                      
                           submitText.textContent = 'Processing...';
                           spinner.classList.remove('d-none');
                           submitButton.disabled = true;
-                        
+                      
                           try {
                             const formData = new FormData(form);
-                        
-                            // ✅ Prepare Google Sheets payload
+                      
+                            // ✅ Google Sheets payload
                             const googleFormData = new URLSearchParams();
                             for (const [key, value] of formData.entries()) {
                               googleFormData.append(key, value);
                             }
-                        
-                            // ✅ Prepare Web3Forms payload
-                            const web3Data = {
-                              access_key: '07f247a2-e4c9-4365-8acb-55700b428281',
-                              subject: 'New Tour Package Booking Request',
-                              name: formData.get('name'),
-                              email: formData.get('email'),
-                              phone: formData.get('mobile'),
-                              message: `
-                        Name: ${formData.get('name')}
-                        Email: ${formData.get('email')}
-                        Phone: ${formData.get('mobile')}
-                        Date: ${formData.get('date') || 'N/A'}
-                        Adults: ${formData.get('adults')}
-                        Children: ${formData.get('children')}
-                        Package: ${formData.get('packageName')}
-                        Category: ${formData.get('categoryName')}
-                        Package ID: ${formData.get('packageId')}
-                        Additional Details: ${formData.get('additionalDetails')}
-                              `.trim()
-                            };
-                        
+                      
+                            // ✅ Backend Email payload
+                            const backendData = Object.fromEntries(formData.entries());
+                      
                             // 🔁 Parallel submission
-                            const googleSheetPromise = fetch('https://script.google.com/macros/s/AKfycbxwW0I65KndHHnrq16qrLIJryEFhLZU-5rMbhqvqzaBqMfEvvVrI5ghGl3tkVQJ0BNldQ/exec', {
-                              method: 'POST',
-                              body: googleFormData,
-                              redirect: 'follow'
-                            });
-                        
-                            const web3FormsPromise = fetch('https://api.web3forms.com/submit', {
+                            const googleSheetPromise = fetch(
+                              'https://script.google.com/macros/s/AKfycbxwW0I65KndHHnrq16qrLIJryEFhLZU-5rMbhqvqzaBqMfEvvVrI5ghGl3tkVQJ0BNldQ/exec',
+                              {
+                                method: 'POST',
+                                body: googleFormData,
+                                redirect: 'follow'
+                              }
+                            );
+                      
+                            const backendEmailPromise = fetch('/book', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify(web3Data)
+                              body: JSON.stringify(backendData)
                             });
-                        
-                            const [sheetResponse, web3Response] = await Promise.all([googleSheetPromise, web3FormsPromise]);
-                        
+                      
+                            const [sheetResponse, emailResponse] = await Promise.all([googleSheetPromise, backendEmailPromise]);
+                      
                             const sheetResult = await sheetResponse.json();
-                            const web3Result = await web3Response.json();
-                        
-                            if (sheetResult.status === 'success' && web3Result.success) {
+                            const emailResult = await emailResponse.json();
+                      
+                            if (sheetResult.status === 'success' && emailResult.success) {
                               successMessage.classList.remove('d-none');
                               form.reset();
                             } else {
-                              throw new Error('One of the submissions failed.');
+                              throw new Error('Submission failed.');
                             }
-                        
+                      
                           } catch (error) {
                             console.error('Submission error:', error);
-                            errorMessage.textContent = 'Error: ' + (error.message || 'Failed to submit');
+                            errorMessage.textContent = 'Error: ' + (error.message || 'Something went wrong');
                             errorMessage.classList.remove('d-none');
                           } finally {
                             submitText.textContent = 'Book Now';
@@ -812,8 +777,8 @@
                             submitButton.disabled = false;
                           }
                         });
-                        </script>
-                        
+                      </script>
+                      
 
                     <div id="successMessage" class="d-none mt-3 p-3 bg-success text-white rounded">
                         Thank you for your booking! We'll contact you shortly.

@@ -138,7 +138,7 @@ textarea:invalid {
 .container-sm,
 .container-xl,
 .container-xxl {
-  max-width: 320px;
+  max-width: 95%;
 }
 
 @media (min-width: 400px) {
@@ -149,7 +149,7 @@ textarea:invalid {
   .container-sm,
   .container-xl,
   .container-xxl {
-    max-width: 90%;
+    max-width: 95%;
   }
 }
 
@@ -161,7 +161,7 @@ textarea:invalid {
   .container-sm,
   .container-xl,
   .container-xxl {
-    max-width: 420px;
+    max-width: 95%;
   }
 }
 
@@ -2697,8 +2697,14 @@ picture.jarallax-img img {
   width: 100%;
   height: 100%;
   background: -webkit-gradient(linear, left top, right top, color-stop(8.81%, #161920), color-stop(99.92%, rgba(22, 25, 32, 0.06)));
-  background: linear-gradient(90deg, #161920 8.81%, rgba(22, 25, 32, 0.06) 99.92%);
+  background: linear-gradient(90deg, #161920 9.81%, rgba(22, 25, 32, 0.06) 49.92%);
   z-index: 10;
+}
+
+@media (max-width: 767.98px) {
+  .background-swiper::before {
+    background: rgba(22, 25, 32, 0.7); 
+  }
 }
 
 .search-form-container {
@@ -5088,7 +5094,6 @@ picture.jarallax-img img {
 .trip-card .trip-meta .trip-price span {
   font-size: 16px;
   color: #767676;
-  text-decoration: line-through;
 }
 
 .trip-card:hover,

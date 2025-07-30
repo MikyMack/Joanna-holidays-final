@@ -327,8 +327,8 @@
                                         <div class="col-md-6 col-lg-3">
                                             <div class="form-floating position-relative">
                                                 <input type="month" name="month" class="form-control form-control-lg ps-4"
-                                                    id="search-month" placeholder="Select Month">
-                                                <label for="search-month" class="d-flex align-items-center gap-2 ps-4">
+                                                    id="search-month" placeholder="Select Month" autocomplete="off" style="cursor: pointer;">
+                                                <label for="search-month" class="d-flex align-items-center gap-2 ps-4" style="cursor: pointer;">
                                                     <span>Select Month</span>
                                                 </label>
                                             </div>
@@ -478,17 +478,19 @@
                                 style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:270px; max-width:340px; width:100%; border-radius:1.25rem;">
                                 <div class="position-absolute top-0 start-0 w-100 h-100"
                                      style="background:rgba(0,0,0,0.38); border-radius:1.25rem;"></div>
-                                <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative px-3 pb-3 pt-2" style="z-index:2; min-height:170px;">
-                                    <a href="/packages?category=<%= category._id %>" class="text-white fw-bold w-100 text-truncate"
-                                       style="font-size:1.35rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.5rem; padding:0.35rem 0.75rem; margin-bottom:0.5rem; display:inline-block; max-width:95%;">
+                                <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative px-3 pb-3 pt-2" style="z-index:2;">
+                                    <!-- Full name, no truncation, no overlap -->
+                                    <a href="/packages?category=<%= category._id %>" class="text-white w-100"
+                                       style="font-size:1.25rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.5rem; padding:0.35rem 0.75rem; margin-bottom:0.5rem; display:block; max-width:100%; white-space:normal; word-break:break-word;">
                                         <%= category.name %>
                                     </a>
+                                    <!-- Balance/price on next line -->
                                     <% if (category.startingPrice) { %>
-                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem;">
+                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem; width:100%; margin-top:0;">
                                             Starting From <span class="text-info">$<%= category.startingPrice %></span>
                                         </p>
                                     <% } else { %>
-                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem;">
+                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem; width:100%; margin-top:0;">
                                             <% if (category.locationCount > 0) { %>
                                                 <span style="font-weight: 600;">
                                                     <%= category.locationCount %> Packages
@@ -508,7 +510,6 @@
                 </div>
             </div>
 
-            <!-- Mobile Swiper Slider: 1.2 cards per view, balance slider, centered -->
             <div class="d-block d-sm-none">
                 <div class="swiper premier-destination-mobile-swiper">
                     <div class="swiper-wrapper">
@@ -519,9 +520,32 @@
                                     <div class="position-absolute top-0 start-0 w-100 h-100"
                                          style="background:rgba(0,0,0,0.38); border-radius:1.1rem;"></div>
                                     <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative px-2 pb-2 pt-1" style="z-index:2; min-height:120px;">
-                                        <a href="/packages?category=<%= category._id %>" class="text-white fw-bold w-100 text-truncate"
-                                           style="font-size:1.13rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.4rem; padding:0.28rem 0.6rem; margin-bottom:0.4rem; display:inline-block; max-width:95%;">
-                                            <%= category.name %>
+                                        <% 
+                                            // If name is too long, split into multiple lines (try to break at spaces)
+                                            var name = category.name || '';
+                                            var maxCharsPerLine = 18;
+                                            var nameLines = [];
+                                            if (name.length > maxCharsPerLine) {
+                                                var words = name.split(' ');
+                                                var line = '';
+                                                words.forEach(function(word) {
+                                                    if ((line + word).length > maxCharsPerLine) {
+                                                        if (line.length > 0) nameLines.push(line.trim());
+                                                        line = word + ' ';
+                                                    } else {
+                                                        line += word + ' ';
+                                                    }
+                                                });
+                                                if (line.length > 0) nameLines.push(line.trim());
+                                            } else {
+                                                nameLines = [name];
+                                            }
+                                        %>
+                                        <a href="/packages?category=<%= category._id %>" class="text-white fw-bold w-100"
+                                           style="font-size:1.13rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.4rem; padding:0.28rem 0.6rem; margin-bottom:0.4rem; display:block; max-width:95%; white-space:normal; word-break:break-word; line-height:1.25;">
+                                            <% nameLines.forEach(function(line, i) { %>
+                                                <%= line %><% if (i < nameLines.length - 1) { %><br><% } %>
+                                            <% }); %>
                                         </a>
                                         <% if (category.startingPrice) { %>
                                             <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.3rem; padding:0.15rem 0.5rem; font-size:0.98rem;">
@@ -843,58 +867,6 @@
                         <div class="second-img wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1000ms">
                             <img src="/img/joanna/dileep.png" alt="joanna">
 
-                            <!-- Play Video -->
-                            <!-- Play Video Button -->
-                            <div class="play-video-btn video-btn" id="playVideoBtn" data-video="https://www.youtube.com/embed/zCSmY_WjvPs?autoplay=1&rel=0">
-                                <div class="icon">
-                                    <i class="ti ti-player-play-filled"></i>
-                                </div>
-                            </div>
-                            <!-- Video Popup Modal -->
-                            <div id="videoPopup" class="video-popup-iframe d-none" style="z-index: 99999; position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;">
-                                <div class="video-content" style="position: relative; max-width: 800px; width: 90vw;">
-                                    <span class="close-btn" id="videoCloseButton" style="position: absolute; top: 10px; right: 10px; z-index: 2; cursor: pointer; font-size: 2rem; color: #fff;">
-                                        <i class="ti ti-x"></i>
-                                    </span>
-                                    <div class="ratio ratio-16x9" style="background: #000;">
-                                        <iframe id="videoFrame" src="" allowfullscreen allow="autoplay; encrypted-media" style="width:100%; height:100%; border:0;"></iframe>
-                                    </div>
-                                </div>
-                            </div>
-                            <script>
-                                // Video popup logic
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    const playBtn = document.getElementById('playVideoBtn');
-                                    const popup = document.getElementById('videoPopup');
-                                    const closeBtn = document.getElementById('videoCloseButton');
-                                    const iframe = document.getElementById('videoFrame');
-                                    let videoUrl = playBtn.getAttribute('data-video');
-
-                                    playBtn.addEventListener('click', function() {
-                                        popup.classList.remove('d-none');
-                                        iframe.src = videoUrl;
-                                        document.body.style.overflow = 'hidden';
-                                    });
-
-                                    function closeVideo() {
-                                        popup.classList.add('d-none');
-                                        iframe.src = '';
-                                        document.body.style.overflow = '';
-                                    }
-
-                                    closeBtn.addEventListener('click', closeVideo);
-
-                                    // Close on outside click
-                                    popup.addEventListener('click', function(e) {
-                                        if (e.target === popup) closeVideo();
-                                    });
-
-                                    // Close on ESC
-                                    document.addEventListener('keydown', function(e) {
-                                        if (e.key === "Escape") closeVideo();
-                                    });
-                                });
-                            </script>
                         </div>
 
                         <!-- Third Image -->
@@ -980,8 +952,8 @@
             <div class="row justify-content-center">
                 <div class="col-12 text-center my-4">
                     <h2 class="sub-title text-info" style="font-size:2.2rem;">Don't Miss Our Upcoming Adventures!</h2>
-                    <p class="lead text-dark mb-0" style="max-width: 600px; margin: 0 auto;">
-                        Ready for your next big adventure? <span style="color:#601FEB;font-weight:bold;">Snag your spot now</span> on our hottest upcoming trips! Explore breathtaking destinations, create epic memories, and unlock exclusive deals. <span style="color:#DC3545;font-weight:bold;">Seats are vanishing fast—book today and let the journey begin!</span>
+                    <p class="lead text-dark mb-0" style=" margin: 0 auto;">
+                        Ready for your next big adventure? <span style="color:#601FEB;font-weight:bold;">Snag your spot now</span> on our hottest upcoming trips! Explore breathtaking destinations, create epic memories, and unlock exclusive deals.
                     </p>
                 </div>
             </div>

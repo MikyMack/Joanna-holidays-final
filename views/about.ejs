@@ -131,6 +131,10 @@
                                             <% }) %>
                         </ul>
                     </li>
+                    <li class="touria-dd">
+                        <a href="/customTours">Custom Tours</a>
+
+                    </li>
                     <!-- About Us -->
                     <li class="touria-dd">
                         <a href="/about" style="color: #334ea2;">About Us</a>
@@ -141,10 +145,7 @@
                         <a href="/gallery">Gallery</a>
                     </li>
                     <!-- Blog -->
-                    <li class="touria-dd">
-                        <a href="/blogs">Blogs</a>
-
-                    </li>
+                
                     <!-- Contact -->
                     <li>
                         <a href="/contact" class="sub-menu-item">Contact Us</a>
@@ -183,7 +184,7 @@
             <div class="divider"></div>
             <h2>About Us</h2>
             <ul class="list-unstyled">
-               <li><a href="index.html">Home</a></li>
+               <li><a href="/">Home</a></li>
                <li>About Us</li>
             </ul>
          </div>
@@ -385,8 +386,7 @@
    <!-- Directors Section -->
    <section class="team-section">
       <!-- Divider -->
-      <div class="divider"></div>
-
+      <div class="divider-sm"></div>
       <div class="container">
          <div class="row justify-content-center">
             <div class="col-12 col-xl-6">
@@ -433,7 +433,7 @@
             <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
                <div class="team-card wow fadeInUp" data-wow-delay="400ms" data-wow-duration="1000ms">
                   <div class="team-thumb mb-4">
-                     <img src="/img/joanna/team1.jpg" alt="Jomon Thomas" style="height: 400px;width: 400px; object-fit: cover;">
+                     <img src="/img/joanna/jomon.jpg" alt="Jomon Thomas" style="height: 400px;width: 400px; object-fit: cover;">
                   </div>
                   <div class="text-center">
                      <h4>JOMON THOMAS</h4>
@@ -474,7 +474,7 @@
                      <img src="/img/joanna/kavitha.jpg" alt="Manager 1" style="height: 400px;width: 400px; object-fit: cover;">
                   </div>
                   <div class="text-center">
-                     <h4>KAVITHA NAIR</h4>
+                     <h4>KAVITHA VIPINKUMAR</h4>
                      <span>Manager Outbound</span>
                   </div>
                </div>
@@ -530,8 +530,8 @@
                 </div>
 
                 <!-- Google Sheets Contact Form -->
-                <!-- Updated Contact Form to match Google Apps Script parameter names -->
-                <form id="contact-form" class="me-lg-5">
+
+                <form id="contact-form" class="me-lg-5" autocomplete="off">
                     <div class="contact-form">
                         <div class="row g-4">
                             <div class="col-12">
@@ -549,6 +549,19 @@
                                     </label>
                                     <input type="text" id="name" class="form-control bg-secondary" name="name"
                                         placeholder="First Name *" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="mobile">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none">
+                                            <path d="M7 2C5.89543 2 5 2.89543 5 4V20C5 21.1046 5.89543 22 7 22H17C18.1046 22 19 21.1046 19 20V4C19 2.89543 18.1046 2 17 2H7ZM7 0H17C19.2091 0 21 1.79086 21 4V20C21 22.2091 19.2091 24 17 24H7C4.79086 24 3 22.2091 3 20V4C3 1.79086 4.79086 0 7 0ZM12 20C12.8284 20 13.5 19.3284 13.5 18.5C13.5 17.6716 12.8284 17 12 17C11.1716 17 10.5 17.6716 10.5 18.5C10.5 19.3284 11.1716 20 12 20Z" fill="#767676"/>
+                                        </svg>
+                                    </label>
+                                    <input type="tel" id="mobile" class="form-control bg-secondary" name="mobile"
+                                        placeholder="Mobile Number *" required pattern="^[0-9]{10,15}$" maxlength="15" minlength="10" inputmode="tel">
+                                    <small class="form-text text-muted" id="mobileHelp">Enter a valid mobile number (10-15 digits).</small>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -589,7 +602,6 @@
                                                 fill="#767676" />
                                         </svg>
                                     </label>
-                                    <!-- Change name to "comments" to match Apps Script -->
                                     <textarea name="comments" id="comments" class="form-control bg-secondary"
                                         placeholder="Your Comment *" required></textarea>
                                 </div>
@@ -604,25 +616,52 @@
                 </form>
                 <script>
                   // Use your Apps Script Web App URL
-                  const scriptUrl = 'https://script.google.com/macros/s/AKfycbwgKz4lsiqwdo19W0sQ3x9Pdjxp7Iyn09SkJ9e-AJQyz4C1KU8F7F5amDFiQpibCRMoYA/exec';
+                  const scriptUrl = 'https://script.google.com/macros/s/AKfycbxLDX7ywFwz5TXAzqYGjESEy0m3Vx4tIWEuUIqHYfpk3ySdw_XGQi0i0YgiBAVrK0DsvQ/exec';
 
                   document.addEventListener('DOMContentLoaded', function() {
                       const form = document.getElementById('contact-form');
                       const statusDiv = document.getElementById('form-status');
                       const submitBtn = document.getElementById('submit-btn');
+                      const mobileInput = document.getElementById('mobile');
+
+                      // Custom mobile validation
+                      function isValidMobile(mobile) {
+                        // Accepts 10-15 digits, no spaces or symbols
+                        return /^[0-9]{10,15}$/.test(mobile);
+                      }
 
                       form.addEventListener('submit', function(e) {
                           e.preventDefault();
                           statusDiv.innerHTML = '';
+
+                          // Validate mobile field
+                          const mobileValue = mobileInput.value.trim();
+                          if (!isValidMobile(mobileValue)) {
+                              statusDiv.innerHTML = '<div class="alert alert-danger">Please enter a valid mobile number (10-15 digits, numbers only).</div>';
+                              mobileInput.focus();
+                              submitBtn.disabled = false;
+                              submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
+                              return;
+                          }
+
                           submitBtn.disabled = true;
                           submitBtn.innerHTML = 'Sending...';
 
-                          const formData = new FormData(form);
+                          // Use the same approach as in contact.ejs: URLSearchParams and append fields manually
+                          const formData = new URLSearchParams();
+                          formData.append('name', document.getElementById('name').value);
+                          formData.append('email', document.getElementById('email').value);
+                          formData.append('mobile', document.getElementById('mobile').value);
+                          formData.append('subject', document.getElementById('subject').value);
+                          formData.append('message', document.getElementById('comments').value);
 
                           fetch(scriptUrl, {
-                              method: "POST",
-                              body: formData,
-                          })
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: formData.toString()
+                            })
                           .then(response => response.json())
                           .then(data => {
                               if (data.status === "success") {
@@ -639,6 +678,15 @@
                               submitBtn.disabled = false;
                               submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
                           });
+                      });
+
+                      // Optional: live validation feedback for mobile
+                      mobileInput.addEventListener('input', function() {
+                        if (mobileInput.value && !isValidMobile(mobileInput.value)) {
+                          mobileInput.classList.add('is-invalid');
+                        } else {
+                          mobileInput.classList.remove('is-invalid');
+                        }
                       });
                   });
                 </script>
@@ -694,60 +742,60 @@
    <div class="divider"></div>
 
    <div class="container">
-       <div class="footer-top-content">
-           <!-- Single Item -->
-           <div class="ft-item">
-               <div class="icon">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                       <path fill-rule="evenodd" clip-rule="evenodd"
-                           d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
-                           fill="white" />
-                   </svg>
-               </div>
-               <div>
-                   <h4 class="text-white">JOANNA HOLIDAYS (COCHIN) </h4>
-                   <a href="tel:+918086602888" target="_blank" class="mb-0 text-white">+91 8086602888</a> <br>
-                   <a href="mailto:admin@joannaholidays.com" target="_blank" class="mb-0 text-white">admin@joannaholidays.com</a>
-               </div>
-           </div>
+    <div class="footer-top-content">
+        <!-- Single Item -->
+        <div class="ft-item">
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                        fill="white" />
+                </svg>
+            </div>
+            <div>
+                <h4 class="text-white">JOANNA HOLIDAYS <br> (COCHIN) </h4>
+                <a href="tel:+918086602888" target="_blank" class="mb-0 text-white">+91 8086602888</a> <br>
+                <a href="mailto:admin@joannaholidays.com" target="_blank" class="mb-0 text-white">admin@joannaholidays.com</a>
+            </div>
+        </div>
 
-           <div class="vr-line d-none d-md-block"></div>
+        <div class="vr-line d-none d-md-block"></div>
 
-           <!-- Single Item -->
-           <div class="ft-item">
-               <div class="icon">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                       <path fill-rule="evenodd" clip-rule="evenodd"
-                           d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
-                           fill="white" />
-                   </svg>
-               </div>
-               <div>
-                   <h4 class="text-white">JOANNA HOLIDAYS (KOTTAYAM) </h4>
-                   <a href="tel:+919846226028" target="_blank" class="mb-0 text-white">+91 9846226028</a> <br>
-                   <a href="mailto:info@joannaholidays.com" target="_blank" class="mb-0 text-white">info@joannaholidays.com</a>
-               </div>
-           </div>
+        <!-- Single Item -->
+        <div class="ft-item">
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                        fill="white" />
+                </svg>
+            </div>
+            <div>
+                <h4 class="text-white">JOANNA HOLIDAYS <br> (KOTTAYAM) </h4>
+                <a href="tel:+919846226028" target="_blank" class="mb-0 text-white">+91 9846226028</a> <br>
+                <a href="mailto:info@joannaholidays.com" target="_blank" class="mb-0 text-white">info@joannaholidays.com</a>
+            </div>
+        </div>
 
-           <div class="vr-line d-none d-lg-block"></div>
+        <div class="vr-line d-none d-lg-block"></div>
 
-           <!-- Single Item -->
-           <div class="ft-item">
-               <div class="icon">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                       <path fill-rule="evenodd" clip-rule="evenodd"
-                           d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
-                           fill="white" />
-                   </svg>
-               </div>
-               <div>
-                   <h4 class="text-white">JOANNA HOLIDAYS (LONDON)</h4>
-                   <a href="tel:+447418375151" target="_blank" class="mb-0 text-white">+44 7418375151</a> <br>
-                   <a href="mailto:md@joannaholidays.com" target="_blank" class="mb-0 text-white">md@joannaholidays.com</a>
-               </div>
-           </div>
-       </div>
-   </div>
+        <!-- Single Item -->
+        <div class="ft-item">
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                        fill="white" />
+                </svg>
+            </div>
+            <div>
+                <h4 class="text-white">JOANNA HOLIDAYS <br> (LONDON)</h4>
+                <a href="tel:+447418375151" target="_blank" class="mb-0 text-white">+44 7418375151</a> <br>
+                <a href="mailto:md@joannaholidays.com" target="_blank" class="mb-0 text-white">md@joannaholidays.com</a>
+            </div>
+        </div>
+    </div>
+</div>
 
    <!-- Divider -->
    <div class="divider"></div>

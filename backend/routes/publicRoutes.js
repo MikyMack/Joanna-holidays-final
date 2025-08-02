@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
         const mainbanners = await MainBanner.find({ isActive: true }).sort({ createdAt: -1 });
 
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
 
         // Fixed Departure category id
@@ -118,7 +118,7 @@ router.get('/', async (req, res) => {
 router.get('/about', async (req, res) => {
     try {
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
 
         const blogs = await Blog.find().sort({ createdAt: -1 }).limit(3);
@@ -176,7 +176,7 @@ router.get('/blogs', async (req, res) => {
 
         // Fetch categories
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
         const packages = await Package.find({ isActive: true })
             .populate({
@@ -230,7 +230,7 @@ router.get('/gallery', async (req, res) => {
 
         // Fetch categories
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
 
         // Fetch packages
@@ -296,7 +296,7 @@ router.get('/contact', async (req, res) => {
     try {
         // Fetch categories
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
 
         // Fetch packages
@@ -434,7 +434,7 @@ router.get('/packages', async (req, res) => {
         const [packageResults, totalResult, categories] = await Promise.all([
             Package.aggregate([...aggregationPipeline, { $skip: skip }, { $limit: parseInt(limit) }]),
             Package.aggregate([...aggregationPipeline, { $count: 'total' }]),
-            Category.find({ isActive: true }).select('name imageUrl subCategories').lean()
+            Category.find({ isActive: true }).select('name imageUrl subCategories').lean().sort({ createdAt: -1 })
         ]);
 
         const totalPackages = totalResult.length > 0 ? totalResult[0].total : 0;
@@ -478,7 +478,7 @@ router.get('/package/:id', async (req, res) => {
         }
 
         const categoriesRaw = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
 
         const allPackages = await Package.find({ isActive: true })
@@ -556,7 +556,7 @@ router.get('/package-details', async (req, res) => {
 
         // Build categories for navigation (same as in other routes)
         const categoriesRaw = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
 
         const allPackages = await Package.find({ isActive: true })
@@ -618,7 +618,7 @@ router.get('/blogdetails', async (req, res) => {
         }
 
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
 
         const relatedBlogs = await Blog.find({ _id: { $ne: id } })
@@ -638,14 +638,53 @@ router.get('/blogdetails', async (req, res) => {
     }
 });
 
-// router.get('/packagedetails', async (req, res) => {
-//     try {
-//         res.render('packagedetails', { title: 'Package Details' });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send('Error loading package details page data');
-//     }
-// });
+router.get('/customTours', async (req, res) => {
+    try {
+        // Fetch categories
+        const categories = await Category.find({ isActive: true })
+            .select('name imageUrl subCategories').sort({ createdAt: -1 })
+            .lean();
+
+        // Fetch packages
+        const packages = await Package.find({ isActive: true })
+            .populate({
+                path: 'category',
+                select: 'name imageUrl'
+            })
+            .populate({
+                path: 'subCategory',
+                select: 'name imageUrl',
+                match: { isActive: true }
+            })
+            .lean();
+
+        // Process category map
+        const categoryMap = categories.map(category => {
+            const categoryPackages = packages.filter(pkg =>
+                pkg.category?._id.toString() === category._id.toString()
+            );
+
+            const directPackages = categoryPackages.filter(pkg => !pkg.subCategory);
+
+            return {
+                ...category,
+                subCategories: category.subCategories.filter(sub => sub.isActive),
+                packages: categoryPackages,
+                directPackages: directPackages,
+                locationCount: categoryPackages.length
+            };
+        });
+
+        // Render contact page with categories
+        res.render('customTours', {
+            title: 'customTours',
+            categories: categoryMap
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error loading customTours page data');
+    }
+});
 
 
 

@@ -132,6 +132,10 @@
                                             <% }) %>
                         </ul>
                     </li>
+                    <li class="touria-dd">
+                        <a href="/customTours">Custom Tours</a>
+
+                    </li>
                     <!-- About Us -->
                     <li class="touria-dd">
                         <a href="/about">About Us</a>
@@ -141,11 +145,7 @@
                     <li class="touria-dd">
                         <a href="/gallery">Gallery</a>
                     </li>
-                    <!-- Blog -->
-                    <li class="touria-dd">
-                        <a href="/blogs">Blogs</a>
-
-                    </li>
+              
                     <!-- Contact -->
                     <li>
                         <a href="/contact" class="sub-menu-item">Contact Us</a>
@@ -648,43 +648,49 @@
                 <% const isFixDeparture = tourPackage.category?.name?.toLowerCase() === 'fix departure'; %>
                 <div class="p-4 rounded shadow-sm position-sticky" style="top: 80px;">
                     <h4 class="fw-bold mb-4 text-center text-primary">Ready to Book Your Adventure?</h4>
-                    <form id="bookingForm" class="p-4 bg-light rounded shadow-sm">
+                    <form id="bookingForm" class="p-4 bg-light rounded shadow-sm" novalidate>
                         <div class="mb-3">
-                          <label class="form-label fw-semibold">Full Name:</label>
-                          <input name="name" type="text" class="form-control" placeholder="Your full name" required>
+                          <label class="form-label fw-semibold" for="bookingName">Full Name:</label>
+                          <input id="bookingName" name="name" type="text" class="form-control" placeholder="Your full name" required minlength="2" pattern="^[A-Za-z\s]{2,}$">
+                          <div class="invalid-feedback">Please enter your full name (letters and spaces only, at least 2 characters).</div>
                         </div>
                       
                         <div class="mb-3">
-                          <label class="form-label fw-semibold">Email:</label>
-                          <input name="email" type="email" class="form-control" placeholder="Your email address" required>
+                          <label class="form-label fw-semibold" for="bookingEmail">Email:</label>
+                          <input id="bookingEmail" name="email" type="email" class="form-control" placeholder="Your email address" required>
+                          <div class="invalid-feedback">Please enter a valid email address.</div>
                         </div>
                       
                         <div class="mb-3">
-                          <label class="form-label fw-semibold">Mobile Number:</label>
-                          <input name="mobile" type="tel" class="form-control" placeholder="Your phone number" required>
+                          <label class="form-label fw-semibold" for="bookingMobile">Mobile Number:</label>
+                          <input id="bookingMobile" name="mobile" type="tel" class="form-control" placeholder="Your phone number" required pattern="^[0-9]{10,15}$">
+                          <div class="invalid-feedback">Please enter a valid mobile number (10-15 digits).</div>
                         </div>
                       
                         <% if (!isFixDeparture) { %>
                         <div class="mb-3">
-                          <label class="form-label fw-semibold">Date:</label>
-                          <input name="date" type="date" class="form-control" placeholder="Select date">
+                          <label class="form-label fw-semibold" for="bookingDate">Date:</label>
+                          <input id="bookingDate" name="date" type="date" class="form-control" placeholder="Select date" required>
+                          <div class="invalid-feedback">Please select a valid date.</div>
                         </div>
                         <% } %>
                       
                         <div class="row mb-3">
                           <div class="col-6">
-                            <label class="form-label fw-semibold">Adults:</label>
-                            <input name="adults" type="number" min="1" value="1" class="form-control" required>
+                            <label class="form-label fw-semibold" for="bookingAdults">Adults:</label>
+                            <input id="bookingAdults" name="adults" type="number" min="1" value="1" class="form-control" required>
+                            <div class="invalid-feedback">At least 1 adult is required.</div>
                           </div>
                           <div class="col-6">
-                            <label class="form-label fw-semibold">Children:</label>
-                            <input name="children" type="number" min="0" value="0" class="form-control">
+                            <label class="form-label fw-semibold" for="bookingChildren">Children:</label>
+                            <input id="bookingChildren" name="children" type="number" min="0" value="0" class="form-control">
+                            <div class="invalid-feedback">Please enter 0 or more children.</div>
                           </div>
                         </div>
                       
                         <div class="mb-3">
-                          <label class="form-label fw-semibold">Additional Details:</label>
-                          <textarea name="additionalDetails" class="form-control" rows="3" placeholder="Any extra info..."></textarea>
+                          <label class="form-label fw-semibold" for="bookingAdditionalDetails">Additional Details:</label>
+                          <textarea id="bookingAdditionalDetails" name="additionalDetails" class="form-control" rows="3" placeholder="Any extra info..."></textarea>
                         </div>
                       
                         <input type="hidden" name="packageId" value="<%= tourPackage._id %>">
@@ -710,10 +716,85 @@
                     <div id="message" class="mt-3 d-none p-3 rounded"></div>
 
                     <script>
+                        function validateEmail(email) {
+                          // Simple email regex
+                          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                        }
+                        function validateName(name) {
+                          return /^[A-Za-z\s]{2,}$/.test(name.trim());
+                        }
+                        function validateMobile(mobile) {
+                          return /^[0-9]{10,15}$/.test(mobile);
+                        }
+                        function validateAdults(adults) {
+                          return Number(adults) >= 1;
+                        }
+                        function validateChildren(children) {
+                          return Number(children) >= 0;
+                        }
+                        function validateDate(date) {
+                          if (!date) return false;
+                          const today = new Date();
+                          today.setHours(0,0,0,0);
+                          const selected = new Date(date);
+                          return selected >= today;
+                        }
+
                         document.getElementById('bookingForm').addEventListener('submit', async function (e) {
                           e.preventDefault();
-                      
                           const form = e.target;
+                          let valid = true;
+
+                          // Clear previous validation states
+                          Array.from(form.elements).forEach(el => {
+                            el.classList.remove('is-invalid');
+                          });
+
+                          // Get values
+                          const name = form.name.value.trim();
+                          const email = form.email.value.trim();
+                          const mobile = form.mobile.value.trim();
+                          const adults = form.adults.value;
+                          const children = form.children.value;
+                          <% if (!isFixDeparture) { %>
+                          const date = form.date.value;
+                          <% } %>
+
+                          // Validate fields
+                          if (!validateName(name)) {
+                            form.name.classList.add('is-invalid');
+                            valid = false;
+                          }
+                          if (!validateEmail(email)) {
+                            form.email.classList.add('is-invalid');
+                            valid = false;
+                          }
+                          if (!validateMobile(mobile)) {
+                            form.mobile.classList.add('is-invalid');
+                            valid = false;
+                          }
+                          if (!validateAdults(adults)) {
+                            form.adults.classList.add('is-invalid');
+                            valid = false;
+                          }
+                          if (!validateChildren(children)) {
+                            form.children.classList.add('is-invalid');
+                            valid = false;
+                          }
+                          <% if (!isFixDeparture) { %>
+                          if (!validateDate(date)) {
+                            form.date.classList.add('is-invalid');
+                            valid = false;
+                          }
+                          <% } %>
+
+                          if (!valid) {
+                            // Scroll to first invalid field
+                            const firstInvalid = form.querySelector('.is-invalid');
+                            if (firstInvalid) firstInvalid.focus();
+                            return;
+                          }
+
                           const submitButton = form.querySelector('button[type="submit"]');
                           const submitText = document.getElementById('submitText');
                           const spinner = document.getElementById('spinner');
@@ -776,6 +857,31 @@
                             spinner.classList.add('d-none');
                             submitButton.disabled = false;
                           }
+                        });
+
+                        // Real-time validation feedback
+                        document.getElementById('bookingForm').addEventListener('input', function(e) {
+                          const el = e.target;
+                          if (el.name === 'name') {
+                            if (validateName(el.value)) el.classList.remove('is-invalid');
+                          }
+                          if (el.name === 'email') {
+                            if (validateEmail(el.value)) el.classList.remove('is-invalid');
+                          }
+                          if (el.name === 'mobile') {
+                            if (validateMobile(el.value)) el.classList.remove('is-invalid');
+                          }
+                          if (el.name === 'adults') {
+                            if (validateAdults(el.value)) el.classList.remove('is-invalid');
+                          }
+                          if (el.name === 'children') {
+                            if (validateChildren(el.value)) el.classList.remove('is-invalid');
+                          }
+                          <% if (!isFixDeparture) { %>
+                          if (el.name === 'date') {
+                            if (validateDate(el.value)) el.classList.remove('is-invalid');
+                          }
+                          <% } %>
                         });
                       </script>
                       
@@ -843,10 +949,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (COCHIN) </h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (COCHIN) </h4>
                         <a href="tel:+918086602888" target="_blank" class="mb-0 text-white">+91 8086602888</a> <br>
-                        <a href="mailto:admin@joannaholidays.com" target="_blank"
-                            class="mb-0 text-white">admin@joannaholidays.com</a>
+                        <a href="mailto:admin@joannaholidays.com" target="_blank" class="mb-0 text-white">admin@joannaholidays.com</a>
                     </div>
                 </div>
 
@@ -862,10 +967,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (KOTTAYAM) </h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (KOTTAYAM) </h4>
                         <a href="tel:+919846226028" target="_blank" class="mb-0 text-white">+91 9846226028</a> <br>
-                        <a href="mailto:info@joannaholidays.com" target="_blank"
-                            class="mb-0 text-white">info@joannaholidays.com</a>
+                        <a href="mailto:info@joannaholidays.com" target="_blank" class="mb-0 text-white">info@joannaholidays.com</a>
                     </div>
                 </div>
 
@@ -881,10 +985,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (LONDON)</h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (LONDON)</h4>
                         <a href="tel:+447418375151" target="_blank" class="mb-0 text-white">+44 7418375151</a> <br>
-                        <a href="mailto:md@joannaholidays.com" target="_blank"
-                            class="mb-0 text-white">md@joannaholidays.com</a>
+                        <a href="mailto:md@joannaholidays.com" target="_blank" class="mb-0 text-white">md@joannaholidays.com</a>
                     </div>
                 </div>
             </div>

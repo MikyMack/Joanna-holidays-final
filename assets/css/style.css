@@ -55,7 +55,7 @@ html {
 }
 
 .ff-montez {
-  font-family: "Montez", cursive !important;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;
 }
 
 h1,
@@ -605,7 +605,7 @@ textarea:invalid {
 
 .touria-scrolltop {
   position: fixed;
-  bottom: 6rem;
+  bottom: 8rem;
   right: 18px;
   -webkit-transition: all 350ms;
   transition: all 350ms;
@@ -729,7 +729,7 @@ textarea:invalid {
   font-size: 24px;
   margin-bottom: 0.25rem;
   text-transform: capitalize;
-  font-family: "Montez", cursive !important;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;
   display: inline-block;
 }
 
@@ -1224,7 +1224,7 @@ picture.jarallax-img img {
     transition: all 350ms;
     position: absolute;
     top: calc(100% + 8px);
-    width: 15rem;
+    width: 200px;
     background-color: #F7F5F2;
     visibility: hidden;
     opacity: 0;
@@ -8924,11 +8924,13 @@ textarea.form-control {
 .contact-page-section {
   position: relative;
   z-index: 1;
+  margin-top: 20px;
 }
 
 @media only screen and (min-width:768px) {
   .contact-page-section {
     margin-bottom: 300px;
+    margin-top: 140px;
   }
 }
 

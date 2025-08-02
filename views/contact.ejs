@@ -134,6 +134,10 @@
                                                 <% }) %>
                             </ul>
                         </li>
+                        <li class="touria-dd">
+                            <a href="/customTours">Custom Tours</a>
+
+                        </li>
                         <!-- About Us -->
                         <li class="touria-dd">
                             <a href="/about">About Us</a>
@@ -144,10 +148,7 @@
                             <a href="/gallery">Gallery</a>
                         </li>
                         <!-- Blog -->
-                        <li class="touria-dd">
-                            <a href="/blogs">Blogs</a>
-
-                        </li>
+                     
                         <!-- Contact -->
                         <li>
                             <a href="/contact" style="color: #334ea2;">Contact Us</a>
@@ -186,7 +187,7 @@
                 <div class="divider"></div>
                 <h2>Contact Us</h2>
                 <ul class="list-unstyled">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="/">Home</a></li>
                     <li>Contact Us</li>
                 </ul>
             </div>
@@ -195,27 +196,18 @@
         <!-- Divider -->
         <div class="divider"></div>
     </div>
-    <div class="contact-page-section">
-        <!-- Maps Section -->
-        <div class="maps-section">
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d125749.18319692682!2d76.289694!3d9.962056!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x61a038c632e9b441%3A0xf34b1ffd7e753374!2sJoanna%20Holidays%20Private%20Limited!5e0!3m2!1sen!2sus!4v1741155030876!5m2!1sen!2sus"
-                style="border:0" class="w-full h-[500px]" allowfullscreen></iframe>
-
-        </div>
-
+    <!-- Contact Form Section -->
+    <div class="contact-page-section py-5" style="position:relative; z-index:1; background: #f7f7f7;">
         <div class="container position-relative">
-            <!-- Contact Form -->
-            <div class="contact-form-wrapper bg-secondary">
+            <div class="contact-form-wrapper bg-secondary rounded-4 shadow p-4 p-md-5 mx-auto"
+                style="max-width: 900px; margin-top: 2rem;">
                 <!-- Section Heading -->
                 <div class="section-heading text-center">
                     <h2>Get In Touch</h2>
                     <p class="mb-0">Get in touch for personalized assistance. We're here to help and provide solutions
                         tailored to your requirements.</p>
                 </div>
-
                 <div class="divider-sm"></div>
-
                 <!-- Contact Form -->
                 <form id="contact-form" class="me-lg-5">
                     <div class="contact-form">
@@ -263,6 +255,28 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
+                                <div class="form-group mb-4 position-relative">
+                                    <label for="mobile" class="form-label fw-semibold mb-2" style="color: #333;">
+                                        <span class="me-2 align-middle">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                                                viewBox="0 0 24 24" fill="none">
+                                                <rect x="3" y="2" width="18" height="20" rx="4" stroke="#767676"
+                                                    stroke-width="1.5" />
+                                                <circle cx="12" cy="18" r="1.5" fill="#767676" />
+                                            </svg>
+                                        </span>
+                                        Mobile Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel" id="mobile"
+                                        class="form-control bg-white border rounded-pill px-4 py-2 shadow-sm"
+                                        name="mobile" placeholder="Enter your mobile number" required
+                                        pattern="[0-9]{7,15}">
+                                    <div class="invalid-feedback" id="mobile-invalid-feedback" style="display:none;">
+                                        Please enter a valid mobile number (7-15 digits).
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <div class="form-group mb-4">
                                     <label for="subject" class="form-label fw-semibold mb-2" style="color: #333;">
                                         Subject <span class="text-danger">*</span>
@@ -279,7 +293,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12">
                                 <div class="form-group mb-4 position-relative">
                                     <label for="comments" class="form-label fw-semibold mb-2" style="color: #333;">
                                         <span class="me-2 align-middle">
@@ -308,37 +322,76 @@
                     <div id="form-status" class="text-center" style="margin-top:1.5rem;"></div>
                 </form>
                 <script>
-                    // Use your Apps Script Web App URL
-                    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwgKz4lsiqwdo19W0sQ3x9Pdjxp7Iyn09SkJ9e-AJQyz4C1KU8F7F5amDFiQpibCRMoYA/exec';
+                    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxLDX7ywFwz5TXAzqYGjESEy0m3Vx4tIWEuUIqHYfpk3ySdw_XGQi0i0YgiBAVrK0DsvQ/exec';
+                    function validateMobile(mobile) {
+                        return /^[0-9]{7,15}$/.test(mobile);
+                    }
 
                     document.addEventListener('DOMContentLoaded', function () {
                         const form = document.getElementById('contact-form');
                         const statusDiv = document.getElementById('form-status');
                         const submitBtn = document.getElementById('submit-btn');
+                        const mobileInput = document.getElementById('mobile');
+                        const mobileInvalid = document.getElementById('mobile-invalid-feedback');
+
+                        mobileInput.addEventListener('input', function () {
+                            if (validateMobile(mobileInput.value)) {
+                                mobileInput.classList.remove('is-invalid');
+                                mobileInvalid.style.display = 'none';
+                            } else {
+                                mobileInput.classList.add('is-invalid');
+                                mobileInvalid.style.display = 'block';
+                            }
+                        });
 
                         form.addEventListener('submit', function (e) {
                             e.preventDefault();
                             statusDiv.innerHTML = '';
+
+                            // Validate mobile before submit
+                            if (!validateMobile(mobileInput.value)) {
+                                mobileInput.classList.add('is-invalid');
+                                mobileInvalid.style.display = 'block';
+                                mobileInput.focus();
+                                return;
+                            }
+
                             submitBtn.disabled = true;
                             submitBtn.innerHTML = 'Sending...';
 
-                            const formData = new FormData(form);
+                            // Create URL-encoded form data
+                            const formData = new URLSearchParams();
+                            formData.append('name', document.getElementById('name').value);
+                            formData.append('email', document.getElementById('email').value);
+                            formData.append('mobile', document.getElementById('mobile').value);
+                            formData.append('subject', document.getElementById('subject').value);
+                            formData.append('message', document.getElementById('comments').value);
 
+                            // Make the fetch request
                             fetch(scriptUrl, {
-                                method: "POST",
-                                body: formData,
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: formData
                             })
-                                .then(response => response.json())
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
                                 .then(data => {
                                     if (data.status === "success") {
                                         statusDiv.innerHTML = '<div class="alert alert-success">Thank you! Your message has been sent.</div>';
                                         form.reset();
                                     } else {
-                                        statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
+                                        throw new Error(data.message || 'Unknown error occurred');
                                     }
                                 })
                                 .catch(error => {
-                                    statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
+                                    console.error('Error:', error);
+                                    statusDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
                                 })
                                 .finally(() => {
                                     submitBtn.disabled = false;
@@ -349,84 +402,51 @@
                 </script>
             </div>
         </div>
-
-
     </div>
-    <!-- Divider -->
-    <div class="divider"></div>
 
-    <div class="container">
-        <div class="row g-4 justify-content-center">
-            <!-- Contact Small Card: Cochin -->
-            <div class="col-12 col-md-6 col-lg-4 d-flex">
-                <div class="contact-card-sm flex-fill">
-                    <div class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
-                            <path
-                                d="M20.0084 19.8214C23.2007 14.812 22.7994 15.437 22.8914 15.3064C24.0537 13.6671 24.668 11.7376 24.668 9.72656C24.668 4.39336 20.3402 0 15 0C9.67723 0 5.33203 4.38469 5.33203 9.72656C5.33203 11.7363 5.95922 13.7163 7.15957 15.3777L9.99152 19.8214C6.96369 20.2867 1.81641 21.6734 1.81641 24.7266C1.81641 25.8396 2.54285 27.4257 6.00363 28.6617C8.42016 29.5247 11.6151 30 15 30C21.3296 30 28.1836 28.2145 28.1836 24.7266C28.1836 21.6728 23.0423 20.2877 20.0084 19.8214ZM8.62787 14.4108C8.6182 14.3957 8.60812 14.381 8.59758 14.3664C7.59873 12.9923 7.08984 11.3637 7.08984 9.72656C7.08984 5.33098 10.6293 1.75781 15 1.75781C19.3617 1.75781 22.9102 5.33256 22.9102 9.72656C22.9102 11.3664 22.4109 12.9397 21.4661 14.2776C21.3814 14.3893 21.8231 13.703 15 24.4095L8.62787 14.4108ZM15 28.2422C8.08629 28.2422 3.57422 26.21 3.57422 24.7266C3.57422 23.7295 5.89266 22.0901 11.0302 21.4511L14.2588 26.5173C14.4202 26.7705 14.6996 26.9238 14.9999 26.9238C15.3002 26.9238 15.5798 26.7705 15.7411 26.5173L18.9697 21.4511C24.1073 22.0901 26.4258 23.7295 26.4258 24.7266C26.4258 26.1974 21.9543 28.2422 15 28.2422Z"
-                                fill="white" />
-                            <path
-                                d="M15 5.33203C12.5769 5.33203 10.6055 7.30342 10.6055 9.72656C10.6055 12.1497 12.5769 14.1211 15 14.1211C17.4231 14.1211 19.3945 12.1497 19.3945 9.72656C19.3945 7.30342 17.4231 5.33203 15 5.33203ZM15 12.3633C13.5461 12.3633 12.3633 11.1804 12.3633 9.72656C12.3633 8.27268 13.5461 7.08984 15 7.08984C16.4539 7.08984 17.6367 8.27268 17.6367 9.72656C17.6367 11.1804 16.4539 12.3633 15 12.3633Z"
-                                fill="white" />
-                        </svg>
+    <!-- Contact Addresses Section -->
+    <div class="container py-4">
+        <div class="row gy-4">
+            <!-- London -->
+            <div class="col-md-4">
+                <div class="p-4 bg-light rounded-4 shadow h-100">
+                    <h5 class="fw-bold mb-2" style="color:#334ea2;">Joanna Holidays Ltd (London)</h5>
+                    <div class="mb-2 small text-secondary text-capitalize">
+                        The Business Terrace,<br>
+                        Maidstone House,<br>
+                        King Street, Maidstone,<br>
+                        Kent. ME 15 6JQ.
                     </div>
-                    <div>
-                        <h4 class="">JOANNA HOLIDAYS (COCHIN) </h4>
-                        <a href="tel:+918086602888" target="_blank" class="mb-0">+91 8086602888</a> <br>
-                        <a href="mailto:admin@joannaholidays.com" target="_blank"
-                            class="mb-0">admin@joannaholidays.com</a>
+                    <div class="mb-1">
+                        <strong>Ph:</strong> <a href="tel:+447418375151" class="text-decoration-none">+44 7418375151</a>
                     </div>
                 </div>
             </div>
-
-            <!-- Contact Small Card: Kottayam -->
-            <div class="col-12 col-md-6 col-lg-4 d-flex">
-                <div class="contact-card-sm flex-fill">
-                    <div class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
-                            <g clip-path="url(#clip0_1_42367)">
-                                <path
-                                    d="M15 0C6.72898 0 0 7.34089 0 16.3636V23.1819C0 23.5587 0.304965 23.8637 0.68184 23.8637C1.05872 23.8637 1.36368 23.5587 1.36368 23.1819V16.3636C1.36368 8.09259 7.48074 1.36362 15 1.36362C22.5193 1.36362 28.6364 8.09259 28.6364 16.3636V23.1819C28.6364 23.5587 28.9413 23.8637 29.3182 23.8637C29.6951 23.8637 30.0001 23.5587 30.0001 23.1819V16.3636C30 7.34089 23.2711 0 15 0Z"
-                                    fill="white" />
-                                <path
-                                    d="M7.49931 16.3633H5.45386C3.94975 16.3633 2.72656 17.5864 2.72656 19.0906V27.2724C2.72656 28.7765 3.94968 29.9997 5.45386 29.9997H7.49931C7.87619 29.9997 8.18115 29.6947 8.18115 29.3179V17.0451C8.18115 16.6682 7.87619 16.3633 7.49931 16.3633ZM6.81754 28.636H5.45386C4.70215 28.636 4.09024 28.0241 4.09024 27.2724V19.0906C4.09024 18.3389 4.70215 17.727 5.45386 17.727H6.81747L6.81754 28.636Z"
-                                    fill="white" />
-                                <path
-                                    d="M24.5476 16.3633H22.5022C22.1253 16.3633 21.8203 16.6682 21.8203 17.0451V29.3179C21.8203 29.6947 22.1253 29.9997 22.5022 29.9997H24.5476C26.0517 29.9997 27.2749 28.7766 27.2749 27.2724V19.0906C27.2749 17.5864 26.0517 16.3633 24.5476 16.3633ZM25.9112 27.2724C25.9112 28.0241 25.2993 28.636 24.5476 28.636H23.184V17.7269H24.5476C25.2993 17.7269 25.9112 18.3388 25.9112 19.0905V27.2724Z"
-                                    fill="white" />
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_1_42367">
-                                    <rect width="30" height="30" fill="white" />
-                                </clipPath>
-                            </defs>
-                        </svg>
+            <!-- Kottayam -->
+            <div class="col-md-4">
+                <div class="p-4 bg-light rounded-4 shadow h-100">
+                    <h5 class="fw-bold mb-2" style="color:#334ea2;">Joanna Holidays (Kottayam)</h5>
+                    <div class="mb-2 small text-secondary text-capitalize">
+                        Chooravelikudilil Buildings,<br>
+                        Kallara South P.O,<br>
+                        Kottayam, Kerala-686611
                     </div>
-                    <div>
-                        <h4 class="">JOANNA HOLIDAYS (KOTTAYAM) </h4>
-                        <a href="tel:+919846226028" target="_blank" class="mb-0">+91 9846226028</a> <br>
-                        <a href="mailto:info@joannaholidays.com" target="_blank"
-                            class="mb-0 ">info@joannaholidays.com</a>
+                    <div class="mb-1">
+                        <strong>Ph:</strong> <a href="tel:9645326028" class="text-decoration-none">9645326028</a>
                     </div>
                 </div>
             </div>
-
-            <!-- Contact Small Card: UK -->
-            <div class="col-12 col-md-6 col-lg-4 d-flex">
-                <div class="contact-card-sm flex-fill">
-                    <div class="icon">
-                        <!-- UK Icon: simple globe -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
-                            <circle cx="15" cy="15" r="14" stroke="white" stroke-width="2" />
-                            <ellipse cx="15" cy="15" rx="8" ry="14" stroke="white" stroke-width="2" />
-                            <line x1="1" y1="15" x2="29" y2="15" stroke="white" stroke-width="2" />
-                            <line x1="15" y1="1" x2="15" y2="29" stroke="white" stroke-width="2" />
-                        </svg>
+            <!-- Cochin -->
+            <div class="col-md-4">
+                <div class="p-4 bg-light rounded-4 shadow h-100">
+                    <h5 class="fw-bold mb-2" style="color:#334ea2;">Joanna Holidays (Cochin)</h5>
+                    <div class="mb-2 small text-secondary text-capitalize">
+                        61/3823-A2-1st Floor-Online Tower<br>
+                        Ravipuram Road-Behind MG Road<br>
+                        Cochin-682016
                     </div>
-                    <div>
-                        <h4 class="">JOANNA HOLIDAYS (UK)</h4>
-                        <a href="tel:+447459547788" target="_blank" class="mb-0">+44 7459 547788</a> <br>
-                        <a href="mailto:uk@joannaholidays.com" target="_blank" class="mb-0">uk@joannaholidays.com</a>
+                    <div class="mb-1">
+                        <strong>Ph:</strong> <a href="tel:04843500880" class="text-decoration-none">0484-3500880</a>
                     </div>
                 </div>
             </div>
@@ -436,8 +456,19 @@
     <!-- Divider -->
     <div class="divider"></div>
 
+    <!-- Maps Section -->
+    <div class="maps-section">
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d125749.18319692682!2d76.289694!3d9.962056!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x61a038c632e9b441%3A0xf34b1ffd7e753374!2sJoanna%20Holidays%20Private%20Limited!5e0!3m2!1sen!2sus!4v1741155030876!5m2!1sen!2sus"
+            style="border:0" class="w-full h-[500px]" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
     <!-- Contact Page Section -->
-   
+
     <div class="floating-contact-icons">
         <a href="https://wa.me/918086602888" target="_blank" aria-label="WhatsApp">
             <i class="ti ti-brand-whatsapp"></i>
@@ -470,7 +501,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (COCHIN) </h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (COCHIN) </h4>
                         <a href="tel:+918086602888" target="_blank" class="mb-0 text-white">+91 8086602888</a> <br>
                         <a href="mailto:admin@joannaholidays.com" target="_blank"
                             class="mb-0 text-white">admin@joannaholidays.com</a>
@@ -489,7 +520,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (KOTTAYAM) </h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (KOTTAYAM) </h4>
                         <a href="tel:+919846226028" target="_blank" class="mb-0 text-white">+91 9846226028</a> <br>
                         <a href="mailto:info@joannaholidays.com" target="_blank"
                             class="mb-0 text-white">info@joannaholidays.com</a>
@@ -508,7 +539,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (LONDON)</h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (LONDON)</h4>
                         <a href="tel:+447418375151" target="_blank" class="mb-0 text-white">+44 7418375151</a> <br>
                         <a href="mailto:md@joannaholidays.com" target="_blank"
                             class="mb-0 text-white">md@joannaholidays.com</a>

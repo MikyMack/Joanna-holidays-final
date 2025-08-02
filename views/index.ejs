@@ -143,6 +143,10 @@
                                                 <% }) %>
                             </ul>
                         </li>
+                        <li class="touria-dd">
+                            <a href="/customTours">Custom Tours</a>
+
+                        </li>
                         <!-- About Us -->
                         <li class="touria-dd">
                             <a href="/about">About Us</a>
@@ -153,10 +157,7 @@
                             <a href="/gallery">Gallery</a>
                         </li>
                         <!-- Blog -->
-                        <li class="touria-dd">
-                            <a href="/blogs">Blogs</a>
-
-                        </li>
+                    
                         <!-- Contact -->
                         <li>
                             <a href="/contact" class="sub-menu-item">Contact Us</a>
@@ -325,11 +326,26 @@
 
                                         <!-- Date Range -->
                                         <div class="col-md-6 col-lg-3">
-                                            <div class="form-floating position-relative">
-                                                <input type="month" name="month" class="form-control form-control-lg ps-4"
-                                                    id="search-month" placeholder="Select Month" autocomplete="off" style="cursor: pointer;">
-                                                <label for="search-month" class="d-flex align-items-center gap-2 ps-4" style="cursor: pointer;">
-                                                    <span>Select Month</span>
+                                            <div class="form-floating position-relative user-select-none">
+                                                <input 
+                                                    type="month" 
+                                                    name="month" 
+                                                    class="form-control form-control-lg ps-4"
+                                                    id="search-month" 
+                                                    placeholder="Select Month" 
+                                                    autocomplete="off" 
+                                                    style="cursor: pointer; user-select: none;" 
+                                                    onfocus="this.showPicker && this.showPicker();" 
+                                                    onclick="this.showPicker && this.showPicker();"
+                                                    onmousedown="event.preventDefault(); this.showPicker && this.showPicker(); return false;"
+                                                >
+                                                <label 
+                                                    for="search-month" 
+                                                    class="d-flex align-items-center gap-2 ps-4" 
+                                                    style="cursor: pointer; user-select: none;"
+                                                    onmousedown="event.preventDefault();"
+                                                >
+                                                    <span style="user-select: none;">Select Month</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -554,7 +570,7 @@
                                         <% } else { %>
                                             <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.3rem; padding:0.15rem 0.5rem; font-size:0.98rem;">
                                                 <% if (category.locationCount > 0) { %>
-                                                    <span class="text-info">
+                                                    <span class="text-white">
                                                         <%= category.locationCount %> Packages Available
                                                     </span>
                                                 <% } else { %>
@@ -1158,7 +1174,7 @@
                             <div class="about-card d-flex align-items-center gap-4">
                                 <div class="icon">
                                     <dotlottie-wc
-                                      src="https://lottie.host/b3f7e620-08a5-41dd-b9c4-50503f8b1789/9SJNSDeWOZ.lottie"
+                                      src="https://lottie.host/35ee50e1-683e-4a89-98de-33a21c25a4b5/0ypb3lV0iy.lottie"
                                       class="lotties"
                                       speed="1"
                                       autoplay
@@ -1224,7 +1240,7 @@
                     </div>
 
                     <!-- Google Sheets Contact Form -->
-                    <form id="contact-form" class="me-lg-5">
+                    <form id="contact-form" class="me-lg-5" autocomplete="off">
                         <div class="contact-form">
                             <div class="row g-4">
                                 <div class="col-12">
@@ -1242,6 +1258,19 @@
                                         </label>
                                         <input type="text" id="name" class="form-control bg-secondary" name="name"
                                             placeholder="First Name *" required>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="mobile">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none">
+                                                <path d="M7 2C5.89543 2 5 2.89543 5 4V20C5 21.1046 5.89543 22 7 22H17C18.1046 22 19 21.1046 19 20V4C19 2.89543 18.1046 2 17 2H7ZM7 0H17C19.2091 0 21 1.79086 21 4V20C21 22.2091 19.2091 24 17 24H7C4.79086 24 3 22.2091 3 20V4C3 1.79086 4.79086 0 7 0ZM12 20C12.8284 20 13.5 19.3284 13.5 18.5C13.5 17.6716 12.8284 17 12 17C11.1716 17 10.5 17.6716 10.5 18.5C10.5 19.3284 11.1716 20 12 20Z" fill="#767676"/>
+                                            </svg>
+                                        </label>
+                                        <input type="tel" id="mobile" class="form-control bg-secondary" name="mobile"
+                                            placeholder="Mobile Number *" required pattern="^[0-9]{10,15}$" maxlength="15" minlength="10" inputmode="tel">
+                                        <small class="form-text text-muted" id="mobileHelp">Enter a valid mobile number (10-15 digits).</small>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -1274,7 +1303,7 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label for="message">
+                                        <label for="comments">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none">
                                                 <path
@@ -1282,7 +1311,7 @@
                                                     fill="#767676" />
                                             </svg>
                                         </label>
-                                        <textarea name="message" id="message" class="form-control bg-secondary"
+                                        <textarea name="comments" id="comments" class="form-control bg-secondary"
                                             placeholder="Your Comment *" required></textarea>
                                     </div>
                                 </div>
@@ -1295,43 +1324,80 @@
                         <div id="form-status" style="margin-top:1rem;"></div>
                     </form>
                     <script>
-                      const scriptUrl = 'https://script.google.com/macros/s/AKfycbwgKz4lsiqwdo19W0sQ3x9Pdjxp7Iyn09SkJ9e-AJQyz4C1KU8F7F5amDFiQpibCRMoYA/exec';
-                                            
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const form = document.getElementById('contact-form');
-                            const statusDiv = document.getElementById('form-status');
-                            const submitBtn = document.getElementById('submit-btn');
-
-                            form.addEventListener('submit', function(e) {
-                                e.preventDefault();
-                                statusDiv.innerHTML = '';
-                                submitBtn.disabled = true;
-                                submitBtn.innerHTML = 'Sending...';
-
-                                const formData = new FormData(form);
-
-                                fetch(GOOGLE_SHEET_URL, {
-                                    method: "POST",
-                                    body: formData,
+                      // Use your Apps Script Web App URL
+                      const scriptUrl = 'https://script.google.com/macros/s/AKfycbxLDX7ywFwz5TXAzqYGjESEy0m3Vx4tIWEuUIqHYfpk3ySdw_XGQi0i0YgiBAVrK0DsvQ/exec';
+    
+                      document.addEventListener('DOMContentLoaded', function() {
+                          const form = document.getElementById('contact-form');
+                          const statusDiv = document.getElementById('form-status');
+                          const submitBtn = document.getElementById('submit-btn');
+                          const mobileInput = document.getElementById('mobile');
+    
+                          // Custom mobile validation
+                          function isValidMobile(mobile) {
+                            // Accepts 10-15 digits, no spaces or symbols
+                            return /^[0-9]{10,15}$/.test(mobile);
+                          }
+    
+                          form.addEventListener('submit', function(e) {
+                              e.preventDefault();
+                              statusDiv.innerHTML = '';
+    
+                              // Validate mobile field
+                              const mobileValue = mobileInput.value.trim();
+                              if (!isValidMobile(mobileValue)) {
+                                  statusDiv.innerHTML = '<div class="alert alert-danger">Please enter a valid mobile number (10-15 digits, numbers only).</div>';
+                                  mobileInput.focus();
+                                  submitBtn.disabled = false;
+                                  submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
+                                  return;
+                              }
+    
+                              submitBtn.disabled = true;
+                              submitBtn.innerHTML = 'Sending...';
+    
+                              // Use the same approach as in contact.ejs: URLSearchParams and append fields manually
+                              const formData = new URLSearchParams();
+                              formData.append('name', document.getElementById('name').value);
+                              formData.append('email', document.getElementById('email').value);
+                              formData.append('mobile', document.getElementById('mobile').value);
+                              formData.append('subject', document.getElementById('subject').value);
+                              formData.append('message', document.getElementById('comments').value);
+    
+                              fetch(scriptUrl, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                    },
+                                    body: formData.toString()
                                 })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.result === "success") {
-                                        statusDiv.innerHTML = '<div class="alert alert-success">Thank you! Your message has been sent.</div>';
-                                        form.reset();
-                                    } else {
-                                        statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
-                                    }
-                                })
-                                .catch(error => {
-                                    statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
-                                })
-                                .finally(() => {
-                                    submitBtn.disabled = false;
-                                    submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
-                                });
-                            });
-                        });
+                              .then(response => response.json())
+                              .then(data => {
+                                  if (data.status === "success") {
+                                      statusDiv.innerHTML = '<div class="alert alert-success">Thank you! Your message has been sent.</div>';
+                                      form.reset();
+                                  } else {
+                                      statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
+                                  }
+                              })
+                              .catch(error => {
+                                  statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
+                              })
+                              .finally(() => {
+                                  submitBtn.disabled = false;
+                                  submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
+                              });
+                          });
+    
+                          // Optional: live validation feedback for mobile
+                          mobileInput.addEventListener('input', function() {
+                            if (mobileInput.value && !isValidMobile(mobileInput.value)) {
+                              mobileInput.classList.add('is-invalid');
+                            } else {
+                              mobileInput.classList.remove('is-invalid');
+                            }
+                          });
+                      });
                     </script>
                 </div>
 
@@ -1543,7 +1609,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (COCHIN) </h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (COCHIN) </h4>
                         <a href="tel:+918086602888" target="_blank" class="mb-0 text-white">+91 8086602888</a> <br>
                         <a href="mailto:admin@joannaholidays.com" target="_blank" class="mb-0 text-white">admin@joannaholidays.com</a>
                     </div>
@@ -1561,7 +1627,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (KOTTAYAM) </h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (KOTTAYAM) </h4>
                         <a href="tel:+919846226028" target="_blank" class="mb-0 text-white">+91 9846226028</a> <br>
                         <a href="mailto:info@joannaholidays.com" target="_blank" class="mb-0 text-white">info@joannaholidays.com</a>
                     </div>
@@ -1579,7 +1645,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="text-white">JOANNA HOLIDAYS (LONDON)</h4>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (LONDON)</h4>
                         <a href="tel:+447418375151" target="_blank" class="mb-0 text-white">+44 7418375151</a> <br>
                         <a href="mailto:md@joannaholidays.com" target="_blank" class="mb-0 text-white">md@joannaholidays.com</a>
                     </div>

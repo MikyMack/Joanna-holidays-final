@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Joanna Holidays">
+
+    <!-- Title & Favicon -->
+    <title>CustomTours | Joanna Holidays</title>
+    <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-KV49GR89');</script>
+    <!-- End Google Tag Manager -->
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="/css/tabler-icons.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="/css/nice-select2.css">
+    <link rel="stylesheet" href="/css/flatpickr.min.css">
+    <link rel="stylesheet" href="/css/venobox.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KV49GR89" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- Search Form Overlay -->
+    <div class="search-bg-overlay" id="searchOverlay"></div>
+
+    <!-- Search Form Popup -->
+    <div class="search-form-popup">
+        <h2 class="mb-5 display-6 fw-bold text-white">How can I help you, Today?</h2>
+        <button type="button" class="close-btn" id="searchClose" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+        <form class="search-form" id="searchForm">
+            <input type="search" name="search" class="form-control" placeholder="Search..." required minlength="3">
+            <button type="submit" class="btn btn-success d-none"><i class="ti ti-search"></i></button>
+        </form>
+        <script>
+            document.getElementById('searchForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const input = this.querySelector('input[name="search"]');
+                const query = input.value.trim();
+
+                if (query.length >= 3) {
+                    // Redirect to /packages with search query
+                    const encoded = encodeURIComponent(query);
+                    window.location.href = `/packages?search=${encoded}`;
+                } else {
+                    alert('Please enter at least 3 characters to search.');
+                }
+            });
+        </script>
+    </div>
+
+    <!-- Header Area-->
+    <header class="header-area style-three">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-xl">
+                <!-- Navbar Brand -->
+                <a class="navbar-brand" href="/">
+                    <img src="/img/joanna/joannalogo.png" alt="joanna" class="joannalogo">
+                </a>
+
+                <!-- Navbar Toggler -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#touriaNav"
+                    aria-controls="touriaNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="ti ti-menu-deep"></i>
+                </button>
+
+                <!-- Navbar Nav -->
+                <div class="collapse justify-content-xl-end navbar-collapse" id="touriaNav">
+                    <ul class="navbar-nav align-items-xl-center navbar-nav-scroll">
+                        <!-- Home -->
+                        <li class="touria-dd">
+                            <a href="/">Home </a>
+                        </li>
+                        <!-- Packages (Dynamic) -->
+                        <li class="touria-dd">
+                            <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
+                            <ul class="touria-dd-menu">
+                                <% categories.forEach(category=> {
+                                    const hasSubCategories = category.subCategories && category.subCategories.length >
+                                    0;
+                                    const hasDirectPackages = category.directPackages && category.directPackages.length
+                                    > 0;
+                                    %>
+                                    <% if (hasSubCategories || hasDirectPackages) { %>
+                                        <li class="touria-dd">
+                                            <a href="/packages?category=<%= category._id %>">
+                                                <%= category.name %>
+                                                    <% if (hasSubCategories || hasDirectPackages) { %>
+                                                        <i class="ti ti-chevron-right"></i>
+                                                        <% } %>
+                                            </a>
+                                            <ul class="touria-dd-menu">
+                                                <% category.subCategories &&
+                                                    category.subCategories.forEach(subCategory=> { %>
+                                                    <li>
+                                                        <a href="/package-details?subCategory=<%= subCategory._id %>">
+                                                            <%= subCategory.name %>
+                                                        </a>
+                                                    </li>
+                                                    <% }) %>
+                                                        <% category.directPackages &&
+                                                            category.directPackages.forEach(pkg=> { %>
+                                                            <li>
+                                                                <a href="/package/<%= pkg._id %>">
+                                                                    <%= pkg.destination %>
+                                                                </a>
+                                                            </li>
+                                                            <% }) %>
+                                            </ul>
+                                        </li>
+                                        <% } else { %>
+                                            <li>
+                                                <a href="/packages?category=<%= category._id %>">
+                                                    <%= category.name %>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                                                <% }) %>
+                            </ul>
+                        </li>
+                        <li class="touria-dd">
+                            <a href="/customTours" style="color: #334ea2;">Custom Tours</a>
+
+                        </li>
+                        <!-- About Us -->
+                        <li class="touria-dd">
+                            <a href="/about">About Us</a>
+                        </li>
+                        <!-- Tours -->
+                        <!-- Gallery -->
+                        <li class="touria-dd">
+                            <a href="/gallery">Gallery</a>
+                        </li>
+                   
+                        <!-- Contact -->
+                        <li>
+                            <a href="/contact">Contact Us</a>
+                        </li>
+                    </ul>
+
+                    <!-- Header Navigation -->
+                    <div class="header-navigation d-flex flex-wrap align-items-center gap-3 mt-4 mt-xl-0">
+                        <!-- Search Button -->
+                        <div class="header-search-btn" id="searchButton">
+                            <button class="btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                                    fill="none">
+                                    <rect width="20" height="20" fill="#F7F7F7" />
+                                    <path
+                                        d="M14.0772 14.0987L16.6438 16.6654M15.833 9.58203C15.833 11.2396 15.1745 12.8293 14.0024 14.0014C12.8303 15.1736 11.2406 15.832 9.58301 15.832C7.9254 15.832 6.33569 15.1736 5.16359 14.0014C3.99149 12.8293 3.33301 11.2396 3.33301 9.58203C3.33301 7.92443 3.99149 6.33472 5.16359 5.16261C6.33569 3.99051 7.9254 3.33203 9.58301 3.33203C11.2406 3.33203 12.8303 3.99051 14.0024 5.16261C15.1745 6.33472 15.833 7.92443 15.833 9.58203Z"
+                                        stroke="#161920" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                        </div>
+                        <!-- Get A Quote -->
+                        <a class="btn btn-success" href="/contact">Enquire <i class="icon-arrow-right"></i></a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Breadcrumb Section -->
+    <div class="breadcrumb-section bg-img jarallax" data-jarallax data-speed="0.6"
+        style="background-image: url('/img/joanna/bg2.jpg');">
+        <div class="container">
+            <!-- Breadcrumb Content -->
+            <div class="breadcrumb-content">
+                <div class="divider"></div>
+                <h2>Custom Tours</h2>
+                <ul class="list-unstyled">
+                    <li><a href="/">Home</a></li>
+                    <li>Custom Tours</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+    </div>
+    <!-- Custom Tours Hero Section -->
+    <section class="custom-tours-hero position-relative overflow-hidden py-5"
+        style="background: linear-gradient(120deg, #e0e7ff 0%, #f0fdfa 100%);">
+        <div class="container position-relative z-2">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-center text-lg-start mb-5 mb-lg-0">
+                    <h1 class="display-4 fw-bold mb-3 animate__animated animate__fadeInDown" style="color:#334ea2;">
+                        Design Your <span style="color:#10b981;">Dream Trip</span> <br>
+                        <span class="fs-2 fw-normal" style="color:#601FEB;">with Joanna Holidays</span>
+                    </h1>
+                    <p class="lead text-secondary mb-4 animate__animated animate__fadeInLeft">
+                        Want a trip as unique as you? <br>
+                        Tell us your wishes, and we'll craft a custom journey just for you—anywhere in the world!
+                    </p>
+                    <ul class="list-unstyled mb-4 animate__animated animate__fadeInLeft">
+                        <li class="mb-2"><i class="ti ti-check text-success me-2"></i> 100% Personalized Itineraries
+                        </li>
+                        <li class="mb-2"><i class="ti ti-check text-success me-2"></i> Handpicked Destinations &
+                            Experiences</li>
+                        <li class="mb-2"><i class="ti ti-check text-success me-2"></i> Expert Support, Every Step</li>
+                    </ul>
+                </div>
+                <div class="col-lg-6 d-flex flex-column align-items-center position-relative">
+                    <!-- World Map Image -->
+                    <div class="world-map-wrapper mb-3 position-relative" style="max-width: 380px;">
+                        <img src="/img/joanna/world.jpg" alt="World Map" class="img-fluid rounded-4 shadow w-100">
+                        <img id="animatedPlane" src="/img/joanna/plane.png" alt="plane" class="position-absolute"
+                            style="width:60px; top:20%; left:10%; transform:translate(-50%,-50%) rotate(-10deg); pointer-events:none;">
+                    </div>
+                    <script>
+                        // Define the boundaries for the plane to move inside the image
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const plane = document.getElementById('animatedPlane');
+                            const wrapper = plane.parentElement;
+                            let width = 0, height = 0;
+
+                            function getRandomPosition() {
+                                // Padding so plane doesn't go out of image
+                                const padX = 40, padY = 40;
+                                const left = Math.random() * (width - padX * 2) + padX;
+                                const top = Math.random() * (height - padY * 2) + padY;
+                                const rotate = Math.random() * 40 - 20; // -20deg to +20deg
+                                return { left, top, rotate };
+                            }
+
+                            function animatePlane() {
+                                if (!width || !height) {
+                                    width = wrapper.offsetWidth;
+                                    height = wrapper.offsetHeight;
+                                }
+                                const { left, top, rotate } = getRandomPosition();
+                                plane.style.transition = 'top 2.2s cubic-bezier(.4,1.3,.6,1), left 2.2s cubic-bezier(.4,1.3,.6,1), transform 2.2s';
+                                plane.style.left = `${left}px`;
+                                plane.style.top = `${top}px`;
+                                plane.style.transform = `translate(-50%,-50%) rotate(${rotate}deg)`;
+                            }
+
+                            // Set initial position
+                            setTimeout(() => {
+                                width = wrapper.offsetWidth;
+                                height = wrapper.offsetHeight;
+                                animatePlane();
+                            }, 300);
+
+                            // Animate every 2.5s
+                            setInterval(animatePlane, 2500);
+
+                            // Recalculate on resize
+                            window.addEventListener('resize', () => {
+                                width = wrapper.offsetWidth;
+                                height = wrapper.offsetHeight;
+                            });
+                        });
+                    </script>
+                    <div class="text-center">
+                        <span class="badge bg-success mb-2 fs-6">Explore Every Continent</span>
+                        <p class="text-secondary small mb-0">From the icy wonders of Antarctica to the vibrant cities of
+                            Asia, your dream destination awaits!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Decorative SVG Waves -->
+        <div class="position-absolute bottom-0 start-0 w-100" style="z-index:1;">
+            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:80px;">
+                <path d="M0,80 C480,160 960,0 1440,80 L1440,120 L0,120 Z" fill="#a5b4fc" fill-opacity="0.25" />
+                <path d="M0,100 C480,180 960,20 1440,100 L1440,120 L0,120 Z" fill="#10b981" fill-opacity="0.12" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- Featured Continents & Destinations Section -->
+    <section class="featured-continents py-5" style="background: linear-gradient(120deg, #e0e7ff 0%, #f0fdfa 100%);">
+        <div class="container">
+            <h2 class="fw-bold text-center mb-5" style="color:#334ea2;">Discover the World, One Continent at a Time</h2>
+            <div class="row g-4 justify-content-center">
+                <!-- Africa -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow border-0 rounded-4">
+                        <img src="/img/joanna/africa.jpg" class="card-img-top rounded-top-4" alt="Africa"
+                            style="height:180px; object-fit:cover;">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color:#f59e42;">Africa - Kenya</h5>
+                            <p class="card-text text-secondary small">Witness the Great Migration in Kenya’s Maasai
+                                Mara, spot the Big Five, and experience the magic of African sunsets on the savannah.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Asia -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow border-0 rounded-4">
+                        <img src="/img/joanna/asia.jpg" class="card-img-top rounded-top-4" alt="Asia"
+                            style="height:180px; object-fit:cover;">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color:#0ea5e9;">Asia - Japan</h5>
+                            <p class="card-text text-secondary small">From cherry blossoms in Kyoto to neon Tokyo
+                                nights, Japan is a blend of ancient tradition and futuristic wonder.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Europe -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow border-0 rounded-4">
+                        <img src="/img/joanna/europe.jpg" class="card-img-top rounded-top-4" alt="Europe"
+                            style="height:180px; object-fit:cover;">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color:#e3342f;">Europe - France</h5>
+                            <p class="card-text text-secondary small">Stroll the romantic streets of Paris, marvel at
+                                the Eiffel Tower, and indulge in world-class cuisine and art.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- North America -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow border-0 rounded-4">
+                        <img src="/img/joanna/north-america.jpg" class="card-img-top rounded-top-4" alt="North America"
+                            style="height:180px; object-fit:cover;">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color:#334ea2;">North America - USA</h5>
+                            <p class="card-text text-secondary small">From the bright lights of New York City to the
+                                natural wonders of the Grand Canyon, the USA is a land of endless adventure.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- South America -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow border-0 rounded-4">
+                        <img src="/img/joanna/south-america.jpg" class="card-img-top rounded-top-4" alt="South America"
+                            style="height:180px; object-fit:cover;">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color:#10b981;">South America - Brazil</h5>
+                            <p class="card-text text-secondary small">Dance through Rio’s Carnival, relax on Copacabana
+                                Beach, and explore the Amazon rainforest in vibrant Brazil.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Australia/Oceania -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow border-0 rounded-4">
+                        <img src="/img/joanna/australia2.jpg" class="card-img-top rounded-top-4" alt="Australia/Oceania"
+                            style="height:180px; object-fit:cover;">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color:#10b981;">Oceania - Australia</h5>
+                            <p class="card-text text-secondary small">Snorkel the Great Barrier Reef, meet kangaroos,
+                                and soak up the sun in Sydney’s iconic harbor.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Antarctica -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow border-0 rounded-4">
+                        <img src="/img/joanna/antarctica.jpg" class="card-img-top rounded-top-4" alt="Antarctica"
+                            style="height:180px; object-fit:cover;">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color:#64748b;">Antarctica</h5>
+                            <p class="card-text text-secondary small">Embark on a once-in-a-lifetime expedition to the
+                                land of icebergs, penguins, and pristine wilderness at the bottom of the world.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Custom Tour Form Section -->
+    <section class="custom-tour-form-section py-5"
+        style="background: linear-gradient(120deg, #f0fdfa 0%, #e0e7ff 100%);">
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <div
+                        class="p-4 p-md-5 bg-white rounded-4 shadow animate__animated animate__fadeInUp position-relative">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/img/joanna/letsgo.jpg" alt="Let's Go!" style="width:48px; height:48px;"
+                                class="me-2 d-none d-md-block">
+                            <h2 class="fw-bold mb-0 text-success" style="font-size:2.2rem;">
+                                <span
+                                    style="background: linear-gradient(90deg,#06b6d4,#10b981,#f59e42);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Design
+                                    Your Bespoke Journey</span>
+                            </h2>
+                        </div>
+                        <p class="mb-4 text-secondary fs-5">
+                            <span class="fw-bold text-success">Experience travel redefined.</span><br>
+                            Share your aspirations and let our experts curate a journey as unique as you are.
+                        </p>
+                        <form id="customTourForm" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">
+                                    <span class="premium-label-icon"><svg width="18" height="18" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="9" cy="9" r="8" stroke="#10b981" stroke-width="2" />
+                                            <path
+                                                d="M9 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm0 1c-2.21 0-4 1.12-4 2.5V15h8v-1c0-1.38-1.79-2.5-4-2.5Z"
+                                                fill="#10b981" />
+                                        </svg></span>
+                                    Full Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control form-control-lg custom-input" id="name"
+                                    name="name" required minlength="2" placeholder="e.g. Priya Sharma"
+                                    autocomplete="name">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mobile" class="form-label">
+                                    <span class="premium-label-icon"><svg width="18" height="18" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="3" y="2" width="12" height="14" rx="3" stroke="#334ea2"
+                                                stroke-width="2" />
+                                            <circle cx="9" cy="14" r="1" fill="#334ea2" />
+                                        </svg></span>
+                                    Mobile Number <span class="text-danger">*</span>
+                                </label>
+                                <input type="tel" class="form-control form-control-lg custom-input" id="mobile"
+                                    name="mobile" required pattern="[0-9]{10,15}" placeholder="e.g. 9876543210"
+                                    autocomplete="tel">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">
+                                    <span class="premium-label-icon"><svg width="18" height="18" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="2" y="4" width="14" height="10" rx="2" stroke="#e3342f"
+                                                stroke-width="2" />
+                                            <path d="M3 5l6 5 6-5" stroke="#e3342f" stroke-width="2"
+                                                stroke-linecap="round" />
+                                        </svg></span>
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                <input type="email" class="form-control form-control-lg custom-input" id="email"
+                                    name="email" required placeholder="you@email.com" autocomplete="email">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="locations" class="form-label">
+                                    <span class="premium-label-icon"><svg width="18" height="18" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 16s6-5.686 6-9.5A6 6 0 1 0 3 6.5C3 10.314 9 16 9 16Z"
+                                                stroke="#10b981" stroke-width="2" />
+                                            <circle cx="9" cy="7" r="2" stroke="#10b981" stroke-width="2" />
+                                        </svg></span>
+                                    Dream Destinations <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control form-control-lg custom-input" id="locations"
+                                    name="locations" required
+                                    placeholder="Where do you want to go? (e.g. Paris, Bali, Kerala)">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">
+                                    <span class="premium-label-icon"><svg width="18" height="18" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="2" y="4" width="14" height="12" rx="2" stroke="#64748b"
+                                                stroke-width="2" />
+                                            <path d="M6 2v4M12 2v4" stroke="#64748b" stroke-width="2"
+                                                stroke-linecap="round" />
+                                        </svg></span>
+                                    Start Date
+                                </label>
+                                <input type="date" class="form-control form-control-lg custom-input" id="startDate"
+                                    name="startDate">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">
+                                    <span class="premium-label-icon"><svg width="18" height="18" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="2" y="4" width="14" height="12" rx="2" stroke="#64748b"
+                                                stroke-width="2" />
+                                            <path d="M6 2v4M12 2v4" stroke="#64748b" stroke-width="2"
+                                                stroke-linecap="round" />
+                                        </svg></span>
+                                    End Date
+                                </label>
+                                <input type="date" class="form-control form-control-lg custom-input" id="endDate"
+                                    name="endDate">
+                            </div>
+                            <div class="col-12">
+                                <label for="details" class="form-label">
+                                    <span class="premium-label-icon"><svg width="18" height="18" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="3" y="3" width="12" height="12" rx="2" stroke="#f59e42"
+                                                stroke-width="2" />
+                                            <path d="M6 7h6M6 10h6" stroke="#f59e42" stroke-width="2"
+                                                stroke-linecap="round" />
+                                        </svg></span>
+                                    Your Preferences <span class="text-muted">(optional)</span>
+                                </label>
+                                <textarea class="form-control form-control-lg custom-input" id="details" name="details"
+                                    rows="3"
+                                    placeholder="Tell us about your ideal hotels, experiences, cuisine, or anything special you desire."></textarea>
+                            </div>
+                            <div class="col-12 text-center mt-2">
+                                <button type="submit" class="btn btn-gradient px-5 py-3 fw-bold fs-5 shadow-sm"
+                                    style="background: linear-gradient(90deg,#06b6d4,#10b981,#f59e42); color: #fff; border: none; border-radius: 2rem;">
+                                    Submit Now
+                                </button>
+                                <div class="small text-muted mt-2">No obligations. Just world-class travel inspiration.
+                                </div>
+                            </div>
+                        </form>
+                        <div id="customTourFormMsg" class="mt-3"></div>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-flex flex-column align-items-center">
+                    <div class="mb-4">
+                        <img src="/img/joanna/custom.webp" alt="Custom Trip" class="img-fluid rounded-4 shadow"
+                            style="max-width:340px;">
+                    </div>
+                    <div class="text-center">
+                        <h4 class="fw-bold text-info mb-2">Why Choose a Custom Tour?</h4>
+                        <ul class="list-unstyled text-secondary fs-6">
+                            <li class="mb-2 d-flex align-items-center">
+                                <span class="me-2"><svg width="20" height="20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="10" cy="10" r="9" stroke="#10b981" stroke-width="2" />
+                                        <path d="M7 10l2 2 4-4" stroke="#10b981" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg></span>
+                                <span><span class="fw-semibold text-success">Tailored Exclusively for You</span> – Every
+                                    detail, your way</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <span class="me-2"><svg width="20" height="20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="10" cy="10" r="9" stroke="#334ea2" stroke-width="2" />
+                                        <path d="M10 6v4l3 3" stroke="#334ea2" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg></span>
+                                <span><span class="fw-semibold text-success">Concierge Support</span> – 24/7 assistance,
+                                    always</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <span class="me-2"><svg width="20" height="20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="10" cy="10" r="9" stroke="#e3342f" stroke-width="2" />
+                                        <path d="M7 13l3-3 3 3" stroke="#e3342f" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg></span>
+                                <span><span class="fw-semibold text-success">Handpicked Experiences</span> – Only the
+                                    finest for you</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-center">
+                                <span class="me-2"><svg width="20" height="20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="10" cy="10" r="9" stroke="#f59e42" stroke-width="2" />
+                                        <path d="M10 7v6M7 10h6" stroke="#f59e42" stroke-width="2"
+                                            stroke-linecap="round" />
+                                    </svg></span>
+                                <span><span class="fw-semibold text-success">Exclusive Value</span> – Privileges &
+                                    upgrades</span>
+                            </li>
+                        </ul>
+                        <div class="mt-3">
+                            <span class="badge bg-gradient"
+                                style="background: linear-gradient(90deg,#06b6d4,#10b981,#f59e42); color:#fff; font-size:1rem; padding:0.7em 1.2em; border-radius:1.5em;">
+                                Trusted by <b>1,000+</b> discerning travelers
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .world-map-wrapper {
+            background: radial-gradient(circle at 60% 40%, #e0e7ff 60%, #a5b4fc 100%);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(52, 99, 255, 0.10);
+            position: relative;
+            display: inline-block;
+        }
+
+        .featured-continents .card {
+            transition: transform 0.2s;
+        }
+
+        .featured-continents .card:hover {
+            transform: scale(1.04) rotate(-1deg);
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15);
+        }
+
+        @keyframes plane-fly {
+            0% {
+                top: 10%;
+                left: 90%;
+                opacity: 1;
+            }
+
+            50% {
+                top: 30%;
+                left: 60%;
+                opacity: 0.8;
+            }
+
+            100% {
+                top: 10%;
+                left: 90%;
+                opacity: 1;
+            }
+        }
+
+        .custom-tours-hero {
+            min-height: 480px;
+        }
+
+        @media (max-width: 991px) {
+            .custom-tours-hero {
+                min-height: 320px;
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .world-map-wrapper {
+                max-width: 100%;
+            }
+        }
+
+        .custom-tour-form-section {
+            background: linear-gradient(120deg, #f0fdfa 0%, #e0e7ff 100%);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, #06b6d4, #10b981, #f59e42);
+            color: #fff;
+            border: none;
+            border-radius: 2rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.10);
+        }
+
+        .btn-gradient:hover,
+        .btn-gradient:focus {
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.18);
+            transform: scale(1.04) translateY(-2px);
+            color: #fff;
+        }
+
+        .bg-gradient {
+            background: linear-gradient(90deg, #06b6d4, #10b981, #f59e42) !important;
+        }
+
+        .premium-label-icon {
+            vertical-align: middle;
+            margin-right: 0.3em;
+        }
+
+        /* Custom input style for better visibility */
+        .custom-input {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            color: #222;
+            font-size: 1.08rem;
+            padding: 0.85rem 1.1rem;
+            border-radius: 0.7rem;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.04);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .custom-input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px #10b98133;
+            background: #fff;
+            color: #111;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Make placeholder text more visible */
+        .custom-input::placeholder {
+            color: #64748b;
+            opacity: 1;
+            font-size: 0.98rem;
+        }
+
+        /* Increase contrast for input borders on dark backgrounds */
+        @media (max-width: 767px) {
+            .custom-input {
+                font-size: 1rem;
+                padding: 0.7rem 0.9rem;
+            }
+        }
+    </style>
+    <!-- Custom Tour Form Submission Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('customTourForm');
+            const msgDiv = document.getElementById('customTourFormMsg');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    msgDiv.innerHTML = '<div class="text-info"><i class="ti ti-loader ti-spin"></i> Crafting your luxury itinerary...</div>';
+                    const formData = new FormData(form);
+
+                    // Use XMLHttpRequest for Google Apps Script with no-cors
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'https://script.google.com/macros/s/AKfycbwddC0bTTutzdcRYAYGgSe1i_OubVCreLVVt20pLpjYQc658TtMmmFkMSg7mVTme62q/exec', true);
+
+                    xhr.onload = function () {
+                        // Google Apps Script with no-cors will NOT return a JSON response, so always show success
+                        msgDiv.innerHTML = '<div class="alert alert-success mt-2">Thank you! Your bespoke journey is in the making. Our team will contact you soon.</div>';
+                        form.reset();
+                    };
+
+                    xhr.onerror = function () {
+                        msgDiv.innerHTML = '<div class="alert alert-danger mt-2">We’re sorry, something went wrong. Please try again or contact us directly.</div>';
+                    };
+
+                    xhr.send(formData);
+                });
+            }
+        });
+    </script>
+    <footer class="footer-wrapper jarallax" data-jarallax data-speed="0.6"
+        style="background-image: url('/img/bg-img/35.jpg');">
+        <!-- Plane Image -->
+        <img class="plane-img" src="/img/core-img/plane2.png" alt="">
+
+        <!-- Tree Image -->
+        <img class="tree-img" src="/img/core-img/tree.png" alt="">
+
+        <!-- Divider -->
+        <div class="divider"></div>
+        <div class="container">
+            <div class="footer-top-content">
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (COCHIN) </h4>
+                        <a href="tel:+918086602888" target="_blank" class="mb-0 text-white">+91 8086602888</a> <br>
+                        <a href="mailto:admin@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">admin@joannaholidays.com</a>
+                    </div>
+                </div>
+
+                <div class="vr-line d-none d-md-block"></div>
+
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (KOTTAYAM) </h4>
+                        <a href="tel:+919846226028" target="_blank" class="mb-0 text-white">+91 9846226028</a> <br>
+                        <a href="mailto:info@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">info@joannaholidays.com</a>
+                    </div>
+                </div>
+
+                <div class="vr-line d-none d-lg-block"></div>
+
+                <!-- Single Item -->
+                <div class="ft-item">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M11.262 22.134C11.262 22.134 4 16.018 4 10C4 7.87827 4.84285 5.84344 6.34315 4.34315C7.84344 2.84285 9.87827 2 12 2C14.1217 2 16.1566 2.84285 17.6569 4.34315C19.1571 5.84344 20 7.87827 20 10C20 16.018 12.738 22.134 12.738 22.134C12.334 22.506 11.669 22.502 11.262 22.134ZM12 13.5C12.4596 13.5 12.9148 13.4095 13.3394 13.2336C13.764 13.0577 14.1499 12.7999 14.4749 12.4749C14.7999 12.1499 15.0577 11.764 15.2336 11.3394C15.4095 10.9148 15.5 10.4596 15.5 10C15.5 9.54037 15.4095 9.08525 15.2336 8.66061C15.0577 8.23597 14.7999 7.85013 14.4749 7.52513C14.1499 7.20012 13.764 6.94231 13.3394 6.76642C12.9148 6.59053 12.4596 6.5 12 6.5C11.0717 6.5 10.1815 6.86875 9.52513 7.52513C8.86875 8.1815 8.5 9.07174 8.5 10C8.5 10.9283 8.86875 11.8185 9.52513 12.4749C10.1815 13.1313 11.0717 13.5 12 13.5Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white">JOANNA HOLIDAYS <br> (LONDON)</h4>
+                        <a href="tel:+447418375151" target="_blank" class="mb-0 text-white">+44 7418375151</a> <br>
+                        <a href="mailto:md@joannaholidays.com" target="_blank"
+                            class="mb-0 text-white">md@joannaholidays.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="border-top"></div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="row g-5">
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="footer-card pe-lg-5">
+                        <a href="#" class="footer-logo">
+                            <img src="/img/joanna/joannalogo.png" alt="joanna">
+                        </a>
+                        <p class="mb-0 text-white">Targeting consultation Death yet way ndulgence off under folly
+                            death wrote
+                            cause her yet way yet wayspite.</p>
+
+                        <!-- Social Nav -->
+                        <div class="social-nav">
+                            <a href="https://www.facebook.com/joannaholidays1/" target="_blank"><i
+                                    class="ti ti-brand-facebook"></i></a>
+                            <a href="https://wa.me/+918086602888" target="_blank"><i
+                                    class="ti ti-brand-whatsapp"></i></a>
+                            <a href="tel:+918086602888" target="_blank"><i class="ti ti-phone"></i></a>
+                            <a href="https://www.instagram.com/joannaholidays/?hl=en" target="_blank"><i
+                                    class="ti ti-brand-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Quick Links</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="footer-nav">
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/">Packages</a></li>
+                            <li><a href="/about">About Us</a></li>
+                            <li><a href="/gallery">Gallery</a></li>
+                            <li><a href="/contact">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Popular Destinations</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="footer-nav">
+                            <li><a href="/packages">India</a></li>
+                            <li><a href="/packages">China</a></li>
+                            <li><a href="/packages">Malaysia</a></li>
+                            <li><a href="/packages">Kenya</a></li>
+                            <li><a href="/packages">Europe</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer Card -->
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="footer-card">
+                        <h5 class="mb-5 card-title text-white">Gallery Post</h5>
+
+                        <!-- Footer Nav -->
+                        <ul class="gallery-post list-unstyled">
+                            <li><a href="/gallery"><img src="/img/joanna/package1.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/joanna/package2.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/joanna/package3.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/joanna/bg5.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/joanna/bg6.jpg" alt="joanna"></a></li>
+                            <li><a href="/gallery"><img src="/img/joanna/bg7.jpg" alt="joanna"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <div class="container">
+            <div class="border-top"></div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="copyright-wrapper">
+            <div class="container">
+                <div class="row align-items-center">
+                    <!-- Copyright -->
+                    <div class="col-12">
+                        <p class="mb-3 mb-md-0 copyright text-center">
+                            Copyright © <span id="year"></span> <span style="color: #ed1c24;">Joanna Holidays Pvt
+                                Ltd.</span>
+                            Designed &amp; Developed by <a href="#" target="_blank" rel="noopener"
+                                style="color: antiquewhite;">Harsh Adz Creators</a>.
+                            All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <nav id="mobile-bottom-navbar" class="mobile-bottom-navbar d-md-none">
+        <a href="/packages?category=684800c980e92de2c956deba" class="nav-item" title="International">
+            <span class="iconify" data-icon="mdi:airplane" data-inline="false"></span>
+            <span class="nav-label">International</span>
+        </a>
+        <a href="/packages?category=6848021b80e92de2c956dec9" class="nav-item" title="Domestic">
+            <span class="iconify" data-icon="mdi:home-city" data-inline="false"></span>
+            <span class="nav-label">Domestic</span>
+        </a>
+        <a href="/about" class="nav-item" title="About">
+            <span class="iconify" data-icon="mdi:information" data-inline="false"></span>
+            <span class="nav-label">About</span>
+        </a>
+        <a href="/gallery" class="nav-item" title="Gallery">
+            <span class="iconify" data-icon="mdi:image-multiple" data-inline="false"></span>
+            <span class="nav-label">Gallery</span>
+        </a>
+        <a href="/contact" class="nav-item isActive" title="Contact Us">
+            <span class="iconify" data-icon="mdi:phone" data-inline="false"></span>
+            <span class="nav-label">Contact</span>
+        </a>
+    </nav>
+    <!-- Iconify for icons -->
+    <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+
+    <!-- Scroll To Top -->
+    <button id="scrollTopButton" class="touria-scrolltop scrolltop-hide">
+        <i class="icon-arrow-up"></i>
+    </button>
+
+    <!-- All JavaScript Files-->
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/slideToggle.min.js"></script>
+    <script src="/js/swiper-bundle.min.js"></script>
+    <script src="/js/jarallax.min.js"></script>
+    <script src="/js/index.js"></script>
+    <script src="/js/imagesloaded.pkgd.min.js"></script>
+    <script src="/js/isotope.pkgd.min.js"></script>
+    <script src="/js/flatpickr.min.js"></script>
+    <script src="/js/nice-select2.js"></script>
+    <script src="/js/venobox.min.js"></script>
+    <script src="/js/wow.min.js"></script>
+    <script src="/js/active.js"></script>
+</body>
+
+</html>

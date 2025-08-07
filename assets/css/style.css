@@ -5955,8 +5955,8 @@ picture.jarallax-img img {
 
 .team-card .team-thumb .team-social a:hover,
 .team-card .team-thumb .team-social a:focus {
-  background-color: #F7921F;
-  border-color: #F7921F;
+  background-color: #324da1;
+  border-color: #324da1;
   color: #FFFFFF;
 }
 
@@ -5975,7 +5975,7 @@ picture.jarallax-img img {
 
 .team-card:hover h4,
 .team-card:focus h4 {
-  color: #F7921F;
+  color: #324da1;
 }
 
 .guider-details-section img {

@@ -7,7 +7,9 @@
     <meta name="description" content="joanna Holidays">
 
     <!-- Title & Favicon -->
-    <title>Joanna Holidays | Home</title>
+    <title>Joanna Holidays | Explore Tour Packages, Custom Holidays, Tours in Kerala & London</title>
+    <meta name="description" content="Joanna Holidays - Top travel agency in Kerala & London. Discover affordable Kerala and international holiday packages, custom tours, group trips, honeymoon packages & family vacations. Book your next adventure with travel experts." />
+    <meta name="keywords" content="Joanna Holidays, Kerala tour packages, holiday packages, travel agency, London tours, honeymoon packages, group tours, family vacations, custom holidays, India travel, adventure trips" />
     <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -16,6 +18,7 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KV49GR89');</script>
     <!-- End Google Tag Manager -->
+    <link rel="canonical" href="https://www.joannaholidays.com/" />
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/css/animate.css">
     <link rel="stylesheet" href="/css/tabler-icons.min.css">
@@ -101,46 +104,44 @@
                             <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
                             <ul class="touria-dd-menu">
                                 <% categories.forEach(category=> {
-                                    const hasSubCategories = category.subCategories && category.subCategories.length >
-                                    0;
-                                    const hasDirectPackages = category.directPackages && category.directPackages.length
-                                    > 0;
-                                    %>
+                                    const hasSubCategories = category.subCategories && category.subCategories.length > 0;
+                                    const hasDirectPackages = category.directPackages && category.directPackages.length > 0;
+                                %>
                                     <% if (hasSubCategories || hasDirectPackages) { %>
                                         <li class="touria-dd">
-                                            <a href="/packages?category=<%= category._id %>">
+                                            <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
                                                 <%= category.name %>
-                                                    <% if (hasSubCategories || hasDirectPackages) { %>
-                                                        <i class="ti ti-chevron-right"></i>
-                                                        <% } %>
+                                                <% if (hasSubCategories || hasDirectPackages) { %>
+                                                    <i class="ti ti-chevron-right"></i>
+                                                <% } %>
                                             </a>
                                             <ul class="touria-dd-menu">
                                                 <% category.subCategories &&
                                                     category.subCategories.forEach(subCategory=> { %>
                                                     <li>
-                                                        <a href="/package-details?subCategory=<%= subCategory._id %>">
+                                                        <a href="/package-details?category=<%= encodeURIComponent(category.name) %>&subCategory=<%= encodeURIComponent(subCategory.name) %>">
                                                             <%= subCategory.name %>
                                                         </a>
                                                     </li>
-                                                    <% }) %>
-                                                        <% category.directPackages &&
-                                                            category.directPackages.forEach(pkg=> { %>
-                                                            <li>
-                                                                <a href="/package/<%= pkg._id %>">
-                                                                    <%= pkg.destination %>
-                                                                </a>
-                                                            </li>
-                                                            <% }) %>
+                                                <% }) %>
+                                                <% category.directPackages &&
+                                                    category.directPackages.forEach(pkg=> { %>
+                                                    <li>
+                                                        <a href="/package/<%= encodeURIComponent(pkg.title) %>">
+                                                            <%= pkg.destination %>
+                                                        </a>
+                                                    </li>
+                                                <% }) %>
                                             </ul>
                                         </li>
-                                        <% } else { %>
-                                            <li>
-                                                <a href="/packages?category=<%= category._id %>">
-                                                    <%= category.name %>
-                                                </a>
-                                            </li>
-                                            <% } %>
-                                                <% }) %>
+                                    <% } else { %>
+                                        <li>
+                                            <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
+                                                <%= category.name %>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                <% }) %>
                             </ul>
                         </li>
                         <li class="touria-dd">
@@ -155,6 +156,9 @@
                         <!-- Gallery -->
                         <li class="touria-dd">
                             <a href="/gallery">Gallery</a>
+                        </li>
+                        <li class="touria-dd">
+                            <a href="/blogs">Blogs</a>
                         </li>
                         <!-- Blog -->
                     
@@ -488,39 +492,43 @@
             <!-- Desktop grid: 4 per row, centered -->
             <div class="d-none d-sm-block">
                 <div class="row g-3 justify-content-center">
-                    <% categories.forEach(function(category, idx) { %>
+                    <% categories.forEach(function(category, idx) { 
+                        var categoryNameParam = encodeURIComponent(category.name); 
+                    %>
                         <div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center">
-                            <div class="card h-100 shadow-sm border-0 position-relative premier-destination-card"
-                                style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:270px; max-width:340px; width:100%; border-radius:1.25rem;">
-                                <div class="position-absolute top-0 start-0 w-100 h-100"
-                                     style="background:rgba(0,0,0,0.38); border-radius:1.25rem;"></div>
-                                <div class="card-body d-flex flex-column justify-content-start align-items-end position-relative px-3 pb-3 pt-2" style="z-index:2;">
-                                    <!-- Full name, no truncation, no overlap -->
-                                    <a href="/packages?category=<%= category._id %>" class="text-white w-100"
-                                       style="font-size:1.25rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.5rem; padding:0.35rem 0.75rem; margin-bottom:0.5rem; display:block; max-width:100%; white-space:normal; word-break:break-word;">
-                                        <%= category.name %>
-                                    </a>
-                                    <!-- Balance/price on next line -->
-                                    <% if (category.startingPrice) { %>
-                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem; width:100%; margin-top:0;">
-                                            Starting From <span class="text-info">$<%= category.startingPrice %></span>
-                                        </p>
-                                    <% } else { %>
-                                        <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem; width:100%; margin-top:0;">
-                                            <% if (category.locationCount > 0) { %>
-                                                <span style="font-weight: 600;">
-                                                    <%= category.locationCount %> Packages
-                                                </span>
-                                            <% } else { %>
-                                                <span class="text-success">Currently Unavailable</span>
-                                            <% } %>
-                                        </p>
-                                    <% } %>
-                                    <a href="/packages?category=<%= category._id %>" class="btn btn-sm btn-light mt-2 px-3 shadow" style="font-weight:600;">
-                                        <i class="ti ti-plane-tilt"></i> View Packages
-                                    </a>
+                            <a href="/packages?category=<%= categoryNameParam %>" style="text-decoration:none; display:block; width:100%; max-width:340px;">
+                                <div class="card h-100 shadow-sm border-0 position-relative premier-destination-card"
+                                    style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:270px; width:100%; border-radius:1.25rem;">
+                                    <div class="position-absolute top-0 start-0 w-100 h-100"
+                                        style="background:rgba(0,0,0,0.38); border-radius:1.25rem;"></div>
+                                    <div class="card-body d-flex flex-column justify-content-start align-items-end position-relative px-3 pb-3 pt-2" style="z-index:2;">
+                                        <!-- Full name, no truncation, no overlap -->
+                                        <span class="text-white w-100"
+                                           style="font-size:1.25rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.5rem; padding:0.35rem 0.75rem; margin-bottom:0.5rem; display:block; max-width:100%; white-space:normal; word-break:break-word;">
+                                            <%= category.name %>
+                                        </span>
+                                        <!-- Balance/price on next line -->
+                                        <% if (category.startingPrice) { %>
+                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem; width:100%; margin-top:0;">
+                                                Starting From <span class="text-info">$<%= category.startingPrice %></span>
+                                            </p>
+                                        <% } else { %>
+                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.4rem; padding:0.2rem 0.6rem; font-size:1.05rem; width:100%; margin-top:0;">
+                                                <% if (category.locationCount > 0) { %>
+                                                    <span style="font-weight: 600;">
+                                                        <%= category.locationCount %> Packages
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="text-success">Currently Unavailable</span>
+                                                <% } %>
+                                            </p>
+                                        <% } %>
+                                        <span class="btn btn-sm btn-light mt-2 px-3 shadow" style="font-weight:600;pointer-events:none;">
+                                            <i class="ti ti-plane-tilt"></i> View Packages
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     <% }); %>
                 </div>
@@ -529,60 +537,64 @@
             <div class="d-block d-sm-none">
                 <div class="swiper premier-destination-mobile-swiper">
                     <div class="swiper-wrapper">
-                        <% categories.forEach(function(category, idx) { %>
+                        <% categories.forEach(function(category, idx) { 
+                            var categoryNameParam = encodeURIComponent(category.name); 
+                        %>
                             <div class="swiper-slide d-flex justify-content-center" style="max-width: 95vw;">
-                                <div class="card h-100 shadow-sm border-0 position-relative premier-destination-card"
-                                    style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:240px; max-width:95vw; width:100%; border-radius:1.1rem;">
-                                    <div class="position-absolute top-0 start-0 w-100 h-100"
-                                         style="background:rgba(0,0,0,0.38); border-radius:1.1rem;"></div>
-                                    <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative px-2 pb-2 pt-1" style="z-index:2; min-height:120px;">
-                                        <% 
-                                            // If name is too long, split into multiple lines (try to break at spaces)
-                                            var name = category.name || '';
-                                            var maxCharsPerLine = 18;
-                                            var nameLines = [];
-                                            if (name.length > maxCharsPerLine) {
-                                                var words = name.split(' ');
-                                                var line = '';
-                                                words.forEach(function(word) {
-                                                    if ((line + word).length > maxCharsPerLine) {
-                                                        if (line.length > 0) nameLines.push(line.trim());
-                                                        line = word + ' ';
-                                                    } else {
-                                                        line += word + ' ';
-                                                    }
-                                                });
-                                                if (line.length > 0) nameLines.push(line.trim());
-                                            } else {
-                                                nameLines = [name];
-                                            }
-                                        %>
-                                        <a href="/packages?category=<%= category._id %>" class="text-white fw-bold w-100"
-                                           style="font-size:1.13rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.4rem; padding:0.28rem 0.6rem; margin-bottom:0.4rem; display:block; max-width:95%; white-space:normal; word-break:break-word; line-height:1.25;">
-                                            <% nameLines.forEach(function(line, i) { %>
-                                                <%= line %><% if (i < nameLines.length - 1) { %><br><% } %>
-                                            <% }); %>
-                                        </a>
-                                        <% if (category.startingPrice) { %>
-                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.3rem; padding:0.15rem 0.5rem; font-size:0.98rem;">
-                                                Starting From <span class="text-info">$<%= category.startingPrice %></span>
-                                            </p>
-                                        <% } else { %>
-                                            <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.3rem; padding:0.15rem 0.5rem; font-size:0.98rem;">
-                                                <% if (category.locationCount > 0) { %>
-                                                    <span class="text-white">
-                                                        <%= category.locationCount %> Packages Available
-                                                    </span>
-                                                <% } else { %>
-                                                    <span class="text-danger">Currently Unavailable</span>
-                                                <% } %>
-                                            </p>
-                                        <% } %>
-                                        <a href="/packages?category=<%= category._id %>" class="btn btn-sm btn-light mt-2 px-3 shadow" style="font-weight:600;">
-                                            <i class="ti ti-plane-tilt"></i> View Packages
-                                        </a>
+                                <a href="/packages?category=<%= categoryNameParam %>" style="text-decoration:none; display:block; width:100%; max-width:95vw;">
+                                    <div class="card h-100 shadow-sm border-0 position-relative premier-destination-card"
+                                        style="background-image: url('<%= category.imageUrl %>'); background-size:cover; background-position:center; min-height:240px; width:100%; border-radius:1.1rem;">
+                                        <div class="position-absolute top-0 start-0 w-100 h-100"
+                                            style="background:rgba(0,0,0,0.38); border-radius:1.1rem;"></div>
+                                        <div class="card-body d-flex flex-column justify-content-end align-items-start position-relative px-2 pb-2 pt-1" style="z-index:2; min-height:120px;">
+                                            <% 
+                                                // If name is too long, split into multiple lines (try to break at spaces)
+                                                var name = category.name || '';
+                                                var maxCharsPerLine = 18;
+                                                var nameLines = [];
+                                                if (name.length > maxCharsPerLine) {
+                                                    var words = name.split(' ');
+                                                    var line = '';
+                                                    words.forEach(function(word) {
+                                                        if ((line + word).length > maxCharsPerLine) {
+                                                            if (line.length > 0) nameLines.push(line.trim());
+                                                            line = word + ' ';
+                                                        } else {
+                                                            line += word + ' ';
+                                                        }
+                                                    });
+                                                    if (line.length > 0) nameLines.push(line.trim());
+                                                } else {
+                                                    nameLines = [name];
+                                                }
+                                            %>
+                                            <span class="text-white fw-bold w-100"
+                                               style="font-size:1.13rem; text-shadow:0 2px 8px #000; text-transform: uppercase; background:rgba(0,0,0,0.32); border-radius:0.4rem; padding:0.28rem 0.6rem; margin-bottom:0.4rem; display:block; max-width:95%; white-space:normal; word-break:break-word; line-height:1.25;">
+                                                <% nameLines.forEach(function(line, i) { %>
+                                                    <%= line %><% if (i < nameLines.length - 1) { %><br><% } %>
+                                                <% }); %>
+                                            </span>
+                                            <% if (category.startingPrice) { %>
+                                                <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.3rem; padding:0.15rem 0.5rem; font-size:0.98rem;">
+                                                    Starting From <span class="text-info">$<%= category.startingPrice %></span>
+                                                </p>
+                                            <% } else { %>
+                                                <p class="mb-1 text-white" style="text-shadow:0 2px 8px #000; background:rgba(0,0,0,0.22); border-radius:0.3rem; padding:0.15rem 0.5rem; font-size:0.98rem;">
+                                                    <% if (category.locationCount > 0) { %>
+                                                        <span class="text-white">
+                                                            <%= category.locationCount %> Packages Available
+                                                        </span>
+                                                    <% } else { %>
+                                                        <span class="text-danger">Currently Unavailable</span>
+                                                    <% } %>
+                                                </p>
+                                            <% } %>
+                                            <span class="btn btn-sm btn-light mt-2 px-3 shadow" style="font-weight:600;pointer-events:none;">
+                                                <i class="ti ti-plane-tilt"></i> View Packages
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         <% }); %>
                     </div>
@@ -675,7 +687,7 @@
                                         <%= pkg.destination %>
                                     </div>
                                     <h5 class="card-title mb-1">
-                                        <a href="/package/<%= pkg._id %>"
+                                        <a href="/package/<%= encodeURIComponent(pkg.title) %>"
                                             class="stretched-link text-decoration-none text-dark fw-semibold">
                                             <%= pkg.title %>
                                         </a>
@@ -697,7 +709,7 @@
                                                     <span class="fw-bold text-warning fs-6">Custom Pricing</span>
                                                     <% } %>
                                         </div>
-                                        <a href="/package/<%= pkg._id %>"
+                                        <a href="/package/<%= encodeURIComponent(pkg.title) %>"
                                             class="btn btn-outline-danger btn-sm animate__animated animate__pulse animate__infinite">
                                             Explore <i class="mdi mdi-arrow-right"></i>
                                         </a>
@@ -727,15 +739,18 @@
         </div>
         <script>
             window.allPackages = <%- JSON.stringify(packages) %>;
-    
+
+            function encodePkgTitle(title) {
+                return encodeURIComponent(title || '');
+            }
+
             function getCategoryId(pkg) {
-                // Defensive: pkg.category may be null or undefined
                 if (pkg.category && pkg.category._id) {
                     return pkg.category._id.toString();
                 }
                 return 'uncategorized';
             }
-    
+
             function renderPackages(filteredPackages) {
                 const container = document.getElementById('packages-container');
                 container.innerHTML = '';
@@ -745,17 +760,20 @@
         <i class="ti ti-discount-2"></i> ${pkg.discount}% Off
     </span>
     ` : '';
-    
+
                     const categoryHtml = pkg.categoryName ? `
     <span class="badge bg-primary position-absolute top-0 end-0 m-2 fs-6 animate__animated animate__fadeInRight">
         <i class="ti ti-star"></i> ${pkg.categoryName}
     </span>
     ` : '';
-    
+
                     const priceHtml = pkg.packagePrice > 0
                         ? `₹${pkg.packagePrice.toLocaleString()}`
                         : 'Custom Pricing';
-    
+
+                    // Use /package/<encoded title> instead of _id
+                    const packageUrl = `/package/${encodePkgTitle(pkg.title)}`;
+
                     const cardHtml = `
     <div class="col-12 col-sm-6 col-lg-3 package-item animate__animated animate__fadeInUp" style="animation-delay: ${(idx * 0.07).toFixed(2)}s;" data-category="${getCategoryId(pkg)}">
         <div class="card h-100 shadow-sm border-0 position-relative">
@@ -772,7 +790,7 @@
                     ${pkg.destination}
                 </div>
                 <h5 class="card-title mb-1">
-                    <a href="/package/${pkg._id}" class="stretched-link text-decoration-none text-dark fw-semibold">
+                    <a href="${packageUrl}" class="stretched-link text-decoration-none text-dark fw-semibold">
                         ${pkg.title}
                     </a>
                 </h5>
@@ -790,7 +808,7 @@
                             : `<span class="fw-bold text-warning fs-6">Custom Pricing</span>`
                         }
                     </div>
-                    <a href="/package/${pkg._id}" class="btn btn-outline-danger btn-sm animate__animated animate__pulse animate__infinite">
+                    <a href="${packageUrl}" class="btn btn-outline-danger btn-sm animate__animated animate__pulse animate__infinite">
                         Explore <i class="mdi mdi-arrow-right"></i>
                     </a>
                 </div>
@@ -800,10 +818,10 @@
     `;
                     container.insertAdjacentHTML('beforeend', cardHtml);
                 });
-    
+
                 if (window.feather) feather.replace();
             }
-    
+
             function filterPackages(categoryId) {
                 // Update active button styling
                 document.querySelectorAll('.category-btn').forEach(btn => {
@@ -815,7 +833,7 @@
                         btn.classList.add('btn-outline-secondary');
                     }
                 });
-    
+
                 // Filter packages and show only 12
                 let filtered = [];
                 if (categoryId === 'all') {
@@ -826,11 +844,11 @@
                     );
                 }
                 renderPackages(filtered);
-    
+
                 // Show/hide no packages message
                 const noPackagesMessage = document.getElementById('no-packages-message');
                 const packagesContainer = document.getElementById('packages-container');
-    
+
                 if (filtered.length === 0) {
                     noPackagesMessage.classList.remove('d-none');
                     packagesContainer.classList.add('d-none');
@@ -839,7 +857,7 @@
                     packagesContainer.classList.remove('d-none');
                 }
             }
-    
+
             document.addEventListener('DOMContentLoaded', function () {
                 // Attach event listeners to category buttons
                 document.querySelectorAll('.category-btn').forEach(btn => {
@@ -1092,7 +1110,7 @@
                     %>
                         <div class="swiper-slide">
                             <div class="deals-slide d-flex flex-column align-items-stretch justify-content-between" style="overflow:hidden; width: 320px; height: 320px; min-width: 320px; max-width: 320px; min-height: 320px; max-height: 320px; border-radius: 16px; background: #fff; box-shadow: 0 2px 16px rgba(0,0,0,0.04);">
-                                <a href="/package/<%= pkg._id %>" style="display:block; width:100%; height:220px; background:#f3f3f3;">
+                                <a href="/package/<%= encodeURIComponent(pkg.title) %>" style="display:block; width:100%; height:220px; background:#f3f3f3;">
                                     <img 
                                         src="<%= imgSrc %>" 
                                         alt="<%= pkg.destination %>" 
@@ -1101,7 +1119,7 @@
                                 </a>
                                 <div class="d-flex flex-row justify-content-between align-items-center px-3" style="height: 60px;">
                                     <span class="fw-bold text-truncate" style="max-width: 180px;"><%= pkg.destination %></span>
-                                    <a href="/package/<%= pkg._id %>" class="btn btn-success btn-sm" style="white-space:nowrap;">Book Now</a>
+                                    <a href="/package/<%= encodeURIComponent(pkg.title) %>" class="btn btn-success btn-sm" style="white-space:nowrap;">Book Now</a>
                                 </div>
                             </div>
                         </div>
@@ -1323,26 +1341,28 @@
                         </div>
                         <div id="form-status" style="margin-top:1rem;"></div>
                     </form>
+                    <!-- SweetAlert2 CDN -->
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <script>
                       // Use your Apps Script Web App URL
                       const scriptUrl = 'https://script.google.com/macros/s/AKfycbxLDX7ywFwz5TXAzqYGjESEy0m3Vx4tIWEuUIqHYfpk3ySdw_XGQi0i0YgiBAVrK0DsvQ/exec';
-    
+
                       document.addEventListener('DOMContentLoaded', function() {
                           const form = document.getElementById('contact-form');
                           const statusDiv = document.getElementById('form-status');
                           const submitBtn = document.getElementById('submit-btn');
                           const mobileInput = document.getElementById('mobile');
-    
+
                           // Custom mobile validation
                           function isValidMobile(mobile) {
                             // Accepts 10-15 digits, no spaces or symbols
                             return /^[0-9]{10,15}$/.test(mobile);
                           }
-    
+
                           form.addEventListener('submit', function(e) {
                               e.preventDefault();
                               statusDiv.innerHTML = '';
-    
+
                               // Validate mobile field
                               const mobileValue = mobileInput.value.trim();
                               if (!isValidMobile(mobileValue)) {
@@ -1352,10 +1372,10 @@
                                   submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
                                   return;
                               }
-    
+
                               submitBtn.disabled = true;
                               submitBtn.innerHTML = 'Sending...';
-    
+
                               // Use the same approach as in contact.ejs: URLSearchParams and append fields manually
                               const formData = new URLSearchParams();
                               formData.append('name', document.getElementById('name').value);
@@ -1363,7 +1383,7 @@
                               formData.append('mobile', document.getElementById('mobile').value);
                               formData.append('subject', document.getElementById('subject').value);
                               formData.append('message', document.getElementById('comments').value);
-    
+
                               fetch(scriptUrl, {
                                     method: 'POST',
                                     headers: {
@@ -1374,8 +1394,44 @@
                               .then(response => response.json())
                               .then(data => {
                                   if (data.status === "success") {
-                                      statusDiv.innerHTML = '<div class="alert alert-success">Thank you! Your message has been sent.</div>';
                                       form.reset();
+                                      // SweetAlert2 success
+                                      Swal.fire({
+                                          title: '🎉 Message Sent! 🎉',
+                                          html: `
+                                            <div style='color:#18991f;font-weight:600;font-size:1.18rem'>
+                                              <span style='font-size:2.2rem;'>🌏✨</span><br>
+                                              <b>Thank you for reaching out to <span style="color:#334ea2">Joanna Holidays</span>!</b>
+                                              <br><br>
+                                              <span style="font-size:1.07rem;">
+                                                <i>Your message is now on the fast-lane to our expert travel planners.</i>
+                                                <br>
+                                                <span style="color:#334ea2;font-weight:700;">
+                                                  Get ready for a journey full of amazing destinations, handpicked deals, and memories you'll cherish forever!
+                                                </span>
+                                                <br><br>
+                                                <span style="color:#048b6c;font-weight:700">Bonus:</span>
+                                                <br>Our specialists love turning <span style='color:#18991f'>dreams</span> into <span style='color:#b86f0b'>adventures</span>.<br>
+                                                <span style="font-size:1.1rem;color:#ffa600;">✈️ Watch for a reply soon!</span>
+                                                <br>
+                                                <small style="color:#777;">
+                                                  You’re closer to your perfect holiday than ever before.<br>
+                                                  <b>Why travel ordinary?</b> Do it the <span style="color:#334ea2">Joanna</span> way!
+                                                </small>
+                                              </span>
+                                            </div>
+                                          `,
+                                          icon: 'success',
+                                          showConfirmButton: true,
+                                          confirmButtonColor: '#18991f',
+                                          confirmButtonText: 'Let\'s Begin My Journey! 🚀',
+                                          background: '#fffef4',
+                                          customClass: {
+                                            title: 'swal-title-joanna',
+                                            confirmButton: 'swal-button-joanna'
+                                          }
+                                      });
+                                      statusDiv.innerHTML = '';
                                   } else {
                                       statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
                                   }
@@ -1388,7 +1444,7 @@
                                   submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
                               });
                           });
-    
+
                           // Optional: live validation feedback for mobile
                           mobileInput.addEventListener('input', function() {
                             if (mobileInput.value && !isValidMobile(mobileInput.value)) {
@@ -1399,6 +1455,22 @@
                           });
                       });
                     </script>
+                    <style>
+                      .swal-title-joanna {
+                        font-family: inherit;
+                        color: #18991f !important;
+                        font-weight: 700;
+                        letter-spacing: 0.5px;
+                      }
+                      .swal-button-joanna {
+                        background-color: #18991f !important;
+                        color: #fff !important;
+                        font-weight:600;
+                        font-size:1rem;
+                        padding-left:2.25em;
+                        padding-right:2.25em;
+                      }
+                    </style>
                 </div>
 
                 <div class="col-12 col-lg-6">
@@ -1407,21 +1479,21 @@
                             <div class="d-flex gap-5 flex-column">
                                 <div class="happy-counts wow fadeInUp" data-wow-delay="200ms"
                                     data-wow-duration="1000ms">
-                                    <h3 class="counter">976<span>+</span></h3>
-                                    <h5 class="mb-0">Happy Traveller</h5>
+                                    <h3 class="counter">9766<span>+</span></h3>
+                                    <h5 class="mb-0">Happy Travellers</h5>
                                 </div>
 
                                 <div class="happy-counts wow fadeInUp" data-wow-delay="400ms"
                                     data-wow-duration="1000ms">
                                     <h3 class="counter">986<span>+</span></h3>
-                                    <h5 class="mb-0">Positive Review</h5>
+                                    <h5 class="mb-0">Positive Reviews</h5>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-6">
                             <div class="happy-counts wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1000ms">
-                                <h3 class="counter">150<span>+</span></h3>
+                                <h3 class="counter">550<span>+</span></h3>
                                 <h5 class="mb-0">Locations</h5>
                             </div>
                         </div>
@@ -1476,9 +1548,9 @@
                                     <div class="dot"></div>
                                     <a href="#"><%= firstBlog.createdAt ? firstBlog.createdAt.toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' }) : '' %></a>
                                 </div>
-                                <a class="post-title h4" href="/blogdetails?id=<%= firstBlog._id %>"><%= firstBlog.title %></a>
+                                <a class="post-title h4" href="/blogdetails?title=<%= encodeURIComponent(firstBlog.title) %>"><%= firstBlog.title %></a>
                                 <div class="d-block mt-3">
-                                    <a class="btn btn-link" href="/blogdetails?id=<%= firstBlog._id %>">View Details <i
+                                    <a class="btn btn-link" href="/blogdetails?title=<%= encodeURIComponent(firstBlog.title) %>">View Details <i
                                             class="icon-arrow-right"></i></a>
                                 </div>
                             </div>
@@ -1500,9 +1572,9 @@
                                             <div class="dot"></div>
                                             <a href="#"><%= blog.createdAt ? blog.createdAt.toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' }) : '' %></a>
                                         </div>
-                                        <a class="post-title h4" href="/blogdetails?id=<%= blog._id %>"><%= blog.title %></a>
+                                        <a class="post-title h4" href="/blogdetails?title=<%= encodeURIComponent(blog.title) %>"><%= blog.title %></a>
                                         <div class="d-block mt-4">
-                                            <a class="btn btn-link" href="/blogdetails?id=<%= blog._id %>">View Details <i
+                                            <a class="btn btn-link" href="/blogdetails?title=<%= encodeURIComponent(blog.title) %>">View Details <i
                                                     class="icon-arrow-right"></i></a>
                                         </div>
                                     </div>
@@ -1542,7 +1614,7 @@
                         <p class="mb-5 text-white wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1000ms">
                             From the snow-capped Himalayas to the sun-kissed beaches of Goa, from the vibrant festivals to the tranquil backwaters of Kerala—India is a land of endless wonders. Embark on a journey through ancient history, rich culture, and breathtaking landscapes. Let your next adventure begin here!
                         </p>
-                        <a class="btn btn-success fadeInUp" href="/packages?category=6848021b80e92de2c956dec9">Book Now</a>
+                        <a class="btn btn-success fadeInUp" href="/packages?category=Domestic%20Tours">Book Now</a>
                     </div>
                     <div class="divider"></div>
                 </div>
@@ -1671,10 +1743,9 @@
                         <a href="#" class="footer-logo">
                             <img src="/img/joanna/joannalogo.png" alt="joanna">
                         </a>
-                        <p class="mb-0 text-white">Targeting consultation Death yet way ndulgence off under folly
-                            death wrote
-                            cause her yet way yet wayspite.</p>
-
+                        <p class="mb-0 text-white">
+                            Explore the world with Joanna Holidays — your gateway to unforgettable adventures, new cultures, and memories that last a lifetime. Travel smart. Travel happy. Travel with us!
+                        </p>
                         <!-- Social Nav -->
                         <div class="social-nav">
                             <a href="https://www.facebook.com/joannaholidays1/" target="_blank"><i class="ti ti-brand-facebook"></i></a>
@@ -1709,11 +1780,21 @@
 
                         <!-- Footer Nav -->
                         <ul class="footer-nav">
-                            <li><a href="/packages">India</a></li>
-                            <li><a href="/packages">China</a></li>
-                            <li><a href="/packages">Malaysia</a></li>
-                            <li><a href="/packages">Kenya</a></li>
-                            <li><a href="/packages">Europe</a></li>
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.forEach(function(category) { 
+                                    var categoryNameParam = encodeURIComponent(category.name); 
+                                %>
+                                    <li>
+                                        <a href="/packages?category=<%= categoryNameParam %>">
+                                            <%= category.name %>
+                                        </a>
+                                    </li>
+                                <% }); %>
+                            <% } else { %>
+                                <li>
+                                    <a href="/packages">All packages</a>
+                                </li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>

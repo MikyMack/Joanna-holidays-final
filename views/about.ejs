@@ -7,7 +7,9 @@
    <meta name="description" content="Joanna Holidays">
 
    <!-- Title & Favicon -->
-   <title>About Us | Joanna Holidays</title>
+   <title>About Us | Joanna Holidays | Best Travel Agency in Kerala & London</title>
+   <meta name="description" content="Learn more about Joanna Holidays, the leading travel agency offering personalized holiday packages, Kerala tours, London travel, group tours, honeymoon vacations, and more. Discover why travelers trust us for unforgettable journeys.">
+   <meta name="keywords" content="About Joanna Holidays, Travel Agency Kerala, London tours, holiday packages, custom tours, group travel, honeymoon packages, travel experts, best tour operator, personalized holidays, travel agency about, memorable journeys">
    <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -15,6 +17,7 @@
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KV49GR89');</script>
+     <link rel="canonical" href="https://www.joannaholidays.com/" />
     <!-- End Google Tag Manager -->
    <!-- Stylesheet -->
    <link rel="stylesheet" href="/css/animate.css">
@@ -89,46 +92,44 @@
                         <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
                         <ul class="touria-dd-menu">
                             <% categories.forEach(category=> {
-                                const hasSubCategories = category.subCategories && category.subCategories.length >
-                                0;
-                                const hasDirectPackages = category.directPackages && category.directPackages.length
-                                > 0;
-                                %>
+                                const hasSubCategories = category.subCategories && category.subCategories.length > 0;
+                                const hasDirectPackages = category.directPackages && category.directPackages.length > 0;
+                            %>
                                 <% if (hasSubCategories || hasDirectPackages) { %>
                                     <li class="touria-dd">
-                                        <a href="/packages?category=<%= category._id %>">
+                                        <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
                                             <%= category.name %>
-                                                <% if (hasSubCategories || hasDirectPackages) { %>
-                                                    <i class="ti ti-chevron-right"></i>
-                                                    <% } %>
+                                            <% if (hasSubCategories || hasDirectPackages) { %>
+                                                <i class="ti ti-chevron-right"></i>
+                                            <% } %>
                                         </a>
                                         <ul class="touria-dd-menu">
                                             <% category.subCategories &&
                                                 category.subCategories.forEach(subCategory=> { %>
                                                 <li>
-                                                    <a href="/package-details?subCategory=<%= subCategory._id %>">
+                                                    <a href="/package-details?category=<%= encodeURIComponent(category.name) %>&subCategory=<%= encodeURIComponent(subCategory.name) %>">
                                                         <%= subCategory.name %>
                                                     </a>
                                                 </li>
-                                                <% }) %>
-                                                    <% category.directPackages &&
-                                                        category.directPackages.forEach(pkg=> { %>
-                                                        <li>
-                                                            <a href="/package/<%= pkg._id %>">
-                                                                <%= pkg.destination %>
-                                                            </a>
-                                                        </li>
-                                                        <% }) %>
+                                            <% }) %>
+                                            <% category.directPackages &&
+                                                category.directPackages.forEach(pkg=> { %>
+                                                <li>
+                                                    <a href="/package/<%= encodeURIComponent(pkg.title) %>">
+                                                        <%= pkg.destination %>
+                                                    </a>
+                                                </li>
+                                            <% }) %>
                                         </ul>
                                     </li>
-                                    <% } else { %>
-                                        <li>
-                                            <a href="/packages?category=<%= category._id %>">
-                                                <%= category.name %>
-                                            </a>
-                                        </li>
-                                        <% } %>
-                                            <% }) %>
+                                <% } else { %>
+                                    <li>
+                                        <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
+                                            <%= category.name %>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            <% }) %>
                         </ul>
                     </li>
                     <li class="touria-dd">
@@ -145,7 +146,9 @@
                         <a href="/gallery">Gallery</a>
                     </li>
                     <!-- Blog -->
-                
+                    <li class="touria-dd">
+                        <a href="/blogs">Blogs</a>
+                    </li>
                     <!-- Contact -->
                     <li>
                         <a href="/contact" class="sub-menu-item">Contact Us</a>
@@ -334,7 +337,7 @@
                      <span class="sub-title text-success">Why Choose Joanna Holidays</span>
                      <h2 class="mb-4">Your Trusted Partner in Travel</h2>
                      <p class="mb-5">
-                        With over 6 years of excellence, Joanna Holidays has become a leader in the travel industry by delivering unforgettable journeys and seamless service. We believe every trip should be a story worth telling.
+                        With over 8 years of excellence, Joanna Holidays has become a leader in the travel industry by delivering unforgettable journeys and seamless service. We believe every trip should be a story worth telling.
                      </p>
                   </div>
 
@@ -613,6 +616,8 @@
                     </div>
                     <div id="form-status" style="margin-top:1rem;"></div>
                 </form>
+                <!-- SweetAlert2 CDN -->
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                 <script>
                   // Use your Apps Script Web App URL
                   const scriptUrl = 'https://script.google.com/macros/s/AKfycbxLDX7ywFwz5TXAzqYGjESEy0m3Vx4tIWEuUIqHYfpk3ySdw_XGQi0i0YgiBAVrK0DsvQ/exec';
@@ -664,8 +669,44 @@
                           .then(response => response.json())
                           .then(data => {
                               if (data.status === "success") {
-                                  statusDiv.innerHTML = '<div class="alert alert-success">Thank you! Your message has been sent.</div>';
                                   form.reset();
+                                  // SweetAlert2 success
+                                  Swal.fire({
+                                      title: '🎉 Message Sent! 🎉',
+                                      html: `
+                                        <div style='color:#18991f;font-weight:600;font-size:1.18rem'>
+                                          <span style='font-size:2.2rem;'>🌏✨</span><br>
+                                          <b>Thank you for reaching out to <span style="color:#334ea2">Joanna Holidays</span>!</b>
+                                          <br><br>
+                                          <span style="font-size:1.07rem;">
+                                            <i>Your message is now on the fast-lane to our expert travel planners.</i>
+                                            <br>
+                                            <span style="color:#334ea2;font-weight:700;">
+                                              Get ready for a journey full of amazing destinations, handpicked deals, and memories you'll cherish forever!
+                                            </span>
+                                            <br><br>
+                                            <span style="color:#048b6c;font-weight:700">Bonus:</span>
+                                            <br>Our specialists love turning <span style='color:#18991f'>dreams</span> into <span style='color:#b86f0b'>adventures</span>.<br>
+                                            <span style="font-size:1.1rem;color:#ffa600;">✈️ Watch for a reply soon!</span>
+                                            <br>
+                                            <small style="color:#777;">
+                                              You’re closer to your perfect holiday than ever before.<br>
+                                              <b>Why travel ordinary?</b> Do it the <span style="color:#334ea2">Joanna</span> way!
+                                            </small>
+                                          </span>
+                                        </div>
+                                      `,
+                                      icon: 'success',
+                                      showConfirmButton: true,
+                                      confirmButtonColor: '#18991f',
+                                      confirmButtonText: 'Let\'s Begin My Journey! 🚀',
+                                      background: '#fffef4',
+                                      customClass: {
+                                        title: 'swal-title-joanna',
+                                        confirmButton: 'swal-button-joanna'
+                                      }
+                                  });
+                                  statusDiv.innerHTML = '';
                               } else {
                                   statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
                               }
@@ -689,6 +730,22 @@
                       });
                   });
                 </script>
+                <style>
+                  .swal-title-joanna {
+                    font-family: inherit;
+                    color: #18991f !important;
+                    font-weight: 700;
+                    letter-spacing: 0.5px;
+                  }
+                  .swal-button-joanna {
+                    background-color: #18991f !important;
+                    color: #fff !important;
+                    font-weight:600;
+                    font-size:1rem;
+                    padding-left:2.25em;
+                    padding-right:2.25em;
+                  }
+                </style>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -697,21 +754,21 @@
                         <div class="d-flex gap-5 flex-column">
                             <div class="happy-counts wow fadeInUp" data-wow-delay="200ms"
                                 data-wow-duration="1000ms">
-                                <h3 class="counter">976<span>+</span></h3>
-                                <h5 class="mb-0">Happy Traveller</h5>
+                                <h3 class="counter">9760<span>+</span></h3>
+                                <h5 class="mb-0">Happy Travellers</h5>
                             </div>
 
                             <div class="happy-counts wow fadeInUp" data-wow-delay="400ms"
                                 data-wow-duration="1000ms">
                                 <h3 class="counter">986<span>+</span></h3>
-                                <h5 class="mb-0">Positive Review</h5>
+                                <h5 class="mb-0">Positive Reviews</h5>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-12 col-sm-6">
                         <div class="happy-counts wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1000ms">
-                            <h3 class="counter">150<span>+</span></h3>
+                            <h3 class="counter">550<span>+</span></h3>
                             <h5 class="mb-0">Locations</h5>
                         </div>
                     </div>
@@ -814,9 +871,9 @@
                    <a href="#" class="footer-logo">
                        <img src="/img/joanna/joannalogo.png" alt="joanna">
                    </a>
-                   <p class="mb-0 text-white">Targeting consultation Death yet way ndulgence off under folly
-                       death wrote
-                       cause her yet way yet wayspite.</p>
+                   <p class="mb-0 text-white">
+                       Explore the world with Joanna Holidays — your gateway to unforgettable adventures, new cultures, and memories that last a lifetime. Travel smart. Travel happy. Travel with us!
+                   </p>
 
                    <!-- Social Nav -->
                    <div class="social-nav">
@@ -837,7 +894,7 @@
                    <!-- Footer Nav -->
                    <ul class="footer-nav">
                        <li><a href="/">Home</a></li>
-                       <li><a href="/">Packages</a></li>
+                       <li><a href="/packages">Packages</a></li>
                        <li><a href="/about">About Us</a></li>
                        <li><a href="/gallery">Gallery</a></li>
                        <li><a href="/contact">Contact Us</a></li>
@@ -852,12 +909,22 @@
 
                    <!-- Footer Nav -->
                    <ul class="footer-nav">
-                       <li><a href="/packages">India</a></li>
-                       <li><a href="/packages">China</a></li>
-                       <li><a href="/packages">Malaysia</a></li>
-                       <li><a href="/packages">Kenya</a></li>
-                       <li><a href="/packages">Europe</a></li>
-                   </ul>
+                    <% if (categories && categories.length > 0) { %>
+                        <% categories.forEach(function(category) { 
+                            var categoryNameParam = encodeURIComponent(category.name); 
+                        %>
+                            <li>
+                                <a href="/packages?category=<%= categoryNameParam %>">
+                                    <%= category.name %>
+                                </a>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li>
+                            <a href="/packages">All packages</a>
+                        </li>
+                    <% } %>
+                </ul>
                </div>
            </div>
 

@@ -356,22 +356,58 @@ router.get('/packages', async (req, res) => {
         const skip = (page - 1) * limit;
         const matchQuery = { isActive: true };
 
-        // Handle category filtering
+        // --- Category filtering by name ---
+        let categoryIds = null;
+        let subCategoryFilters = null;
+        let selectedCategoryNames = [];
+        let selectedSubCategoryNames = [];
+
+        // Handle category filtering by name
         if (category) {
-            const categoryIds = Array.isArray(category)
+            // Handles single or multiple category names (comma separated or array)
+            const categoryNames = Array.isArray(category)
                 ? category
-                : category.split(',').map(id => new mongoose.Types.ObjectId(id));
-            
+                : category.split(',').map(name => name.trim());
+
+            // Find categories by name
+            const categoryDocs = await Category.find({ name: { $in: categoryNames } }).select('_id name subCategories');
+            categoryIds = categoryDocs.map(cat => cat._id);
             matchQuery.category = { $in: categoryIds };
+            selectedCategoryNames = categoryDocs.map(cat => cat.name);
+            subCategoryFilters = categoryDocs.map(cat => cat.subCategories || []).flat();
         }
 
-        // Handle subcategory filtering
+        // Handle subcategory filtering by name
         if (subCategory) {
-            const subCategoryIds = Array.isArray(subCategory)
+            // Handles single or multiple subcategory names (comma separated or array)
+            const subCategoryNames = Array.isArray(subCategory)
                 ? subCategory
-                : subCategory.split(',').map(id => new mongoose.Types.ObjectId(id));
-            
-            matchQuery.subCategory = { $in: subCategoryIds };
+                : subCategory.split(',').map(name => name.trim());
+
+            // Find matching subcategory _ids under those categories (or all categories if none specified)
+            let matchedSubcategories = [];
+            if (subCategoryFilters) {
+                // Filter only within subCategoryFilters (from the filtered categories)
+                for (const subcatName of subCategoryNames) {
+                    const found = subCategoryFilters.find(sc => sc.name === subcatName);
+                    if (found) matchedSubcategories.push(found._id);
+                }
+            } else {
+                // Search all categories for any subcategory with that name
+                const categoryDocs = await Category.find({ "subCategories.name": { $in: subCategoryNames } });
+                for (const cat of categoryDocs) {
+                    for (const sc of cat.subCategories) {
+                        if (subCategoryNames.includes(sc.name)) matchedSubcategories.push(sc._id);
+                    }
+                }
+            }
+            if (matchedSubcategories.length > 0) {
+                matchQuery.subCategory = { $in: matchedSubcategories };
+            } else {
+                // If no matched subcategories, ensure search yields nothing
+                matchQuery.subCategory = { $in: [] };
+            }
+            selectedSubCategoryNames = subCategoryNames;
         }
 
         if (duration) matchQuery.duration = duration;
@@ -415,7 +451,7 @@ router.get('/packages', async (req, res) => {
             }
         ];
 
-        // Add search if applicable
+        // Add search if applicable (search by name, not _id!)
         if (searchRegex) {
             aggregationPipeline.push({
                 $match: {
@@ -424,7 +460,7 @@ router.get('/packages', async (req, res) => {
                         { destination: { $regex: searchRegex } },
                         { packageDescription: { $regex: searchRegex } },
                         { 'category.name': { $regex: searchRegex } },
-                        { 'subCategory.name': { $regex: searchRegex } },
+                        { 'subCategory.name': { $regex: searchRegex } }
                     ]
                 }
             });
@@ -439,17 +475,17 @@ router.get('/packages', async (req, res) => {
 
         const totalPackages = totalResult.length > 0 ? totalResult[0].total : 0;
 
-        // Prepare response
+        // Prepare response (pass currentCategory and currentSubCategory as names)
         const responseData = {
             title: 'Tour Packages',
             packages: packageResults,
             categories: categories.map(cat => ({
                 ...cat,
                 subCategories: cat.subCategories.filter(sub => sub.isActive),
-                packageCount: packageResults.filter(p => p.category._id.equals(cat._id)).length
+                packageCount: packageResults.filter(p => (p.category.name === cat.name)).length
             })),
-            currentCategory: category,
-            currentSubCategory: subCategory,
+            currentCategory: selectedCategoryNames.length === 1 ? selectedCategoryNames[0] : selectedCategoryNames,
+            currentSubCategory: selectedSubCategoryNames.length === 1 ? selectedSubCategoryNames[0] : selectedSubCategoryNames,
             searchTerm: search,
             currentPage: parseInt(page),
             totalPages: Math.ceil(totalPackages / limit),
@@ -465,16 +501,55 @@ router.get('/packages', async (req, res) => {
   
 
 // Package details page
-router.get('/package/:id', async (req, res) => {
+router.get('/package/:title', async (req, res) => {
     try {
-        const tourPackage = await Package.findById(req.params.id)
+        const rawTitle = req.params.title;
+        let tourPackage = await Package.findOne({ title: decodeURIComponent(rawTitle) })
             .populate('category', 'name')
             .populate('subCategory', 'name');
+
+        if (!tourPackage) {
+            const slugTitle = decodeURIComponent(rawTitle).replace(/-/g, ' ');
+            tourPackage = await Package.findOne({ title: new RegExp('^' + slugTitle + '$', 'i') })
+                .populate('category', 'name')
+                .populate('subCategory', 'name');
+        }
 
         if (!tourPackage) {
             return res.status(404).render('comming-soon', {
                 message: 'Package not found'
             });
+        }
+
+        let otherPackagesQuery = {
+            _id: { $ne: tourPackage._id },
+            isActive: true
+        };
+        if (tourPackage.category && tourPackage.category._id) {
+            otherPackagesQuery.category = tourPackage.category._id;
+        }
+        if (tourPackage.subCategory && tourPackage.subCategory._id) {
+            otherPackagesQuery.subCategory = tourPackage.subCategory._id;
+        }
+
+        let otherPackages = await Package.find(otherPackagesQuery)
+            .limit(3)
+            .populate('category', 'name')
+            .populate('subCategory', 'name')
+            .lean();
+
+        if (otherPackages.length < 3) {
+            const fillCount = 3 - otherPackages.length;
+            const additionalPackages = await Package.find({
+                _id: { $nin: [tourPackage._id, ...otherPackages.map(pkg => pkg._id)] },
+                isActive: true,
+            })
+            .sort({ createdAt: -1 })
+            .limit(fillCount)
+            .populate('category', 'name')
+            .populate('subCategory', 'name')
+            .lean();
+            otherPackages = otherPackages.concat(additionalPackages);
         }
 
         const categoriesRaw = await Category.find({ isActive: true })
@@ -512,7 +587,8 @@ router.get('/package/:id', async (req, res) => {
         res.render('packageDetails', {
             title: tourPackage.title,
             tourPackage,
-            categories // ✅ now with directPackages
+            categories, 
+            otherPackages
         });
     } catch (error) {
         console.error(error);
@@ -520,29 +596,51 @@ router.get('/package/:id', async (req, res) => {
     }
 });
 
-// Package details by subcategory
 router.get('/package-details', async (req, res) => {
     try {
-        const { subCategory } = req.query;
+        const { category: categoryName, subCategory: subCategoryName } = req.query;
+
+        if (!categoryName || !subCategoryName) {
+            return res.status(400).render('comming-soon', {
+                message: 'Category name and subcategory name are required'
+            });
+        }
+
         const category = await Category.findOne(
-            { 'subCategories._id': subCategory },
-            {
-                name: 1,
-                'subCategories.$': 1
-            }
+            { 
+                name: categoryName,
+                isActive: true,
+                'subCategories': { 
+                  $elemMatch: { 
+                    name: subCategoryName, 
+                    isActive: true 
+                  } 
+                }
+            },
+            { name: 1, imageUrl: 1, subCategories: 1 }
+        ).lean();
+
+        if (!category) {
+            return res.status(404).render('comming-soon', {
+                message: 'Category or subcategory not found'
+            });
+        }
+
+        // Find the subcategory object by name
+        const subCategoryData = category.subCategories.find(
+            (sub) => sub.name.toLowerCase() === subCategoryName.toLowerCase() && sub.isActive
         );
 
-        if (!category || !category.subCategories || category.subCategories.length === 0) {
+        if (!subCategoryData) {
             return res.status(404).render('comming-soon', {
                 message: 'Subcategory not found'
             });
         }
 
-        const subCategoryData = category.subCategories[0];
-
-        // Get the FIRST package in this subcategory
+        // Find first matching package with both category and subcategory name (isActive only)
         const tourPackage = await Package.findOne({
-            subCategory: subCategory,
+            category: category._id,
+            subCategory: subCategoryData._id,
             isActive: true
         })
             .populate('category', 'name')
@@ -552,6 +650,34 @@ router.get('/package-details', async (req, res) => {
             return res.status(404).render('comming-soon', {
                 message: 'No packages found in this subcategory'
             });
+        }
+
+        // Find other packages from this subcategory, but exclude the current one (max 3)
+        let otherPackages = await Package.find({
+            category: category._id,
+            subCategory: subCategoryData._id,
+            isActive: true,
+            _id: { $ne: tourPackage._id }
+        })
+            .limit(3)
+            .populate('category', 'name')
+            .populate('subCategory', 'name')
+            .lean();
+
+        // If not enough, fill up to 3 from other active packages (exclude current & already included)
+        if (otherPackages.length < 3) {
+            const fillCount = 3 - otherPackages.length;
+            const additionalPackages = await Package.find({
+                _id: { $nin: [tourPackage._id, ...otherPackages.map(pkg => pkg._id)] },
+                isActive: true,
+            })
+            .sort({ createdAt: -1 })
+            .limit(fillCount)
+            .populate('category', 'name')
+            .populate('subCategory', 'name')
+            .lean();
+
+            otherPackages = otherPackages.concat(additionalPackages);
         }
 
         // Build categories for navigation (same as in other routes)
@@ -595,7 +721,8 @@ router.get('/package-details', async (req, res) => {
                 _id: category._id,
                 name: category.name
             },
-            categories
+            categories,
+            otherPackages
         });
 
     } catch (error) {
@@ -605,13 +732,14 @@ router.get('/package-details', async (req, res) => {
 });
 router.get('/blogdetails', async (req, res) => {
     try {
-        const { id } = req.query;
+        const { title } = req.query;
 
-        if (!id) {
-            return res.status(400).send('Blog ID is required');
+        if (!title) {
+            return res.status(400).send('Blog title is required');
         }
 
-        const blog = await Blog.findById(id).lean();
+        // Search blog by exact title match
+        const blog = await Blog.findOne({ title }).lean();
 
         if (!blog) {
             return res.status(404).send('Blog not found');
@@ -621,7 +749,7 @@ router.get('/blogdetails', async (req, res) => {
             .select('name imageUrl subCategories').sort({ createdAt: -1 })
             .lean();
 
-        const relatedBlogs = await Blog.find({ _id: { $ne: id } })
+        const relatedBlogs = await Blog.find({ title: { $ne: title } })
             .sort({ createdAt: -1 })
             .limit(3)
             .lean();

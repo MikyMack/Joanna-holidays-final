@@ -13,9 +13,11 @@
     })(window,document,'script','dataLayer','GTM-KV49GR89');</script>
     <!-- End Google Tag Manager -->
     <!-- Title & Favicon -->
-    <title>Packages | Joanna holidays</title>
+    <title>Holiday Packages | Joanna Holidays - Best Travel Deals & Tours 2024</title>
+    <meta name="description" content="Explore affordable holiday packages, tours, and travel deals with Joanna Holidays. Find your next adventure with expertly crafted itineraries, top destinations, and exclusive offers in 2024. Book your ideal getaway today!">
+    <meta name="keywords" content="holiday packages, travel deals, Joanna Holidays, tours, vacation packages, family trips, adventure holidays, travel 2024, book holidays, travel agency, exclusive offers, top destinations">
     <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
-
+    <link rel="canonical" href="https://www.joannaholidays.com/" />
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/css/animate.css">
     <link rel="stylesheet" href="/css/tabler-icons.min.css">
@@ -87,49 +89,47 @@
                         </li>
                         <!-- Packages (Dynamic) -->
                         <li class="touria-dd">
-                            <a href="/packages" style="color: #334ea2;">Packages <i class="ti ti-chevron-down"></i></a>
+                            <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
                             <ul class="touria-dd-menu">
                                 <% categories.forEach(category=> {
-                                    const hasSubCategories = category.subCategories && category.subCategories.length >
-                                    0;
-                                    const hasDirectPackages = category.directPackages && category.directPackages.length
-                                    > 0;
-                                    %>
+                                    const hasSubCategories = category.subCategories && category.subCategories.length > 0;
+                                    const hasDirectPackages = category.directPackages && category.directPackages.length > 0;
+                                %>
                                     <% if (hasSubCategories || hasDirectPackages) { %>
                                         <li class="touria-dd">
-                                            <a href="/packages?category=<%= category._id %>">
+                                            <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
                                                 <%= category.name %>
-                                                    <% if (hasSubCategories || hasDirectPackages) { %>
-                                                        <i class="ti ti-chevron-right"></i>
-                                                        <% } %>
+                                                <% if (hasSubCategories || hasDirectPackages) { %>
+                                                    <i class="ti ti-chevron-right"></i>
+                                                <% } %>
                                             </a>
                                             <ul class="touria-dd-menu">
                                                 <% category.subCategories &&
                                                     category.subCategories.forEach(subCategory=> { %>
                                                     <li>
-                                                        <a href="/package-details?subCategory=<%= subCategory._id %>">
+                                                        <a href="/package-details?category=<%= encodeURIComponent(category.name) %>&subCategory=<%= encodeURIComponent(subCategory.name) %>">
                                                             <%= subCategory.name %>
                                                         </a>
                                                     </li>
-                                                    <% }) %>
-                                                        <% category.directPackages &&
-                                                            category.directPackages.forEach(pkg=> { %>
-                                                            <li>
-                                                                <a href="/package/<%= pkg._id %>">
-                                                                    <%= pkg.destination %>
-                                                                </a>
-                                                            </li>
-                                                            <% }) %>
+                                                <% }) %>
+                                                <% category.directPackages &&
+                                                    category.directPackages.forEach(pkg=> { %>
+                                                    <li>
+                                                        <a href="/package/<%= encodeURIComponent(pkg.title) %>">
+                                                            <%= pkg.destination %>
+                                                        </a>
+                                                    </li>
+                                                <% }) %>
                                             </ul>
                                         </li>
-                                        <% } else { %>
-                                            <li>
-                                                <a href="/packages?category=<%= category._id %>">
-                                                    <%= category.name %>
-                                                </a>
-                                            </li>
-                                            <% } %>
-                                                <% }) %>
+                                    <% } else { %>
+                                        <li>
+                                            <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
+                                                <%= category.name %>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                <% }) %>
                             </ul>
                         </li>
                         <li class="touria-dd">
@@ -146,7 +146,9 @@
                             <a href="/gallery">Gallery</a>
                         </li>
                         <!-- Blog -->
-            
+                        <li class="touria-dd">
+                            <a href="/blogs">Blogs</a>
+                        </li>
                         <!-- Contact -->
                         <li>
                             <a href="/contact" class="sub-menu-item">Contact Us</a>
@@ -296,12 +298,12 @@
                         All Categories
                       </label>
                       <% categories.forEach(category => { %>
-                        <label class="d-flex align-items-center py-2 px-2 border rounded<%= currentCategory === category._id.toString() ? ' bg-light' : '' %>">
+                        <label class="d-flex align-items-center py-2 px-2 border rounded<%= currentCategory === category.name ? ' bg-light' : '' %>">
                           <input
                             type="radio"
                             name="category"
-                            value="<%= category._id %>"
-                            <%= currentCategory === category._id.toString() ? 'checked' : '' %>
+                            value="<%= category.name %>"
+                            <%= currentCategory === category.name ? 'checked' : '' %>
                             class="form-check-input me-2"
                             onchange="this.form.submit()"
                           />
@@ -341,16 +343,22 @@
                               <h4 class="trip-price mb-0">
                                 <% if (!pkg.packagePrice || pkg.packagePrice == 0) { %>
                                   <span>Custom Pricing</span>
-                                <% } else { %>
-                                  ₹<%= pkg.packagePrice %>
+                                <% } else { 
+                                  // Format function for INR with proper commas
+                                  function formatINR(x) {
+                                    if (typeof x !== 'number') x = Number(x);
+                                    return x.toLocaleString('en-IN');
+                                  }
+                                %>
+                                  ₹<%= formatINR(pkg.packagePrice) %>
                                   <% if (pkg.originalPrice) { %>
-                                    <span class="text-muted ms-1">₹<%= pkg.originalPrice %></span>
+                                    <span class="text-muted ms-1">₹<%= formatINR(pkg.originalPrice) %></span>
                                   <% } %>
                                 <% } %>
                               </h4>
                             </div>
                           </div>
-                          <a href="/package/<%= pkg._id %>" class="btn btn-light w-100 mt-3">Know more</a>
+                          <a href="/package/<%= encodeURIComponent(pkg.title) %>" class="btn btn-light w-100 mt-3">Know more</a>
                         </div>
                       </div>
                     </div>
@@ -463,10 +471,9 @@
                         <a href="#" class="footer-logo">
                             <img src="/img/joanna/joannalogo.png" alt="joanna">
                         </a>
-                        <p class="mb-0 text-white">Targeting consultation Death yet way ndulgence off under folly
-                            death wrote
-                            cause her yet way yet wayspite.</p>
-
+                        <p class="mb-0 text-white">
+                            Explore the world with Joanna Holidays — your gateway to unforgettable adventures, new cultures, and memories that last a lifetime. Travel smart. Travel happy. Travel with us!
+                        </p>
                         <!-- Social Nav -->
                         <div class="social-nav">
                             <a href="https://www.facebook.com/joannaholidays1/" target="_blank"><i
@@ -488,7 +495,7 @@
                         <!-- Footer Nav -->
                         <ul class="footer-nav">
                             <li><a href="/">Home</a></li>
-                            <li><a href="/">Packages</a></li>
+                            <li><a href="/packages">Packages</a></li>
                             <li><a href="/about">About Us</a></li>
                             <li><a href="/gallery">Gallery</a></li>
                             <li><a href="/contact">Contact Us</a></li>
@@ -503,11 +510,21 @@
 
                         <!-- Footer Nav -->
                         <ul class="footer-nav">
-                            <li><a href="/packages">India</a></li>
-                            <li><a href="/packages">China</a></li>
-                            <li><a href="/packages">Malaysia</a></li>
-                            <li><a href="/packages">Kenya</a></li>
-                            <li><a href="/packages">Europe</a></li>
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.forEach(function(category) { 
+                                    var categoryNameParam = encodeURIComponent(category.name); 
+                                %>
+                                    <li>
+                                        <a href="/packages?category=<%= categoryNameParam %>">
+                                            <%= category.name %>
+                                        </a>
+                                    </li>
+                                <% }); %>
+                            <% } else { %>
+                                <li>
+                                    <a href="/packages">All packages</a>
+                                </li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>

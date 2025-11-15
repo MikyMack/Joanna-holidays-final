@@ -12,8 +12,10 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KV49GR89');</script>
     <!-- End Google Tag Manager -->
+    <link rel="canonical" href="https://www.joannaholidays.com/" />
    <!-- Title & Favicon -->
-   <title>Package Details | Joanna Holidays</title>
+   <title><%= tourPackage && tourPackage.title ? tourPackage.title + ' | Joanna Holidays' : 'Package Details | Joanna Holidays' %></title>
+   <meta name="description" content="<%= tourPackage && tourPackage.packageDescription ? tourPackage.packageDescription.split('.').shift().trim() + '.' : 'Discover details about this vacation package from Joanna Holidays.' %>">
    <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
 
    <!-- Stylesheet -->
@@ -87,49 +89,47 @@
                     </li>
                     <!-- Packages (Dynamic) -->
                     <li class="touria-dd">
-                        <a href="/packages" style="color: #334ea2;">Packages <i class="ti ti-chevron-down"></i></a>
+                        <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
                         <ul class="touria-dd-menu">
                             <% categories.forEach(category=> {
-                                const hasSubCategories = category.subCategories && category.subCategories.length >
-                                0;
-                                const hasDirectPackages = category.directPackages && category.directPackages.length
-                                > 0;
-                                %>
+                                const hasSubCategories = category.subCategories && category.subCategories.length > 0;
+                                const hasDirectPackages = category.directPackages && category.directPackages.length > 0;
+                            %>
                                 <% if (hasSubCategories || hasDirectPackages) { %>
                                     <li class="touria-dd">
-                                        <a href="/packages?category=<%= category._id %>">
+                                        <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
                                             <%= category.name %>
-                                                <% if (hasSubCategories || hasDirectPackages) { %>
-                                                    <i class="ti ti-chevron-right"></i>
-                                                    <% } %>
+                                            <% if (hasSubCategories || hasDirectPackages) { %>
+                                                <i class="ti ti-chevron-right"></i>
+                                            <% } %>
                                         </a>
                                         <ul class="touria-dd-menu">
                                             <% category.subCategories &&
                                                 category.subCategories.forEach(subCategory=> { %>
                                                 <li>
-                                                    <a href="/package-details?subCategory=<%= subCategory._id %>">
+                                                    <a href="/package-details?category=<%= encodeURIComponent(category.name) %>&subCategory=<%= encodeURIComponent(subCategory.name) %>">
                                                         <%= subCategory.name %>
                                                     </a>
                                                 </li>
-                                                <% }) %>
-                                                    <% category.directPackages &&
-                                                        category.directPackages.forEach(pkg=> { %>
-                                                        <li>
-                                                            <a href="/package/<%= pkg._id %>">
-                                                                <%= pkg.destination %>
-                                                            </a>
-                                                        </li>
-                                                        <% }) %>
+                                            <% }) %>
+                                            <% category.directPackages &&
+                                                category.directPackages.forEach(pkg=> { %>
+                                                <li>
+                                                    <a href="/package/<%= encodeURIComponent(pkg.title) %>">
+                                                        <%= pkg.destination %>
+                                                    </a>
+                                                </li>
+                                            <% }) %>
                                         </ul>
                                     </li>
-                                    <% } else { %>
-                                        <li>
-                                            <a href="/packages?category=<%= category._id %>">
-                                                <%= category.name %>
-                                            </a>
-                                        </li>
-                                        <% } %>
-                                            <% }) %>
+                                <% } else { %>
+                                    <li>
+                                        <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
+                                            <%= category.name %>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            <% }) %>
                         </ul>
                     </li>
                     <li class="touria-dd">
@@ -145,7 +145,9 @@
                     <li class="touria-dd">
                         <a href="/gallery">Gallery</a>
                     </li>
-              
+                    <li class="touria-dd">
+                        <a href="/blogs">Blogs</a>
+                    </li>
                     <!-- Contact -->
                     <li>
                         <a href="/contact" class="sub-menu-item">Contact Us</a>
@@ -296,10 +298,10 @@
                         </li>
 
                         <!-- Row 2 -->
-                        <li class="col-md-6 d-flex align-items-center bg-white p-3 rounded shadow-sm flex-grow-1 min-w-200">
+                        <li class="col-md-6 d-flex align-items-center bg-white p-3 rounded shadow-sm flex-grow-1 min-w-200" >
                             <div class="me-3" style="width:72px;min-width:72px;">
                                 <dotlottie-wc
-                                  src="https://lottie.host/55f4968e-35b5-4620-8d71-a86be3ae667a/Y3TcfLbqZG.lottie"
+                                  src="https://lottie.host/6e37da36-9198-41ea-84ee-61edc243277c/aMeBy752o5.lottie"
                                   style="width:72px;height:72px"
                                   speed="1"
                                   autoplay
@@ -307,10 +309,17 @@
                                 ></dotlottie-wc>
                             </div>
                             <div>
-                                <p class="small text-muted mb-1">Group Size</p>
+                                <p class="small text-muted mb-1">Price</p>
+                                <% 
+                                    function formatINR(price) {
+                                        if (typeof price !== 'number') price = Number(price);
+                                        return price.toLocaleString('en-IN');
+                                    }
+                                %>
                                 <p class="fw-medium text-dark mb-0">
-                                    <%= tourPackage.groupSize %> People
+                                    <%= tourPackage.packagePrice > 0 ? `₹ ${formatINR(tourPackage.packagePrice)}` : 'Custom Pricing' %>
                                 </p>
+                               
                             </div>
                         </li>
 
@@ -333,26 +342,7 @@
                         </li>
 
                         <!-- Last item centered -->
-                        <li class="col-12 d-flex align-items-center bg-white p-3 rounded shadow-sm mx-auto mt-4 w-100" style="max-width:300px;">
-                            <div class="me-3" style="width:72px;min-width:72px;">
-                                <dotlottie-wc
-                                  src="https://lottie.host/6e37da36-9198-41ea-84ee-61edc243277c/aMeBy752o5.lottie"
-                                  style="width:72px;height:72px"
-                                  speed="1"
-                                  autoplay
-                                  loop
-                                ></dotlottie-wc>
-                            </div>
-                            <div>
-                                <p class="small text-muted mb-1">Price</p>
-                                <p class="fw-medium text-dark mb-0">
-                                    <%= tourPackage.packagePrice > 0 ? `₹ ${tourPackage.packagePrice}` : 'Custom Pricing' %>
-                                </p>
-                                <p class="small text-secondary mb-0">
-                                    <%= tourPackage.duration %>
-                                </p>
-                            </div>
-                        </li>
+                       
                     </ul>
                 </div>
 
@@ -371,11 +361,16 @@
                         <% tourPackage.travelPlan.forEach((plan, index) => { %>
                             <div class="accordion-item mb-2">
                                 <h2 class="accordion-header" id="heading-<%= index %>">
-                                    <button class="accordion-button <%= index !== 0 ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="collapse-<%= index %>">
-                                        Day <%= plan.day %>
+                                    <button class="accordion-button <%= index !== 0 ? 'collapsed' : '' %>" type="button" 
+                                        data-bs-toggle="collapse" data-bs-target="#collapse-<%= index %>" 
+                                        aria-expanded="<%= index === 0 ? 'true' : 'false' %>" 
+                                        aria-controls="collapse-<%= index %>">
+                                        <!-- Auto-calculate day number and use plan.day as title -->
+                                        Day <%= index + 1 %>: <%= plan.day %>
                                     </button>
                                 </h2>
-                                <div id="collapse-<%= index %>" class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>" aria-labelledby="heading-<%= index %>" data-bs-parent="#accordionTravelPlan">
+                                <div id="collapse-<%= index %>" class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>" 
+                                    aria-labelledby="heading-<%= index %>" data-bs-parent="#accordionTravelPlan">
                                     <div class="accordion-body">
                                         <p class="text-secondary mb-0">
                                             <%= plan.description %>
@@ -642,12 +637,14 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- Booking Sidebar -->
             <div class="col-lg-4 col-md-5">
                 <% const isFixDeparture = tourPackage.category?.name?.toLowerCase() === 'fix departure'; %>
                 <div class="p-4 rounded shadow-sm position-sticky" style="top: 80px;">
                     <h4 class="fw-bold mb-4 text-center text-primary">Ready to Book Your Adventure?</h4>
+                    <!-- SweetAlert CDN -->
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <form id="bookingForm" class="p-4 bg-light rounded shadow-sm" novalidate>
                         <div class="mb-3">
                           <label class="form-label fw-semibold" for="bookingName">Full Name:</label>
@@ -704,10 +701,6 @@
                           </span>
                         </button>
                       </form>
-                      
-                      <div id="successMessage" class="d-none mt-3 p-3 bg-success text-white rounded">
-                        Thank you for your booking! We'll contact you shortly.
-                      </div>
                       
                       <div id="errorMessage" class="d-none mt-3 p-3 bg-danger text-white rounded">
                         There was an error submitting your booking. Please try again.
@@ -798,10 +791,8 @@
                           const submitButton = form.querySelector('button[type="submit"]');
                           const submitText = document.getElementById('submitText');
                           const spinner = document.getElementById('spinner');
-                          const successMessage = document.getElementById('successMessage');
                           const errorMessage = document.getElementById('errorMessage');
                       
-                          successMessage.classList.add('d-none');
                           errorMessage.classList.add('d-none');
                       
                           submitText.textContent = 'Processing...';
@@ -840,10 +831,38 @@
                       
                             const sheetResult = await sheetResponse.json();
                             const emailResult = await emailResponse.json();
-                      
+
+                            // Catchy content for SweetAlert2
+                            var catchyTitle = "🎉 Booking Success!";
+                            var catchyHtml = `
+                              <div style='font-size:1.2em'>
+                                  Thank you, <b>${name.charAt(0).toUpperCase()+name.slice(1)}</b>, for booking your adventure with us!
+                                  <br><br>
+                                  <span style="display:inline-block;margin:10px 0;">🌍 <b><%= tourPackage.title %></b></span>
+                                  <br>
+                                  <em>Our travel experts will contact you soon with all the details.</em>
+                                  <br><br>
+                                  <span style="color:#ff0078;font-weight:bold;">Prepare for an unforgettable journey! 🚀</span>
+                                  <br>
+                                  <a href="/packages" style="margin-top:16px;display:inline-block;font-weight:600;text-decoration:underline;color:#dc3545;">Browse More Packages</a>
+                              </div>
+                            `;
+
                             if (sheetResult.status === 'success' && emailResult.success) {
-                              successMessage.classList.remove('d-none');
                               form.reset();
+                              setTimeout(function() {
+                                Swal.fire({
+                                  title: catchyTitle,
+                                  html: catchyHtml,
+                                  icon: 'success',
+                                  showConfirmButton: true,
+                                  confirmButtonText: 'Awesome!',
+                                  background: '#fffbe7',
+                                  customClass: {
+                                    popup: 'swal2-booking-popup'
+                                  }
+                                });
+                              }, 300);
                             } else {
                               throw new Error('Submission failed.');
                             }
@@ -884,27 +903,26 @@
                           <% } %>
                         });
                       </script>
-                      
-
-                    <div id="successMessage" class="d-none mt-3 p-3 bg-success text-white rounded">
-                        Thank you for your booking! We'll contact you shortly.
-                    </div>
-
-                    <div id="errorMessage" class="d-none mt-3 p-3 bg-danger text-white rounded">
-                        There was an error submitting your booking. Please try again.
-                    </div>
 
                     <div class="mt-4">
                         <h5 class="fs-5 fw-medium">Tour Location</h5>
                         <div class="mt-2">
                             <% if (tourPackage.locationHref) { %>
-                                <a href="<%= tourPackage.locationHref %>" target="_blank"
-                                    class="d-flex align-items-center justify-content-center w-100 rounded bg-light" style="height:300px;">
-                                    <div class="text-center">
-                                        <i data-feather="map" style="width:48px;height:48px;" class="text-danger mb-2"></i>
-                                        <p class="mt-2 text-secondary">View on Google Maps</p>
-                                    </div>
-                                </a>
+                                <div style="width:100%;height:300px;" class="rounded overflow-hidden bg-light">
+                                    <iframe
+                                        src="<%= tourPackage.locationHref.replace('output=search','output=embed') %>"
+                                        width="100%"
+                                        height="100%"
+                                        style="border:0; border-radius:8px;"
+                                        allowfullscreen=""
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <a href="<%= tourPackage.locationHref %>" target="_blank" class="btn btn-outline-danger btn-sm">
+                                        <i class="ti ti-external-link"></i> View on Google Maps
+                                    </a>
+                                </div>
                             <% } else { %>
                                 <div class="d-flex align-items-center justify-content-center w-100 rounded bg-light" style="height:300px;">
                                     <p class="text-secondary">Location not available</p>
@@ -917,6 +935,44 @@
         </div>
     </div>
 </section>
+<section class="other-packages-section py-5">
+  <div class="container">
+    <h1 class="fw-bold mb-4 text-center text-primary">Other Packages</h1>
+    <div class="row justify-content-center">
+      <% if (otherPackages && otherPackages.length > 0) { %>
+        <% otherPackages.forEach(function(pkg) { %>
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+              <div class="package-img-wrapper" style="width:100%;height:225px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f9f9f9;">
+                <% if (pkg.images && pkg.images.length > 0) { %>
+                  <img src="<%= pkg.images[0] %>" class="card-img-top" alt="<%= pkg.title %>" style="max-width:100%;max-height:100%;object-fit:cover;width:100%;height:225px;">
+                <% } else { %>
+                  <img src="/img/joanna/noimage.jpg" class="card-img-top" alt="No Image" style="max-width:100%;max-height:100%;object-fit:cover;width:100%;height:225px;">
+                <% } %>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-primary"><%= pkg.title %></h5>
+                <% if (pkg.destination) { %>
+                  <p class="text-secondary mb-2"><i class="ti ti-map-pin"></i> <%= pkg.destination %></p>
+                <% } %>
+                <% if (pkg.shortDescription) { %>
+                  <p class="mb-3 text-truncate" title="<%= pkg.shortDescription %>"><%= pkg.shortDescription %></p>
+                <% } %>
+                <a href="/package/<%= encodeURIComponent(pkg.title) %>" class="btn btn-outline-success mt-auto w-100">View Details</a>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="col-12">
+          <p class="text-center text-muted">No other packages available at this time.</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+
 <div class="floating-contact-icons">
     <a href="https://wa.me/918086602888" target="_blank" aria-label="WhatsApp">
         <i class="ti ti-brand-whatsapp"></i>
@@ -1011,10 +1067,9 @@
                         <a href="#" class="footer-logo">
                             <img src="/img/joanna/joannalogo.png" alt="joanna">
                         </a>
-                        <p class="mb-0 text-white">Targeting consultation Death yet way ndulgence off under folly
-                            death wrote
-                            cause her yet way yet wayspite.</p>
-
+                        <p class="mb-0 text-white">
+                            Explore the world with Joanna Holidays — your gateway to unforgettable adventures, new cultures, and memories that last a lifetime. Travel smart. Travel happy. Travel with us!
+                        </p>
                         <!-- Social Nav -->
                         <div class="social-nav">
                             <a href="https://www.facebook.com/joannaholidays1/" target="_blank"><i
@@ -1036,7 +1091,7 @@
                         <!-- Footer Nav -->
                         <ul class="footer-nav">
                             <li><a href="/">Home</a></li>
-                            <li><a href="/">Packages</a></li>
+                            <li><a href="/packages">Packages</a></li>
                             <li><a href="/about">About Us</a></li>
                             <li><a href="/gallery">Gallery</a></li>
                             <li><a href="/contact">Contact Us</a></li>
@@ -1051,11 +1106,21 @@
 
                         <!-- Footer Nav -->
                         <ul class="footer-nav">
-                            <li><a href="/packages">India</a></li>
-                            <li><a href="/packages">China</a></li>
-                            <li><a href="/packages">Malaysia</a></li>
-                            <li><a href="/packages">Kenya</a></li>
-                            <li><a href="/packages">Europe</a></li>
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.forEach(function(category) { 
+                                    var categoryNameParam = encodeURIComponent(category.name); 
+                                %>
+                                    <li>
+                                        <a href="/packages?category=<%= categoryNameParam %>">
+                                            <%= category.name %>
+                                        </a>
+                                    </li>
+                                <% }); %>
+                            <% } else { %>
+                                <li>
+                                    <a href="/packages">All packages</a>
+                                </li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>

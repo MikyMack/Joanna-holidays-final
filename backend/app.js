@@ -33,12 +33,26 @@ app.use(session({
   })
 }));
 
+
+
 // Use Routes
 app.use('/', publicRoutes);
 app.use('/', adminRoutes); 
 app.use('/api/auth', authRoutes); 
 app.use('/', apiRoutes); 
 app.use('/', videoRoutes); 
+
+
+app.use((req, res, next) => {
+  const host = req.headers.host;
+  
+  // Check if the request is for non-www version
+  if (host === 'joannaholidays.com') {
+    return res.redirect(301, `https://www.joannaholidays.com${req.url}`);
+  }
+  
+  next();
+});
 
 app.use(async (req, res) => {
     res.status(404).render('errorPage', { title: 'Page Not Found' });

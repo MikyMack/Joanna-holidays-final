@@ -252,7 +252,7 @@
                     <i data-feather="map-pin" class="me-2"></i>
                     <%= tourPackage.destination %>
                     <% if (tourPackage.category) { %>
-                        | <i data-feather="tag" class="me-2 ms-3"></i>
+                        | <i data-feather="tag" class="me-2"></i>
                         <%= tourPackage.category.name %>
                     <% } %>
                 </p>
@@ -832,45 +832,32 @@
                             const sheetResult = await sheetResponse.json();
                             const emailResult = await emailResponse.json();
 
-                            // Catchy content for SweetAlert2
-                            var catchyTitle = "🎉 Booking Success!";
-                            var catchyHtml = `
-                              <div style='font-size:1.2em'>
-                                  Thank you, <b>${name.charAt(0).toUpperCase()+name.slice(1)}</b>, for booking your adventure with us!
-                                  <br><br>
-                                  <span style="display:inline-block;margin:10px 0;">🌍 <b><%= tourPackage.title %></b></span>
-                                  <br>
-                                  <em>Our travel experts will contact you soon with all the details.</em>
-                                  <br><br>
-                                  <span style="color:#ff0078;font-weight:bold;">Prepare for an unforgettable journey! 🚀</span>
-                                  <br>
-                                  <a href="/packages" style="margin-top:16px;display:inline-block;font-weight:600;text-decoration:underline;color:#dc3545;">Browse More Packages</a>
-                              </div>
-                            `;
-
                             if (sheetResult.status === 'success' && emailResult.success) {
                               form.reset();
-                              setTimeout(function() {
-                                Swal.fire({
-                                  title: catchyTitle,
-                                  html: catchyHtml,
-                                  icon: 'success',
-                                  showConfirmButton: true,
-                                  confirmButtonText: 'Awesome!',
-                                  background: '#fffbe7',
-                                  customClass: {
-                                    popup: 'swal2-booking-popup'
-                                  }
-                                });
-                              }, 300);
+                              // On success, redirect to /thankyou
+                              window.location.href = "/thankyou";
                             } else {
-                              throw new Error('Submission failed.');
+                              // On error, show SweetAlert
+                              Swal.fire({
+                                title: "Something went wrong",
+                                html: (emailResult.error ? emailResult.error : 'There was an error submitting your booking. Please try again.'),
+                                icon: "error",
+                                confirmButtonText: "OK",
+                                background: '#fffbe7',
+                                customClass: { popup: 'swal2-booking-popup' }
+                              });
                             }
                       
                           } catch (error) {
                             console.error('Submission error:', error);
-                            errorMessage.textContent = 'Error: ' + (error.message || 'Something went wrong');
-                            errorMessage.classList.remove('d-none');
+                            Swal.fire({
+                              title: "Submission error",
+                              html: (error.message || "Something went wrong, please try again."),
+                              icon: "error",
+                              confirmButtonText: "OK",
+                              background: '#fffbe7',
+                              customClass: { popup: 'swal2-booking-popup' }
+                            });
                           } finally {
                             submitText.textContent = 'Book Now';
                             spinner.classList.add('d-none');
@@ -944,11 +931,13 @@
           <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm border-0">
               <div class="package-img-wrapper" style="width:100%;height:225px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f9f9f9;">
-                <% if (pkg.images && pkg.images.length > 0) { %>
-                  <img src="<%= pkg.images[0] %>" class="card-img-top" alt="<%= pkg.title %>" style="max-width:100%;max-height:100%;object-fit:cover;width:100%;height:225px;">
-                <% } else { %>
-                  <img src="/img/joanna/noimage.jpg" class="card-img-top" alt="No Image" style="max-width:100%;max-height:100%;object-fit:cover;width:100%;height:225px;">
-                <% } %>
+                <a href="/package/<%= encodeURIComponent(pkg.title) %>">
+                  <% if (pkg.images && pkg.images.length > 0) { %>
+                    <img src="<%= pkg.images[0] %>" class="card-img-top" alt="<%= pkg.title %>" style="max-width:100%;max-height:100%;object-fit:cover;width:100%;height:225px;">
+                  <% } else { %>
+                    <img src="/img/joanna/noimage.jpg" class="card-img-top" alt="No Image" style="max-width:100%;max-height:100%;object-fit:cover;width:100%;height:225px;">
+                  <% } %>
+                </a>
               </div>
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title text-primary"><%= pkg.title %></h5>

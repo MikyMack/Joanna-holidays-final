@@ -4,7 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Joanna Holidays">
+    <meta name="description" content="joanna Holidays">
+
+    <!-- Title & Favicon -->
+    <title>Thank You | Joanna Holidays - Best Travel Agency in Kerala & London</title>
+    <meta name="description" content="Exciting updates are on the way! Joanna Holidays is preparing a new experience for travelers. Stay tuned for the latest travel packages, offers, and insights from Kerala and London’s leading travel agency.">
+    <meta name="keywords" content="Thank You, Joanna Holidays, travel agency, Kerala tours, London holidays, vacation packages, travel offers, holiday booking, group tours, custom holidays">
+    <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -12,20 +18,14 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KV49GR89');</script>
     <!-- End Google Tag Manager -->
-    <!-- Title & Favicon -->
-    <title>Holiday Packages | Joanna Holidays - Best Travel Deals & Tours 2024</title>
-    <meta name="description" content="Explore affordable holiday packages, tours, and travel deals with Joanna Holidays. Find your next adventure with expertly crafted itineraries, top destinations, and exclusive offers in 2024. Book your ideal getaway today!">
-    <meta name="keywords" content="holiday packages, travel deals, Joanna Holidays, tours, vacation packages, family trips, adventure holidays, travel 2024, book holidays, travel agency, exclusive offers, top destinations">
-    <link rel="shortcut icon" href="/img/joanna/joannalogo.png" type="image/x-icon">
-    <link rel="canonical" href="https://www.joannaholidays.com/" />
     <!-- Stylesheet -->
+    <link rel="canonical" href="https://www.joannaholidays.com/" />
     <link rel="stylesheet" href="/css/animate.css">
     <link rel="stylesheet" href="/css/tabler-icons.min.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/swiper-bundle.min.css">
     <link rel="stylesheet" href="/css/nice-select2.css">
     <link rel="stylesheet" href="/css/flatpickr.min.css">
-    <link rel="stylesheet" href="/css/nouislider.min.css">
     <link rel="stylesheet" href="/css/venobox.min.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -89,48 +89,8 @@
                         </li>
                         <!-- Packages (Dynamic) -->
                         <li class="touria-dd">
-                            <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
-                            <ul class="touria-dd-menu">
-                                <% categories.forEach(category=> {
-                                    const hasSubCategories = category.subCategories && category.subCategories.length > 0;
-                                    const hasDirectPackages = category.directPackages && category.directPackages.length > 0;
-                                %>
-                                    <% if (hasSubCategories || hasDirectPackages) { %>
-                                        <li class="touria-dd">
-                                            <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
-                                                <%= category.name %>
-                                                <% if (hasSubCategories || hasDirectPackages) { %>
-                                                    <i class="ti ti-chevron-right"></i>
-                                                <% } %>
-                                            </a>
-                                            <ul class="touria-dd-menu">
-                                                <% category.subCategories &&
-                                                    category.subCategories.forEach(subCategory=> { %>
-                                                    <li>
-                                                        <a href="/package-details?category=<%= encodeURIComponent(category.name) %>&subCategory=<%= encodeURIComponent(subCategory.name) %>">
-                                                            <%= subCategory.name %>
-                                                        </a>
-                                                    </li>
-                                                <% }) %>
-                                                <% category.directPackages &&
-                                                    category.directPackages.forEach(pkg=> { %>
-                                                    <li>
-                                                        <a href="/package/<%= encodeURIComponent(pkg.title) %>">
-                                                            <%= pkg.destination %>
-                                                        </a>
-                                                    </li>
-                                                <% }) %>
-                                            </ul>
-                                        </li>
-                                    <% } else { %>
-                                        <li>
-                                            <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
-                                                <%= category.name %>
-                                            </a>
-                                        </li>
-                                    <% } %>
-                                <% }) %>
-                            </ul>
+                            <a href="/packages">Packages</a>
+                          
                         </li>
                         <li class="touria-dd">
                             <a href="/customTours">Custom Tours</a>
@@ -177,95 +137,103 @@
             </nav>
         </div>
     </header>
-
-    <section class="hero-section style-two px-3 px-lg-4 px-xxl-5">
-        <!-- Hero Swiper -->
-        <div class="swiper hero-swiper">
-            <div class="swiper-wrapper">
-
-                <!-- Slide Item -->
-                <!-- International Packages Slide -->
-                <div class="swiper-slide hero-swiper-slide" style="background-image: url('/img/joanna/package1.jpg');">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-9 col-lg-7 col-xl-6">
-                                <div class="hero-content hero-animated-content">
-                                    <h2 class="text-white mb-4" data-fade-in-up data-animation-delay="300ms">
-                                        Go Global. Go Anywhere.
-                                    </h2>
-                                    <p class="text-white" data-fade-in-up data-animation-delay="600ms">
-                                        Explore the world with our top international packages!
-                                    </p>
-                                    <a class="btn btn-info" href="/contact" data-fade-in-up
-                                        data-animation-delay="900ms">
-                                        Explore Now <i class="icon-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+    <section class="thankyou-section d-flex align-items-center justify-content-center min-vh-100 py-5" style="background: linear-gradient(135deg, #fffef4 0%, #ffffff 100%); margin-top: 100px;">
+        <div class="container">
+            <div class="row justify-content-center align-items-center flex-column flex-md-row">
+                <div class="col-12 col-md-6 text-center mb-4 mb-md-0 d-flex justify-content-center align-items-center">
+                    <dotlottie-wc src="https://lottie.host/4333e054-4b22-4b9f-bf65-9490b2b90f7a/HIjAIE5fTY.lottie" 
+                        style="width: 300px; height: 300px; max-width: 90vw;" autoplay loop></dotlottie-wc>
+                </div>
+                <div class="col-12 col-md-6 text-center text-md-start">
+                    <h1 class="display-3 fw-bold mb-2 text-success">Thank You!</h1>
+                    <h3 class="mb-4 text-dark">We’ve received your request 🚀</h3>
+                    <p class="mb-4 fs-4 fw-semibold text-dark">
+                        Thank you for reaching out to <span class="fw-bold text-success">Joanna Holidays</span>!<br>
+                        <span class="fw-bold text-primary">Your enquiry has been received.</span> 
+                        <br>
+                        Our dedicated team will respond to you very soon.<br>
+                        <span class="fw-semibold">Get ready for incredible journeys and unforgettable memories!</span>
+                    </p>
+                    <ul class="list-unstyled fw-semibold text-start mx-auto mx-md-0 mb-4" style="max-width: 430px;">
+                        <li class="mb-2"><i class="icon-check text-success me-2"></i>We value your trust in us</li>
+                        <li class="mb-2"><i class="icon-check text-success me-2"></i>Expert support—always a call away</li>
+                        <li class="mb-2"><i class="icon-check text-success me-2"></i>Personalized packages for your dream trip</li>
+                        <li class="mb-2"><i class="icon-check text-success me-2"></i>Feel free to connect with us directly at <a href="tel:+918086602888" class="text-success fw-semibold">+91 8086602888</a></li>
+                        <li><i class="icon-check text-success me-2"></i>Follow us: 
+                            <a href="https://www.instagram.com/joannaholidays/?hl=en" target="_blank" class="text-success ms-1 me-1" aria-label="Instagram"><i class="ti ti-brand-instagram"></i></a>
+                            <a href="https://www.facebook.com/joannaholidays1/" target="_blank" class="text-success ms-1 me-1" aria-label="Facebook"><i class="ti ti-brand-facebook"></i></a>
+                        </li>
+                    </ul>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                        <a href="/" class="btn btn-success px-4"><i class="icon-home me-2"></i>Back to Home</a>
+                        <a href="/packages" class="btn btn-outline-success px-4"><i class="icon-map-pin me-2"></i>Browse Packages</a>
                     </div>
                 </div>
-
-                <!-- Domestic Packages Slide -->
-                <div class="swiper-slide hero-swiper-slide" style="background-image: url('/img/joanna/package2.jpg');">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-9 col-lg-7 col-xl-6">
-                                <div class="hero-content hero-animated-content">
-                                    <h2 class="text-white mb-4" data-fade-in-up data-animation-delay="300ms">
-                                        Incredible India Awaits!
-                                    </h2>
-                                    <p class="text-white" data-fade-in-up data-animation-delay="600ms">
-                                        Discover amazing places across India. Adventure starts here!
-                                    </p>
-                                    <a class="btn btn-info" href="/contact" data-fade-in-up
-                                        data-animation-delay="900ms">
-                                        Book Now <i class="icon-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
+            </div>
+            <div class="row mt-5 justify-content-center">
+                <div class="col-12 col-lg-8 text-center">
+                    <h5 class="fw-semibold text-success mb-2">Why Choose Joanna Holidays?</h5>
+                    <div class="d-flex flex-wrap justify-content-center gap-4">
+                        <div class="thankyou-feature p-3 rounded bg-white shadow-sm text-center flex-grow-1" style="min-width: 170px;">
+                            <i class="ti ti-trophy mb-2 display-6 text-success"></i>
+                            <div class="fw-semibold">Award-winning Service</div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- All Packages Slide -->
-                <div class="swiper-slide hero-swiper-slide" style="background-image: url('/img/joanna/package3.jpg');">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-9 col-lg-7 col-xl-6">
-                                <div class="hero-content hero-animated-content">
-                                    <h2 class="text-white mb-4" data-fade-in-up data-animation-delay="300ms">
-                                        All Packages. All Destinations.
-                                    </h2>
-                                    <p class="text-white" data-fade-in-up data-animation-delay="600ms">
-                                        International or domestic, your dream trip is here!
-                                    </p>
-                                    <a class="btn btn-info" href="/contact" data-fade-in-up
-                                        data-animation-delay="900ms">
-                                        Enquire Now <i class="icon-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="thankyou-feature p-3 rounded bg-white shadow-sm text-center flex-grow-1" style="min-width: 170px;">
+                            <i class="ti ti-globe mb-2 display-6 text-success"></i>
+                            <div class="fw-semibold">9,760+ Happy Travellers</div>
+                        </div>
+                        <div class="thankyou-feature p-3 rounded bg-white shadow-sm text-center flex-grow-1" style="min-width: 170px;">
+                            <i class="ti ti-building mb-2 display-6 text-success"></i>
+                            <div class="fw-semibold">Managed by Experts</div>
+                        </div>
+                        <div class="thankyou-feature p-3 rounded bg-white shadow-sm text-center flex-grow-1" style="min-width: 170px;">
+                            <i class="ti ti-certificate mb-2 display-6 text-success"></i>
+                            <div class="fw-semibold">Personalized, Authentic Experiences</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Hero Navigation -->
-        <div class="hero-navigation">
-            <button class="hero-button-prev mb-2">
-                <i class="icon-arrow-up"></i>
-            </button>
-
-            <!-- Hero Pagination -->
-            <div class="hero-pagination"></div>
-
-            <button class="hero-button-next mt-2">
-                <i class="icon-arrow-down"></i>
-            </button>
-        </div>
+        <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
+        <style>
+            .thankyou-section {
+                background: linear-gradient(135deg, #fffef4 0%, #e1f9e5 100%);
+            }
+            .thankyou-feature {
+                transition: transform 0.12s;
+            }
+            .thankyou-feature:hover {
+                transform: translateY(-6px) scale(1.03);
+                box-shadow: 0 6px 26px rgba(30,105,63,0.10);
+            }
+            @media (max-width: 991px) {
+                .thankyou-section {
+                    min-height: unset !important;
+                    padding: 60px 0;
+                }
+                .thankyou-feature {
+                    min-width: 130px;
+                    font-size: 0.96rem;
+                }
+            }
+            @media (max-width: 576px) {
+                .thankyou-section {
+                    padding: 30px 0;
+                }
+                .thankyou-feature {
+                    padding: 1rem 0.4rem;
+                }
+                .thankyou-section h1 {
+                    font-size: 2.3rem;
+                }
+            }
+            .icon-check {
+                color: #18991f;
+                font-weight: 600;
+            }
+        </style>
     </section>
+
     <div class="floating-contact-icons">
         <a href="https://wa.me/918086602888" target="_blank" aria-label="WhatsApp">
             <i class="ti ti-brand-whatsapp"></i>
@@ -274,131 +242,17 @@
             <i class="ti ti-phone"></i>
         </a>
     </div>
-    <!-- Tour List Section -->
-    <section class="tour-list-section">
-        <div class="divider"></div>
-        <div class="container">
-          <div class="row g-4">
-            <!-- Sidebar -->
-            <div class="col-12 col-md-4">
-              <div class="tour-list-sidebar">
-                <form id="filter-form" method="GET" action="/packages">
-                  <div class="sidebar-widget">
-                    <h4 class="widget-title mb-4">Destination Category</h4>
-                    <div class="category-filter d-flex flex-column gap-2">
-                      <label class="d-flex align-items-center py-2 px-2 border rounded<%= !currentCategory ? ' bg-light' : '' %>">
-                        <input
-                          type="radio"
-                          name="category"
-                          value=""
-                          <%= !currentCategory ? 'checked' : '' %>
-                          class="form-check-input me-2"
-                          onchange="this.form.submit()"
-                        />
-                        All Categories
-                      </label>
-                      <% categories.forEach(category => { %>
-                        <label class="d-flex align-items-center py-2 px-2 border rounded<%= currentCategory === category.name ? ' bg-light' : '' %>">
-                          <input
-                            type="radio"
-                            name="category"
-                            value="<%= category.name %>"
-                            <%= currentCategory === category.name ? 'checked' : '' %>
-                            class="form-check-input me-2"
-                            onchange="this.form.submit()"
-                          />
-                          <%= category.name %>
-                        </label>
-                      <% }) %>
-                    </div>
-                  </div>
-                  <div class="mt-4">
-                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-      
-            <!-- Package Cards -->
-            <div class="col-12 col-md-8">
-              <div class="tour-list-content">
-                <div class="row g-4">
-                  <% packages.forEach((pkg, index) => { %>
-                    <div class="col-12 col-lg-6">
-                      <div class="trip-card h-100 d-flex flex-column">
-                        <a href="/package/<%= encodeURIComponent(pkg.title) %>">
-                          <div class="img-wrapper" style="height: 300px; overflow: hidden;">
-                            <img src="<%= pkg.images[0] || '/img/default-package.jpg' %>" alt="<%= pkg.title %>" class="img-fluid w-100 h-100 object-fit-cover">
-                          </div>
-                        </a>
-                        <div class="trip-body flex-grow-1 d-flex flex-column justify-content-between">
-                          <h4 class="mb-3 trip-title"><%= pkg.title %></h4>
-                          <div class="trip-meta d-flex align-items-center justify-content-between">
-                            <ul class="list-unstyled d-flex flex-column gap-2">
-                              <li><i class="ti ti-map-pin-filled"></i> <%= pkg.destination %></li>
-                              <li><i class="ti ti-clock"></i> <%= pkg.duration %></li>
-                            </ul>
-                            <div class="text-end">
-                              <% if (pkg.discount) { %>
-                                <span class="badge bg-success mb-2"><%= pkg.discount %>% Off</span>
-                              <% } %>
-                              <h4 class="trip-price mb-0">
-                                <% if (!pkg.packagePrice || pkg.packagePrice == 0) { %>
-                                  <span>Custom Pricing</span>
-                                <% } else { 
-                                  // Format function for INR with proper commas
-                                  function formatINR(x) {
-                                    if (typeof x !== 'number') x = Number(x);
-                                    return x.toLocaleString('en-IN');
-                                  }
-                                %>
-                                  ₹<%= formatINR(pkg.packagePrice) %>
-                                  <% if (pkg.originalPrice) { %>
-                                    <span class="text-muted ms-1">₹<%= formatINR(pkg.originalPrice) %></span>
-                                  <% } %>
-                                <% } %>
-                              </h4>
-                            </div>
-                          </div>
-                          <a href="/package/<%= encodeURIComponent(pkg.title) %>" class="btn btn-light w-100 mt-3">Know more</a>
-                        </div>
-                      </div>
-                    </div>
-                  <% }); %>
-                </div>
-      
-                <div class="divider-sm"></div>
-      
-                <ul class="touria-pagination list-unstyled justify-content-start">
-                  <% if (currentPage > 1) { %>
-                    <li><a href="/packages?<%= new URLSearchParams({...query, page: currentPage - 1}) %>"><i class="ti ti-chevron-left"></i></a></li>
-                  <% } %>
-      
-                  <% for (let i = 1; i <= totalPages; i++) { %>
-                    <li class="<%= currentPage === i ? 'active' : '' %>"><a href="/packages?<%= new URLSearchParams({...query, page: i}) %>"><%= i %></a></li>
-                  <% } %>
-      
-                  <% if (currentPage < totalPages) { %>
-                    <li><a href="/packages?<%= new URLSearchParams({...query, page: currentPage + 1}) %>"><i class="ti ti-chevron-right"></i></a></li>
-                  <% } %>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="divider"></div>
-      </section>
     <!-- Footer -->
-    <footer class="footer-wrapper jarallax" data-jarallax data-speed="0.6"
-        style="background-image: url('/img/core-img/plane2.png');">
+    <footer class="footer-wrapper jarallax" data-jarallax data-speed="0.6">
         <!-- Plane Image -->
-        <img class="plane-img" src="/img/core-img/plane2.png" alt="joanna">
+        <img class="plane-img" src="/img/core-img/plane2.png" alt="">
 
         <!-- Tree Image -->
         <img class="tree-img" src="/img/core-img/tree.png" alt="">
 
         <!-- Divider -->
         <div class="divider"></div>
+
         <div class="container">
             <div class="footer-top-content">
                 <!-- Single Item -->
@@ -497,7 +351,7 @@
                         <!-- Footer Nav -->
                         <ul class="footer-nav">
                             <li><a href="/">Home</a></li>
-                            <li><a href="/packages">Packages</a></li>
+                            <li><a href="/">Packages</a></li>
                             <li><a href="/about">About Us</a></li>
                             <li><a href="/gallery">Gallery</a></li>
                             <li><a href="/contact">Contact Us</a></li>
@@ -512,21 +366,11 @@
 
                         <!-- Footer Nav -->
                         <ul class="footer-nav">
-                            <% if (categories && categories.length > 0) { %>
-                                <% categories.forEach(function(category) { 
-                                    var categoryNameParam = encodeURIComponent(category.name); 
-                                %>
-                                    <li>
-                                        <a href="/packages?category=<%= categoryNameParam %>">
-                                            <%= category.name %>
-                                        </a>
-                                    </li>
-                                <% }); %>
-                            <% } else { %>
+                        
                                 <li>
                                     <a href="/packages">All packages</a>
                                 </li>
-                            <% } %>
+                        
                         </ul>
                     </div>
                 </div>
@@ -575,7 +419,6 @@
             </div>
         </div>
     </footer>
-
     <nav id="mobile-bottom-navbar" class="mobile-bottom-navbar d-md-none">
         <a href="/packages?category=International%20Tours" class="nav-item" title="International">
             <span class="iconify" data-icon="mdi:airplane" data-inline="false"></span>
@@ -605,7 +448,7 @@
         <i class="icon-arrow-up"></i>
     </button>
 
-    <!-- All JavaScript Files-->
+    <!-- All JavaScript Files -->
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/slideToggle.min.js"></script>
     <script src="/js/swiper-bundle.min.js"></script>
@@ -616,9 +459,13 @@
     <script src="/js/flatpickr.min.js"></script>
     <script src="/js/nice-select2.js"></script>
     <script src="/js/venobox.min.js"></script>
-    <script src="/js/nouislider.min.js"></script>
     <script src="/js/wow.min.js"></script>
     <script src="/js/active.js"></script>
+    <script async src="//www.instagram.com/embed.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 </body>
+
 
 </html>

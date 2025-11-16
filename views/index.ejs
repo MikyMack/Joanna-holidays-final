@@ -278,12 +278,12 @@
                                                     class="form-select form-select-lg ps-4">
                                                     <option value="">Select Type</option>
                                                     <% categories.forEach(category=> { %>
-                                                        <option value="<%= category._id %>" <%=(query &&
-                                                            query.category===category._id.toString()) ? 'selected' : ''
+                                                        <option value="<%= category.name %>" <%=(query &&
+                                                            query.category===category.name) ? 'selected' : ''
                                                             %>>
                                                             <%= category.name %>
                                                         </option>
-                                                        <% }); %>
+                                                    <% }); %>
                                                 </select>
                                                 <label for="search-category"
                                                     class="d-flex align-items-center gap-2 ps-4">
@@ -308,18 +308,17 @@
                                                     query.category) ? 'disabled' : '' %>>
                                                     <option value="">Select Type First</option>
                                                     <% if (query && query.category) { %>
-                                                        <% const selectedCat=categories.find(c=> c._id.toString() ===
-                                                            query.category); %>
+                                                        <% const selectedCat=categories.find(c=> c.name === query.category); %>
                                                             <% if (selectedCat && selectedCat.subCategories) { %>
                                                                 <% selectedCat.subCategories.forEach(subCat=> { %>
-                                                                    <option value="<%= subCat._id %>"
-                                                                        <%=query.subCategory===subCat._id.toString()
+                                                                    <option value="<%= subCat.name %>"
+                                                                        <%=query.subCategory===subCat.name
                                                                         ? 'selected' : '' %>>
                                                                         <%= subCat.name %>
                                                                     </option>
-                                                                    <% }); %>
-                                                                        <% } %>
-                                                                            <% } %>
+                                                                <% }); %>
+                                                            <% } %>
+                                                    <% } %>
                                                 </select>
                                                 <label for="search-subcategory"
                                                     class="d-flex align-items-center gap-2 ps-4">
@@ -370,46 +369,46 @@
                                 const categorySelect = document.getElementById('search-category');
                                 const subcategorySelect = document.getElementById('search-subcategory');
 
-                                // Create a mapping of categories to their subcategories
+                                // Create a mapping of categories to their subcategories (by name)
                                 const categoryMap = {};
-                          <% categories.forEach(category => { %>
-                                    categoryMap['<%= category._id %>'] =[];
-                            <% if (category.subCategories && category.subCategories.length > 0) { %>
-                              <% category.subCategories.forEach(subCategory => { %>
-                                <% if (subCategory.isActive) { %>
-                                            categoryMap['<%= category._id %>'].push({
-                                                id: '<%= subCategory._id %>',
-                                                name: '<%= subCategory.name.replace(/\'/g, "\\'") %>'
-                                  });
-                                <% } %>
-                              <% }); %>
-                            <% } %>
-                          <% }); %>
+                                <% categories.forEach(category => { %>
+                                    categoryMap['<%= category.name.replace(/'/g,"\\'") %>'] = [];
+                                    <% if (category.subCategories && category.subCategories.length > 0) { %>
+                                        <% category.subCategories.forEach(subCategory => { %>
+                                            <% if (subCategory.isActive) { %>
+                                                categoryMap['<%= category.name.replace(/'/g,"\\'") %>'].push({
+                                                    id: '<%= subCategory.name.replace(/'/g,"\\'") %>',
+                                                    name: '<%= subCategory.name.replace(/'/g, "\\'") %>'
+                                                });
+                                            <% } %>
+                                        <% }); %>
+                                    <% } %>
+                                <% }); %>
 
-                                    // When category changes, update subcategories
-                                    categorySelect.addEventListener('change', function () {
-                                        const categoryId = this.value;
-                                        subcategorySelect.innerHTML = '<option value="">Select Type First</option>';
+                                // When category changes, update subcategories
+                                categorySelect.addEventListener('change', function () {
+                                    const categoryName = this.value;
+                                    subcategorySelect.innerHTML = '<option value="">Select Type First</option>';
 
-                                        if (categoryId && categoryMap[categoryId] && categoryMap[categoryId].length > 0) {
-                                            subcategorySelect.disabled = false;
-                                            categoryMap[categoryId].forEach(subCat => {
-                                                const option = new Option(subCat.name, subCat.id);
-                                                subcategorySelect.add(option);
-                                            });
+                                    if (categoryName && categoryMap[categoryName] && categoryMap[categoryName].length > 0) {
+                                        subcategorySelect.disabled = false;
+                                        categoryMap[categoryName].forEach(subCat => {
+                                            const option = new Option(subCat.name, subCat.id);
+                                            subcategorySelect.add(option);
+                                        });
 
-                              // Check if there's a previously selected subcategory that belongs to this category
-                              <% if (query && query.subCategory) { %>
-                                const prevSubCat = '<%= query.subCategory %>';
-                                                if (categoryMap[categoryId].some(sub => sub.id === prevSubCat)) {
-                                                    subcategorySelect.value = prevSubCat;
-                                                }
-                              <% } %>
-                            } else {
-                                            subcategorySelect.disabled = true;
-                                            subcategorySelect.innerHTML = '<option value="">No locations available</option>';
-                                        }
-                                    });
+                                        // Check if there's a previously selected subcategory that belongs to this category
+                                        <% if (query && query.subCategory) { %>
+                                            const prevSubCat = '<%= query.subCategory %>';
+                                            if (categoryMap[categoryName].some(sub => sub.id === prevSubCat)) {
+                                                subcategorySelect.value = prevSubCat;
+                                            }
+                                        <% } %>
+                                    } else {
+                                        subcategorySelect.disabled = true;
+                                        subcategorySelect.innerHTML = '<option value="">No locations available</option>';
+                                    }
+                                });
 
                                 // Initialize with current category if present
                                 if (categorySelect.value) {
@@ -1395,49 +1394,29 @@
                               .then(data => {
                                   if (data.status === "success") {
                                       form.reset();
-                                      // SweetAlert2 success
+                                      window.location.href = "/thankyou";
+                                  } else {
                                       Swal.fire({
-                                          title: '🎉 Message Sent! 🎉',
-                                          html: `
-                                            <div style='color:#18991f;font-weight:600;font-size:1.18rem'>
-                                              <span style='font-size:2.2rem;'>🌏✨</span><br>
-                                              <b>Thank you for reaching out to <span style="color:#334ea2">Joanna Holidays</span>!</b>
-                                              <br><br>
-                                              <span style="font-size:1.07rem;">
-                                                <i>Your message is now on the fast-lane to our expert travel planners.</i>
-                                                <br>
-                                                <span style="color:#334ea2;font-weight:700;">
-                                                  Get ready for a journey full of amazing destinations, handpicked deals, and memories you'll cherish forever!
-                                                </span>
-                                                <br><br>
-                                                <span style="color:#048b6c;font-weight:700">Bonus:</span>
-                                                <br>Our specialists love turning <span style='color:#18991f'>dreams</span> into <span style='color:#b86f0b'>adventures</span>.<br>
-                                                <span style="font-size:1.1rem;color:#ffa600;">✈️ Watch for a reply soon!</span>
-                                                <br>
-                                                <small style="color:#777;">
-                                                  You’re closer to your perfect holiday than ever before.<br>
-                                                  <b>Why travel ordinary?</b> Do it the <span style="color:#334ea2">Joanna</span> way!
-                                                </small>
-                                              </span>
-                                            </div>
-                                          `,
-                                          icon: 'success',
-                                          showConfirmButton: true,
-                                          confirmButtonColor: '#18991f',
-                                          confirmButtonText: 'Let\'s Begin My Journey! 🚀',
-                                          background: '#fffef4',
-                                          customClass: {
-                                            title: 'swal-title-joanna',
-                                            confirmButton: 'swal-button-joanna'
-                                          }
+                                        title: 'Failed to Send',
+                                        text: 'There was an error sending your message. Please try again later.',
+                                        icon: 'error',
+                                        confirmButtonColor: '#18991f',
+                                        confirmButtonText: 'OK',
+                                        background: '#fffef4',
                                       });
                                       statusDiv.innerHTML = '';
-                                  } else {
-                                      statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
                                   }
                               })
                               .catch(error => {
-                                  statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
+                                  Swal.fire({
+                                    title: 'Failed to Send',
+                                    text: 'There was an error sending your message. Please try again later.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#18991f',
+                                    confirmButtonText: 'OK',
+                                    background: '#fffef4',
+                                  });
+                                  statusDiv.innerHTML = '';
                               })
                               .finally(() => {
                                   submitBtn.disabled = false;

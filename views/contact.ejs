@@ -329,6 +329,7 @@
                 <script>
                     // No additional link required, SweetAlert2 is already included above
                     const scriptUrl = 'https://script.google.com/macros/s/AKfycbxLDX7ywFwz5TXAzqYGjESEy0m3Vx4tIWEuUIqHYfpk3ySdw_XGQi0i0YgiBAVrK0DsvQ/exec';
+
                     function validateMobile(mobile) {
                         return /^[0-9]{7,15}$/.test(mobile);
                     }
@@ -380,50 +381,33 @@
                                 },
                                 body: formData
                             })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Network response was not ok');
-                                    }
-                                    return response.json();
-                                })
-                                .then(data => {
-                                    if (data.status === "success") {
-                                        form.reset();
-                                        // SweetAlert2 thank you and content
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Thank You for Reaching Out!',
-                                            html: `
-                                                <div style="font-size:1.12em;line-height:1.5;">
-                                                We’ve received your enquiry and it’s in the care of our travel experts.<br>
-                                                <span style="color:#4069c0;font-weight:600;">
-                                                Get ready for expert advice and exciting travel solutions –<br>
-                                                you'll hear from us soon!
-                                                </span>
-                                                <br><br>
-                                                <span style="font-size:0.95em;color:#1859bf;">
-                                                Ready for inspiration while you wait? <a href="/" style="color:#ef6948;font-weight:500;">Explore our homepage</a>
-                                                </span>
-                                                <br>
-                                                <span style="font-size:1.4em;letter-spacing:1px;">🌴✈️</span>
-                                                </div>
-                                            `,
-                                            confirmButtonColor: '#4069c0',
-                                            confirmButtonText: 'Back to Joanna Holidays'
-                                        });
-                                        statusDiv.innerHTML = '';
-                                    } else {
-                                        throw new Error(data.message || 'Unknown error occurred');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    statusDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
-                                })
-                                .finally(() => {
-                                    submitBtn.disabled = false;
-                                    submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.status === "success") {
+                                    // On success, redirect to thank you page
+                                    window.location.href = '/thankyou';
+                                } else {
+                                    throw new Error(data.message || 'Unknown error occurred');
+                                }
+                            })
+                            .catch(error => {
+                                // Show error in SweetAlert
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops!',
+                                    html: `<div style="font-size:1.1em;">${error.message || 'There was a problem submitting your enquiry 😥. Please try again later or contact us directly.'}</div>`,
+                                    confirmButtonColor: '#4069c0'
                                 });
+                            })
+                            .finally(() => {
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = 'Submit Message <i class="icon-arrow-right"></i>';
+                            });
                         });
                     });
                 </script>

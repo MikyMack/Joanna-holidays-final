@@ -651,7 +651,6 @@
                           submitBtn.disabled = true;
                           submitBtn.innerHTML = 'Sending...';
 
-                          // Use the same approach as in contact.ejs: URLSearchParams and append fields manually
                           const formData = new URLSearchParams();
                           formData.append('name', document.getElementById('name').value);
                           formData.append('email', document.getElementById('email').value);
@@ -669,50 +668,30 @@
                           .then(response => response.json())
                           .then(data => {
                               if (data.status === "success") {
-                                  form.reset();
-                                  // SweetAlert2 success
+                                  // redirect to /thankyou
+                                  window.location.href = '/thankyou';
+                              } else {
                                   Swal.fire({
-                                      title: '🎉 Message Sent! 🎉',
-                                      html: `
-                                        <div style='color:#18991f;font-weight:600;font-size:1.18rem'>
-                                          <span style='font-size:2.2rem;'>🌏✨</span><br>
-                                          <b>Thank you for reaching out to <span style="color:#334ea2">Joanna Holidays</span>!</b>
-                                          <br><br>
-                                          <span style="font-size:1.07rem;">
-                                            <i>Your message is now on the fast-lane to our expert travel planners.</i>
-                                            <br>
-                                            <span style="color:#334ea2;font-weight:700;">
-                                              Get ready for a journey full of amazing destinations, handpicked deals, and memories you'll cherish forever!
-                                            </span>
-                                            <br><br>
-                                            <span style="color:#048b6c;font-weight:700">Bonus:</span>
-                                            <br>Our specialists love turning <span style='color:#18991f'>dreams</span> into <span style='color:#b86f0b'>adventures</span>.<br>
-                                            <span style="font-size:1.1rem;color:#ffa600;">✈️ Watch for a reply soon!</span>
-                                            <br>
-                                            <small style="color:#777;">
-                                              You’re closer to your perfect holiday than ever before.<br>
-                                              <b>Why travel ordinary?</b> Do it the <span style="color:#334ea2">Joanna</span> way!
-                                            </small>
-                                          </span>
-                                        </div>
-                                      `,
-                                      icon: 'success',
-                                      showConfirmButton: true,
+                                      title: 'Oops! Something went wrong.',
+                                      icon: 'error',
+                                      html: data.message || 'There was an error sending your message. Please try again later.',
                                       confirmButtonColor: '#18991f',
-                                      confirmButtonText: 'Let\'s Begin My Journey! 🚀',
-                                      background: '#fffef4',
-                                      customClass: {
-                                        title: 'swal-title-joanna',
-                                        confirmButton: 'swal-button-joanna'
-                                      }
+                                      confirmButtonText: 'Okay',
+                                      background: '#fffef4'
                                   });
                                   statusDiv.innerHTML = '';
-                              } else {
-                                  statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
                               }
                           })
                           .catch(error => {
-                              statusDiv.innerHTML = '<div class="alert alert-danger">There was an error sending your message. Please try again later.</div>';
+                              Swal.fire({
+                                  title: 'Error',
+                                  icon: 'error',
+                                  html: 'There was an error sending your message. Please try again later.',
+                                  confirmButtonColor: '#18991f',
+                                  confirmButtonText: 'Okay',
+                                  background: '#fffef4'
+                              });
+                              statusDiv.innerHTML = '';
                           })
                           .finally(() => {
                               submitBtn.disabled = false;

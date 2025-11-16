@@ -339,6 +339,7 @@ router.get('/contact', async (req, res) => {
         res.status(500).send('Error loading contact page data');
     }
 });
+
 router.get('/packages', async (req, res) => {
     try {
         const {
@@ -349,150 +350,166 @@ router.get('/packages', async (req, res) => {
             maxPrice,
             duration,
             tourType,
+            month,
             page = 1,
-            limit = 10
+            limit = 10,
         } = req.query;
 
-        const skip = (page - 1) * limit;
-        const matchQuery = { isActive: true };
+        const skip = (parseInt(page) - 1) * parseInt(limit);
 
-        // --- Category filtering by name ---
-        let categoryIds = null;
-        let subCategoryFilters = null;
+        // Build Mongoose query object
+        const queryObj = { isActive: true };
+
+        // Get all categories to filter/search by name and for side nav display
+        const allCategories = await Category.find({ isActive: true })
+            .select('name imageUrl subCategories')
+            .lean()
+            .sort({ createdAt: -1 });
+
+        // Handle category name(s) filter
         let selectedCategoryNames = [];
-        let selectedSubCategoryNames = [];
-
-        // Handle category filtering by name
         if (category) {
-            // Handles single or multiple category names (comma separated or array)
-            const categoryNames = Array.isArray(category)
+            const categoryNamesArr = Array.isArray(category)
                 ? category
-                : category.split(',').map(name => name.trim());
-
-            // Find categories by name
-            const categoryDocs = await Category.find({ name: { $in: categoryNames } }).select('_id name subCategories');
-            categoryIds = categoryDocs.map(cat => cat._id);
-            matchQuery.category = { $in: categoryIds };
-            selectedCategoryNames = categoryDocs.map(cat => cat.name);
-            subCategoryFilters = categoryDocs.map(cat => cat.subCategories || []).flat();
+                : String(category).split(',').map(n => n.trim()).filter(Boolean);
+            if (categoryNamesArr.length) {
+                const matchedCategoryDocs = allCategories.filter(cat => categoryNamesArr.includes(cat.name));
+                const catIds = matchedCategoryDocs.map(cat => String(cat._id));
+                if (catIds.length) {
+                    queryObj.category = { $in: catIds };
+                    selectedCategoryNames = matchedCategoryDocs.map(cat => cat.name);
+                }
+            }
         }
 
-        // Handle subcategory filtering by name
+        // Handle subCategory name(s) filter (resolve subcategory _ids first)
+        let selectedSubCategoryNames = [];
         if (subCategory) {
-            // Handles single or multiple subcategory names (comma separated or array)
-            const subCategoryNames = Array.isArray(subCategory)
+            const subCatNamesArr = Array.isArray(subCategory)
                 ? subCategory
-                : subCategory.split(',').map(name => name.trim());
+                : String(subCategory).split(',').map(n => n.trim()).filter(Boolean);
 
-            // Find matching subcategory _ids under those categories (or all categories if none specified)
-            let matchedSubcategories = [];
-            if (subCategoryFilters) {
-                // Filter only within subCategoryFilters (from the filtered categories)
-                for (const subcatName of subCategoryNames) {
-                    const found = subCategoryFilters.find(sc => sc.name === subcatName);
-                    if (found) matchedSubcategories.push(found._id);
-                }
+            let allSubCats = [];
+            if (queryObj.category && Array.isArray(queryObj.category.$in)) {
+                // from selected categories only
+                const filteredCats = allCategories.filter(cat => queryObj.category.$in.includes(String(cat._id)));
+                filteredCats.forEach(cat => {
+                    (cat.subCategories || []).forEach(sub => {
+                        allSubCats.push(sub);
+                    });
+                });
             } else {
-                // Search all categories for any subcategory with that name
-                const categoryDocs = await Category.find({ "subCategories.name": { $in: subCategoryNames } });
-                for (const cat of categoryDocs) {
-                    for (const sc of cat.subCategories) {
-                        if (subCategoryNames.includes(sc.name)) matchedSubcategories.push(sc._id);
-                    }
-                }
+                // from all categories
+                allCategories.forEach(cat => {
+                    (cat.subCategories || []).forEach(sub => {
+                        allSubCats.push(sub);
+                    });
+                });
             }
-            if (matchedSubcategories.length > 0) {
-                matchQuery.subCategory = { $in: matchedSubcategories };
-            } else {
-                // If no matched subcategories, ensure search yields nothing
-                matchQuery.subCategory = { $in: [] };
-            }
-            selectedSubCategoryNames = subCategoryNames;
-        }
 
-        if (duration) matchQuery.duration = duration;
-        if (tourType) matchQuery.tourType = tourType;
-
-        if (minPrice || maxPrice) {
-            matchQuery.packagePrice = {};
-            if (minPrice) matchQuery.packagePrice.$gte = Number(minPrice);
-            if (maxPrice) matchQuery.packagePrice.$lte = Number(maxPrice);
-        }
-
-        const searchRegex = search && search.length >= 3 ? new RegExp(search, 'i') : null;
-
-        // Main aggregation pipeline
-        const aggregationPipeline = [
-            { $match: matchQuery },
-            {
-                $lookup: {
-                    from: 'categories',
-                    localField: 'category',
-                    foreignField: '_id',
-                    as: 'category'
-                }
-            },
-            { $unwind: '$category' },
-            {
-                $addFields: {
-                    subCategoryObj: {
-                        $filter: {
-                            input: '$category.subCategories',
-                            as: 'subCat',
-                            cond: { $eq: ['$$subCat._id', '$subCategory'] }
-                        }
-                    }
-                }
-            },
-            {
-                $addFields: {
-                    subCategory: { $arrayElemAt: ['$subCategoryObj', 0] }
-                }
-            }
-        ];
-
-        // Add search if applicable (search by name, not _id!)
-        if (searchRegex) {
-            aggregationPipeline.push({
-                $match: {
-                    $or: [
-                        { title: { $regex: searchRegex } },
-                        { destination: { $regex: searchRegex } },
-                        { packageDescription: { $regex: searchRegex } },
-                        { 'category.name': { $regex: searchRegex } },
-                        { 'subCategory.name': { $regex: searchRegex } }
-                    ]
-                }
+            const matchedSubCatIds = [];
+            subCatNamesArr.forEach(name => {
+                const found = allSubCats.find(sc => sc.name === name && sc.isActive !== false);
+                if (found) matchedSubCatIds.push(found._id);
             });
+
+            if (matchedSubCatIds.length) {
+                queryObj.subCategory = { $in: matchedSubCatIds };
+                selectedSubCategoryNames = subCatNamesArr;
+            } else {
+                // If searching for a subcategory but no valid ones, set impossible filter
+                if (subCatNamesArr.length) {
+                    queryObj.subCategory = { $in: [] };
+                }
+            }
         }
 
-        // Get total count and paginated results
-        const [packageResults, totalResult, categories] = await Promise.all([
-            Package.aggregate([...aggregationPipeline, { $skip: skip }, { $limit: parseInt(limit) }]),
-            Package.aggregate([...aggregationPipeline, { $count: 'total' }]),
-            Category.find({ isActive: true }).select('name imageUrl subCategories').lean().sort({ createdAt: -1 })
+        // Duration/tourType/month (opt: month currently just string match on a field, if you want)
+        if (duration) queryObj.duration = duration;
+        if (tourType) queryObj.tourType = tourType;
+        if (month) queryObj.month = month; // Only if you have such field
+
+        // Price range
+        if (minPrice || maxPrice) {
+            queryObj.packagePrice = {};
+            if (minPrice) queryObj.packagePrice.$gte = +minPrice;
+            if (maxPrice) queryObj.packagePrice.$lte = +maxPrice;
+        }
+
+        // Search in key text fields
+        let searchRegex = null;
+        if (search && String(search).length >= 3) {
+            searchRegex = new RegExp(search, 'i');
+        }
+        let searchFilter = {};
+        if (searchRegex) {
+            searchFilter = {
+                $or: [
+                    { title: { $regex: searchRegex } },
+                    { destination: { $regex: searchRegex } },
+                    { packageDescription: { $regex: searchRegex } },
+                ]
+            };
+        }
+
+        // Combine main and search filter
+        const finalQuery = Object.keys(searchFilter).length
+            ? { $and: [queryObj, searchFilter] }
+            : queryObj;
+
+        // Main Package query (populate category/subCategory for UI)
+        const [totalPackages, packages, categoriesForList] = await Promise.all([
+            Package.countDocuments(finalQuery),
+            Package.find(finalQuery)
+                .populate({ path: 'category', select: 'name imageUrl' })
+                .populate({ path: 'subCategory', select: 'name imageUrl' })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parseInt(limit))
+                .lean(),
+            // For filter/category sidebar/buttons
+            Category.find({ isActive: true })
+                .select('name imageUrl subCategories')
+                .lean()
+                .sort({ createdAt: -1 })
         ]);
 
-        const totalPackages = totalResult.length > 0 ? totalResult[0].total : 0;
+        // Filter category list for only active subCategories
+        const uiCategories = categoriesForList.map(cat => ({
+            ...cat,
+            subCategories: (cat.subCategories || []).filter(sub => sub.isActive)
+        }));
 
-        // Prepare response (pass currentCategory and currentSubCategory as names)
-        const responseData = {
+        // For category tab counts (just based on current page of packages, not total in db)
+        const pageCats = {};
+        packages.forEach(pkg => {
+            if (pkg.category && pkg.category.name) {
+                pageCats[pkg.category.name] = pageCats[pkg.category.name] ? pageCats[pkg.category.name] + 1 : 1;
+            }
+        });
+
+        // Send to EJS renderer
+        res.render('packages', {
             title: 'Tour Packages',
-            packages: packageResults,
-            categories: categories.map(cat => ({
+            packages,
+            categories: uiCategories.map(cat => ({
                 ...cat,
-                subCategories: cat.subCategories.filter(sub => sub.isActive),
-                packageCount: packageResults.filter(p => (p.category.name === cat.name)).length
+                packageCount: pageCats[cat.name] || 0,
             })),
-            currentCategory: selectedCategoryNames.length === 1 ? selectedCategoryNames[0] : selectedCategoryNames,
-            currentSubCategory: selectedSubCategoryNames.length === 1 ? selectedSubCategoryNames[0] : selectedSubCategoryNames,
+            currentCategory:
+                selectedCategoryNames.length === 1
+                    ? selectedCategoryNames[0]
+                    : (selectedCategoryNames.length ? selectedCategoryNames : null),
+            currentSubCategory:
+                selectedSubCategoryNames.length === 1
+                    ? selectedSubCategoryNames[0]
+                    : (selectedSubCategoryNames.length ? selectedSubCategoryNames : null),
             searchTerm: search,
             currentPage: parseInt(page),
-            totalPages: Math.ceil(totalPackages / limit),
-            query: req.query
-        };
+            totalPages: Math.ceil(totalPackages / parseInt(limit)),
+            query: req.query,
+        });
 
-        res.render('packages', responseData);
     } catch (error) {
         console.error('Error in /packages route:', error);
         res.status(500).send('Server Error');
@@ -814,6 +831,11 @@ router.get('/customTours', async (req, res) => {
     }
 });
 
+router.get('/thankyou', (req, res) => {
+    res.render('thankyou', {
+        title: 'Thank You'
+    });
+});
 
 
 

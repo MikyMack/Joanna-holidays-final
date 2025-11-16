@@ -12,6 +12,8 @@ const authRoutes = require('./routes/authRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 const videoRoutes = require('./routes/videoRoutes');
 
+const app = express();
+
 app.use((req, res, next) => {
   const host = req.headers.host;
 
@@ -22,7 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const app = express();
+
 
 // Middleware
 app.use(express.static(path.join(__dirname, '../assets')));

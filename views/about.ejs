@@ -91,13 +91,13 @@
                     <li class="touria-dd">
                         <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
                         <ul class="touria-dd-menu">
-                            <% categories.forEach(category=> {
+                            <% categories.forEach(category => {
                                 const hasSubCategories = category.subCategories && category.subCategories.length > 0;
                                 const hasDirectPackages = category.directPackages && category.directPackages.length > 0;
                             %>
                                 <% if (hasSubCategories || hasDirectPackages) { %>
                                     <li class="touria-dd">
-                                        <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
+                                        <a href="/packages?category=<%= category.slug %>">
                                             <%= category.name %>
                                             <% if (hasSubCategories || hasDirectPackages) { %>
                                                 <i class="ti ti-chevron-right"></i>
@@ -105,17 +105,17 @@
                                         </a>
                                         <ul class="touria-dd-menu">
                                             <% category.subCategories &&
-                                                category.subCategories.forEach(subCategory=> { %>
+                                                category.subCategories.forEach(subCategory => { %>
                                                 <li>
-                                                    <a href="/package-details?category=<%= encodeURIComponent(category.name) %>&subCategory=<%= encodeURIComponent(subCategory.name) %>">
+                                                    <a href="/package-details?category=<%= category.slug %>&subCategory=<%= subCategory.slug %>">
                                                         <%= subCategory.name %>
                                                     </a>
                                                 </li>
                                             <% }) %>
                                             <% category.directPackages &&
-                                                category.directPackages.forEach(pkg=> { %>
+                                                category.directPackages.forEach(pkg => { %>
                                                 <li>
-                                                    <a href="/package/<%= encodeURIComponent(pkg.title) %>">
+                                                    <a href="/package/<%= pkg.slug %>">
                                                         <%= pkg.destination %>
                                                     </a>
                                                 </li>
@@ -124,7 +124,7 @@
                                     </li>
                                 <% } else { %>
                                     <li>
-                                        <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
+                                        <a href="/packages?category=<%= category.slug %>">
                                             <%= category.name %>
                                         </a>
                                     </li>
@@ -876,6 +876,7 @@
                        <li><a href="/packages">Packages</a></li>
                        <li><a href="/about">About Us</a></li>
                        <li><a href="/gallery">Gallery</a></li>
+                       <li><a href="/blogs">Blogs</a></li>
                        <li><a href="/contact">Contact Us</a></li>
                    </ul>
                </div>
@@ -890,7 +891,7 @@
                    <ul class="footer-nav">
                     <% if (categories && categories.length > 0) { %>
                         <% categories.forEach(function(category) { 
-                            var categoryNameParam = encodeURIComponent(category.name); 
+                            var categoryNameParam =category.slug; 
                         %>
                             <li>
                                 <a href="/packages?category=<%= categoryNameParam %>">
@@ -950,11 +951,11 @@
    </div>
 </footer>
 <nav id="mobile-bottom-navbar" class="mobile-bottom-navbar d-md-none">
-    <a href="/packages?category=International%20Tours" class="nav-item" title="International">
+    <a href="/packages?category=international-tours" class="nav-item" title="International">
         <span class="iconify" data-icon="mdi:airplane" data-inline="false"></span>
         <span class="nav-label">International</span>
     </a>
-    <a href="/packages?category=Domestic%20Tours" class="nav-item" title="Domestic">
+    <a href="/packages?category=domestic-tours" class="nav-item" title="Domestic">
         <span class="iconify" data-icon="mdi:home-city" data-inline="false"></span>
         <span class="nav-label">Domestic</span>
     </a>

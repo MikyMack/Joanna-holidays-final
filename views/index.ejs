@@ -103,13 +103,13 @@
                         <li class="touria-dd">
                             <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
                             <ul class="touria-dd-menu">
-                                <% categories.forEach(category=> {
+                                <% categories.forEach(category => {
                                     const hasSubCategories = category.subCategories && category.subCategories.length > 0;
                                     const hasDirectPackages = category.directPackages && category.directPackages.length > 0;
                                 %>
                                     <% if (hasSubCategories || hasDirectPackages) { %>
                                         <li class="touria-dd">
-                                            <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
+                                            <a href="/packages?category=<%= category.slug %>">
                                                 <%= category.name %>
                                                 <% if (hasSubCategories || hasDirectPackages) { %>
                                                     <i class="ti ti-chevron-right"></i>
@@ -117,17 +117,17 @@
                                             </a>
                                             <ul class="touria-dd-menu">
                                                 <% category.subCategories &&
-                                                    category.subCategories.forEach(subCategory=> { %>
+                                                    category.subCategories.forEach(subCategory => { %>
                                                     <li>
-                                                        <a href="/package-details?category=<%= encodeURIComponent(category.name) %>&subCategory=<%= encodeURIComponent(subCategory.name) %>">
+                                                        <a href="/package-details?category=<%= category.slug %>&subCategory=<%= subCategory.slug %>">
                                                             <%= subCategory.name %>
                                                         </a>
                                                     </li>
                                                 <% }) %>
                                                 <% category.directPackages &&
-                                                    category.directPackages.forEach(pkg=> { %>
+                                                    category.directPackages.forEach(pkg => { %>
                                                     <li>
-                                                        <a href="/package/<%= encodeURIComponent(pkg.title) %>">
+                                                        <a href="/package/<%= pkg.slug %>">
                                                             <%= pkg.destination %>
                                                         </a>
                                                     </li>
@@ -136,7 +136,7 @@
                                         </li>
                                     <% } else { %>
                                         <li>
-                                            <a href="/packages?category=<%= encodeURIComponent(category.name) %>">
+                                            <a href="/packages?category=<%= category.slug %>">
                                                 <%= category.name %>
                                             </a>
                                         </li>
@@ -278,10 +278,10 @@
                                                     class="form-select form-select-lg ps-4">
                                                     <option value="">Select Type</option>
                                                     <% categories.forEach(category=> { %>
-                                                        <option value="<%= category.name %>" <%=(query &&
-                                                            query.category===category.name) ? 'selected' : ''
+                                                        <option value="<%= category.slug %>" <%=(query &&
+                                                            query.category===category.slug) ? 'selected' : ''
                                                             %>>
-                                                            <%= category.name %>
+                                                            <%= category.slug %>
                                                         </option>
                                                     <% }); %>
                                                 </select>
@@ -308,13 +308,13 @@
                                                     query.category) ? 'disabled' : '' %>>
                                                     <option value="">Select Type First</option>
                                                     <% if (query && query.category) { %>
-                                                        <% const selectedCat=categories.find(c=> c.name === query.category); %>
+                                                        <% const selectedCat=categories.find(c=> c.slug === query.category); %>
                                                             <% if (selectedCat && selectedCat.subCategories) { %>
                                                                 <% selectedCat.subCategories.forEach(subCat=> { %>
-                                                                    <option value="<%= subCat.name %>"
-                                                                        <%=query.subCategory===subCat.name
+                                                                    <option value="<%= subCat.slug %>"
+                                                                        <%=query.subCategory===subCat.slug
                                                                         ? 'selected' : '' %>>
-                                                                        <%= subCat.name %>
+                                                                        <%= subCat.slug %>
                                                                     </option>
                                                                 <% }); %>
                                                             <% } %>
@@ -366,84 +366,120 @@
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
+                            
                                 const categorySelect = document.getElementById('search-category');
                                 const subcategorySelect = document.getElementById('search-subcategory');
-
-                                // Create a mapping of categories to their subcategories (by name)
+                            
+                            
                                 const categoryMap = {};
-                                <% categories.forEach(category => { %>
-                                    categoryMap['<%= category.name.replace(/'/g,"\\'") %>'] = [];
-                                    <% if (category.subCategories && category.subCategories.length > 0) { %>
-                                        <% category.subCategories.forEach(subCategory => { %>
-                                            <% if (subCategory.isActive) { %>
-                                                categoryMap['<%= category.name.replace(/'/g,"\\'") %>'].push({
-                                                    id: '<%= subCategory.name.replace(/'/g,"\\'") %>',
-                                                    name: '<%= subCategory.name.replace(/'/g, "\\'") %>'
-                                                });
-                                            <% } %>
-                                        <% }); %>
-                                    <% } %>
-                                <% }); %>
-
-                                // When category changes, update subcategories
-                                categorySelect.addEventListener('change', function () {
-                                    const categoryName = this.value;
-                                    subcategorySelect.innerHTML = '<option value="">Select Type First</option>';
-
-                                    if (categoryName && categoryMap[categoryName] && categoryMap[categoryName].length > 0) {
-                                        subcategorySelect.disabled = false;
-                                        categoryMap[categoryName].forEach(subCat => {
-                                            const option = new Option(subCat.name, subCat.id);
-                                            subcategorySelect.add(option);
+                            
+                                <% categories.forEach(category => { 
+                                    const catSlug = category.slug.replace(/'/g, "\\'");
+                                %>
+                                    categoryMap["<%= catSlug %>"] = [];
+                            
+                                    <% category.subCategories.forEach(sub => { 
+                                        if (sub.isActive) {
+                                            const subSlug = sub.slug.replace(/'/g, "\\'");
+                                            const subName = sub.name.replace(/'/g, "\\'");
+                                    %>
+                                        categoryMap["<%= catSlug %>"].push({
+                                            id: "<%= subSlug %>",
+                                            name: "<%= subName %>"
                                         });
-
-                                        // Check if there's a previously selected subcategory that belongs to this category
-                                        <% if (query && query.subCategory) { %>
-                                            const prevSubCat = '<%= query.subCategory %>';
-                                            if (categoryMap[categoryName].some(sub => sub.id === prevSubCat)) {
-                                                subcategorySelect.value = prevSubCat;
+                                    <% } }); %>
+                            
+                                <% }); %>
+                            
+                           
+                                categorySelect.addEventListener('change', function () {
+                                    const categorySlug = this.value;
+                                    subcategorySelect.innerHTML = '<option value="">Select Type First</option>';
+                            
+                                    if (categorySlug && categoryMap[categorySlug]?.length > 0) {
+                                        subcategorySelect.disabled = false;
+                            
+                                        categoryMap[categorySlug].forEach(sub => {
+                                            const opt = new Option(sub.name, sub.id);
+                                            subcategorySelect.add(opt);
+                                        });
+                            
+                              
+                                        <% if (query && query.subCategory) {
+                                            const prevSub = query.subCategory.replace(/'/g, "\\'");
+                                        %>
+                                            const prevSubJS = "<%= prevSub %>";
+                                            if (categoryMap[categorySlug].some(s => s.id === prevSubJS)) {
+                                                subcategorySelect.value = prevSubJS;
                                             }
                                         <% } %>
+                            
                                     } else {
                                         subcategorySelect.disabled = true;
                                         subcategorySelect.innerHTML = '<option value="">No locations available</option>';
                                     }
                                 });
-
-                                // Initialize with current category if present
+                       
                                 if (categorySelect.value) {
                                     categorySelect.dispatchEvent(new Event('change'));
                                 }
-
-                                // Enable subcategory select if it has options on page load
+                            
                                 if (subcategorySelect.options.length > 1) {
                                     subcategorySelect.disabled = false;
                                 }
-
-                                // Add hover effects to form controls
+                        
                                 const formControls = document.querySelectorAll('.form-select, .form-control');
                                 formControls.forEach(control => {
-                                    control.addEventListener('mouseenter', () => {
+                                    control.addEventListener('mouseenter', function () {
                                         control.classList.add('shadow-sm');
                                         const lottie = control.parentElement.querySelector('dotlottie-player');
                                         if (lottie) lottie.setSpeed(1.5);
                                     });
-                                    control.addEventListener('mouseleave', () => {
+                                    control.addEventListener('mouseleave', function () {
                                         control.classList.remove('shadow-sm');
                                         const lottie = control.parentElement.querySelector('dotlottie-player');
                                         if (lottie) lottie.setSpeed(1);
                                     });
-                                    control.addEventListener('focus', () => {
+                                    control.addEventListener('focus', function () {
                                         const lottie = control.parentElement.querySelector('dotlottie-player');
                                         if (lottie) lottie.setSpeed(2);
                                     });
-                                    control.addEventListener('blur', () => {
+                                    control.addEventListener('blur', function () {
                                         const lottie = control.parentElement.querySelector('dotlottie-player');
                                         if (lottie) lottie.setSpeed(1);
                                     });
                                 });
-                            });
-                        </script>
+                            
+                            }); 
+                            </script>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    const form = document.querySelector(".hero-search-form form");
+                                    const categorySelect = document.getElementById("search-category");
+                                    const subcategorySelect = document.getElementById("search-subcategory");
+                                
+                                    form.addEventListener("submit", function (e) {
+                                        e.preventDefault(); 
+                                
+                                        const cat = categorySelect.value;
+                                        const sub = subcategorySelect.value;
+                                
+                                    
+                                        if (cat && !sub) {
+                                            window.location.href = `/packages?category=${encodeURIComponent(cat)}`;
+                                            return;
+                                        }
+                                
+                                        if (cat && sub) {
+                                            window.location.href = `/package-details?category=${encodeURIComponent(cat)}&subCategory=${encodeURIComponent(sub)}`;
+                                            return;
+                                        }
+                                    
+                                        window.location.href = `/packages`;
+                                    });
+                                });
+                                </script>
+                                
                     </div>
                 </div>
             </div>
@@ -492,7 +528,7 @@
             <div class="d-none d-sm-block">
                 <div class="row g-3 justify-content-center">
                     <% categories.forEach(function(category, idx) { 
-                        var categoryNameParam = encodeURIComponent(category.name); 
+                        var categoryNameParam = category.slug; 
                     %>
                         <div class="col-6 col-md-4 col-lg-3 d-flex justify-content-center">
                             <a href="/packages?category=<%= categoryNameParam %>" style="text-decoration:none; display:block; width:100%; max-width:340px;">
@@ -537,7 +573,7 @@
                 <div class="swiper premier-destination-mobile-swiper">
                     <div class="swiper-wrapper">
                         <% categories.forEach(function(category, idx) { 
-                            var categoryNameParam = encodeURIComponent(category.name); 
+                            var categoryNameParam = category.slug; 
                         %>
                             <div class="swiper-slide d-flex justify-content-center" style="max-width: 95vw;">
                                 <a href="/packages?category=<%= categoryNameParam %>" style="text-decoration:none; display:block; width:100%; max-width:95vw;">
@@ -647,12 +683,12 @@
                             </button>
                             <% categories.forEach(function(category) { %>
                                 <button type="button" class="btn btn-outline-secondary category-btn mb-2 btn-sm"
-                                    data-category="<%= category._id %>"
+                                    data-category="<%= category.slug %>"
                                     style="font-size: 0.95rem; padding: 0.35rem 1rem;">
                                     <i class="ti ti-map-pin"></i>
-                                    <%= category.name %>
+                                    <%= category.slug %>
                                 </button>
-                                <% }) %>
+                            <% }) %>
                         </div>
                     </div>
                 </div>
@@ -661,24 +697,24 @@
                     <% packages.slice(0, 12).forEach(function(pkg, idx) { %>
                         <div class="col-12 col-sm-6 col-lg-3 package-item animate__animated animate__fadeInUp"
                             style="animation-delay: <%= (idx*0.07).toFixed(2) %>s;"
-                            data-category="<%= pkg.category && pkg.category._id ? pkg.category._id : 'uncategorized' %>">
+                            data-category="<%= pkg.category && pkg.category.slug ? pkg.category.slug : 'uncategorized' %>">
                             <div class="card h-100 shadow-sm border-0 position-relative">
                                 <div class="position-relative">
                                     <img src="<%= pkg.images && pkg.images[0] ? pkg.images[0] : '/images/listing/default.jpg' %>"
-                                        class="card-img-top" alt="<%= pkg.title %>"
+                                        class="card-img-top" alt="<%= pkg.slug %>"
                                         style="height: 220px; object-fit: cover; border-top-left-radius: 1.5rem; border-top-right-radius: 1.5rem;">
-                                    <% if (pkg.discount> 0) { %>
+                                    <% if (pkg.discount > 0) { %>
                                         <span
                                             class="badge bg-danger position-absolute top-0 start-0 m-2 fs-6 animate__animated animate__bounceIn">
                                             <i class="ti ti-discount-2"></i>
                                             <%= pkg.discount %>% Off
                                         </span>
-                                        <% } %>
-                                            <span
-                                                class="badge bg-primary position-absolute top-0 end-0 m-2 fs-6 animate__animated animate__fadeInRight">
-                                                <i class="ti ti-star"></i>
-                                                <%= pkg.categoryName || 'Tour' %>
-                                            </span>
+                                    <% } %>
+                                    <span
+                                        class="badge bg-primary position-absolute top-0 end-0 m-2 fs-6 animate__animated animate__fadeInRight">
+                                        <i class="ti ti-star"></i>
+                                        <%= pkg.categorySlug || 'Tour' %>
+                                    </span>
                                 </div>
                                 <div class="card-body d-flex flex-column">
                                     <div class="mb-2 text-muted small">
@@ -686,9 +722,9 @@
                                         <%= pkg.destination %>
                                     </div>
                                     <h5 class="card-title mb-1">
-                                        <a href="/package/<%= encodeURIComponent(pkg.title) %>"
+                                        <a href="/package/<%= pkg.slug %>"
                                             class="stretched-link text-decoration-none text-dark fw-semibold">
-                                            <%= pkg.title %>
+                                            <%= pkg.slug %>
                                         </a>
                                     </h5>
                                     <div class="mb-2 text-secondary small">
@@ -701,14 +737,13 @@
                                     <div
                                         class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
                                         <div>
-                                            <% if (pkg.packagePrice> 0) { %>
-                                                <span class="fw-bold text-success fs-5">₹<%=
-                                                        pkg.packagePrice.toLocaleString() %></span>
-                                                <% } else { %>
-                                                    <span class="fw-bold text-warning fs-6">Custom Pricing</span>
-                                                    <% } %>
+                                            <% if (pkg.packagePrice > 0) { %>
+                                                <span class="fw-bold text-success fs-5">₹<%= pkg.packagePrice.toLocaleString() %></span>
+                                            <% } else { %>
+                                                <span class="fw-bold text-warning fs-6">Custom Pricing</span>
+                                            <% } %>
                                         </div>
-                                        <a href="/package/<%= encodeURIComponent(pkg.title) %>"
+                                        <a href="/package/<%= pkg.slug %>"
                                             class="btn btn-outline-danger btn-sm animate__animated animate__pulse animate__infinite">
                                             Explore <i class="mdi mdi-arrow-right"></i>
                                         </a>
@@ -716,7 +751,7 @@
                                 </div>
                             </div>
                         </div>
-                        <% }) %>
+                    <% }) %>
                 </div>
 
                 <div id="no-packages-message" class="d-none text-center py-5">
@@ -739,13 +774,9 @@
         <script>
             window.allPackages = <%- JSON.stringify(packages) %>;
 
-            function encodePkgTitle(title) {
-                return encodeURIComponent(title || '');
-            }
-
-            function getCategoryId(pkg) {
-                if (pkg.category && pkg.category._id) {
-                    return pkg.category._id.toString();
+            function getCategorySlug(pkg) {
+                if (pkg.category && pkg.category.slug) {
+                    return pkg.category.slug.toString();
                 }
                 return 'uncategorized';
             }
@@ -760,9 +791,9 @@
     </span>
     ` : '';
 
-                    const categoryHtml = pkg.categoryName ? `
+                    const categoryHtml = pkg.categorySlug ? `
     <span class="badge bg-primary position-absolute top-0 end-0 m-2 fs-6 animate__animated animate__fadeInRight">
-        <i class="ti ti-star"></i> ${pkg.categoryName}
+        <i class="ti ti-star"></i> ${pkg.categorySlug}
     </span>
     ` : '';
 
@@ -770,15 +801,15 @@
                         ? `₹${pkg.packagePrice.toLocaleString()}`
                         : 'Custom Pricing';
 
-                    // Use /package/<encoded title> instead of _id
-                    const packageUrl = `/package/${encodePkgTitle(pkg.title)}`;
+                    // Use /package/<slug> (no encodeURIComponent)
+                    const packageUrl = `/package/${pkg.slug}`;
 
                     const cardHtml = `
-    <div class="col-12 col-sm-6 col-lg-3 package-item animate__animated animate__fadeInUp" style="animation-delay: ${(idx * 0.07).toFixed(2)}s;" data-category="${getCategoryId(pkg)}">
+    <div class="col-12 col-sm-6 col-lg-3 package-item animate__animated animate__fadeInUp" style="animation-delay: ${(idx * 0.07).toFixed(2)}s;" data-category="${getCategorySlug(pkg)}">
         <div class="card h-100 shadow-sm border-0 position-relative">
             <div class="position-relative">
                 <img src="${(pkg.images && pkg.images[0]) ? pkg.images[0] : '/images/listing/default.jpg'}"
-                    class="card-img-top" alt="${pkg.title}"
+                    class="card-img-top" alt="${pkg.slug}"
                     style="height: 220px; object-fit: cover; border-top-left-radius: 1.5rem; border-top-right-radius: 1.5rem;">
                 ${discountHtml}
                 ${categoryHtml}
@@ -790,7 +821,7 @@
                 </div>
                 <h5 class="card-title mb-1">
                     <a href="${packageUrl}" class="stretched-link text-decoration-none text-dark fw-semibold">
-                        ${pkg.title}
+                        ${pkg.slug}
                     </a>
                 </h5>
                 <div class="mb-2 text-secondary small">
@@ -821,10 +852,10 @@
                 if (window.feather) feather.replace();
             }
 
-            function filterPackages(categoryId) {
+            function filterPackages(categorySlug) {
                 // Update active button styling
                 document.querySelectorAll('.category-btn').forEach(btn => {
-                    if (btn.dataset.category === categoryId) {
+                    if (btn.dataset.category === categorySlug) {
                         btn.classList.add('btn-danger', 'active');
                         btn.classList.remove('btn-outline-secondary');
                     } else {
@@ -835,11 +866,11 @@
 
                 // Filter packages and show only 12
                 let filtered = [];
-                if (categoryId === 'all') {
+                if (categorySlug === 'all') {
                     filtered = window.allPackages;
                 } else {
                     filtered = window.allPackages.filter(pkg =>
-                        getCategoryId(pkg) === categoryId
+                        getCategorySlug(pkg) === categorySlug
                     );
                 }
                 renderPackages(filtered);
@@ -1109,7 +1140,7 @@
                     %>
                         <div class="swiper-slide">
                             <div class="deals-slide d-flex flex-column align-items-stretch justify-content-between" style="overflow:hidden; width: 320px; height: 320px; min-width: 320px; max-width: 320px; min-height: 320px; max-height: 320px; border-radius: 16px; background: #fff; box-shadow: 0 2px 16px rgba(0,0,0,0.04);">
-                                <a href="/package/<%= encodeURIComponent(pkg.title) %>" style="display:block; width:100%; height:220px; background:#f3f3f3;">
+                                <a href="/package/<%= pkg.slug %>" style="display:block; width:100%; height:220px; background:#f3f3f3;">
                                     <img 
                                         src="<%= imgSrc %>" 
                                         alt="<%= pkg.destination %>" 
@@ -1118,7 +1149,7 @@
                                 </a>
                                 <div class="d-flex flex-row justify-content-between align-items-center px-3" style="height: 60px;">
                                     <span class="fw-bold text-truncate" style="max-width: 180px;"><%= pkg.destination %></span>
-                                    <a href="/package/<%= encodeURIComponent(pkg.title) %>" class="btn btn-success btn-sm" style="white-space:nowrap;">Book Now</a>
+                                    <a href="/package/<%= pkg.slug %>" class="btn btn-success btn-sm" style="white-space:nowrap;">Book Now</a>
                                 </div>
                             </div>
                         </div>
@@ -1593,7 +1624,7 @@
                         <p class="mb-5 text-white wow fadeInUp" data-wow-delay="600ms" data-wow-duration="1000ms">
                             From the snow-capped Himalayas to the sun-kissed beaches of Goa, from the vibrant festivals to the tranquil backwaters of Kerala—India is a land of endless wonders. Embark on a journey through ancient history, rich culture, and breathtaking landscapes. Let your next adventure begin here!
                         </p>
-                        <a class="btn btn-success fadeInUp" href="/packages?category=Domestic%20Tours">Book Now</a>
+                        <a class="btn btn-success fadeInUp" href="/packages?category=domestic-tours">Book Now</a>
                     </div>
                     <div class="divider"></div>
                 </div>
@@ -1747,6 +1778,7 @@
                             <li><a href="/packages">Packages</a></li>
                             <li><a href="/about">About Us</a></li>
                             <li><a href="/gallery">Gallery</a></li>
+                            <li><a href="/blogs">Blogs</a></li>
                             <li><a href="/contact">Contact Us</a></li>
                         </ul>
                     </div>
@@ -1761,7 +1793,7 @@
                         <ul class="footer-nav">
                             <% if (categories && categories.length > 0) { %>
                                 <% categories.forEach(function(category) { 
-                                    var categoryNameParam = encodeURIComponent(category.name); 
+                                    var categoryNameParam = category.slug; 
                                 %>
                                     <li>
                                         <a href="/packages?category=<%= categoryNameParam %>">
@@ -1822,11 +1854,11 @@
     </footer>
     <!-- Mobile Bottom Navbar -->
     <nav id="mobile-bottom-navbar" class="mobile-bottom-navbar d-md-none">
-        <a href="/packages?category=International%20Tours" class="nav-item" title="International">
+        <a href="/packages?category=international-tours" class="nav-item" title="International">
             <span class="iconify" data-icon="mdi:airplane" data-inline="false"></span>
             <span class="nav-label">International</span>
         </a>
-        <a href="/packages?category=Domestic%20Tours" class="nav-item" title="Domestic">
+        <a href="/packages?category=domestic-tours" class="nav-item" title="Domestic">
             <span class="iconify" data-icon="mdi:home-city" data-inline="false"></span>
             <span class="nav-label">Domestic</span>
         </a>

@@ -11,13 +11,23 @@ const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 const videoRoutes = require('./routes/videoRoutes');
+
+app.use((req, res, next) => {
+  const host = req.headers.host;
+
+  if (host === 'joannaholidays.com') {
+    return res.redirect(301, `https://www.joannaholidays.com${req.url}`);
+  }
+  
+  next();
+});
+
 const app = express();
 
 // Middleware
 app.use(express.static(path.join(__dirname, '../assets')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../views'));
-// app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use(methodOverride('_method'));
 app.use(bodyParser.json());
@@ -43,16 +53,7 @@ app.use('/', apiRoutes);
 app.use('/', videoRoutes); 
 
 
-app.use((req, res, next) => {
-  const host = req.headers.host;
-  
-  // Check if the request is for non-www version
-  if (host === 'joannaholidays.com') {
-    return res.redirect(301, `https://www.joannaholidays.com${req.url}`);
-  }
-  
-  next();
-});
+
 
 app.use(async (req, res) => {
     res.status(404).render('errorPage', { title: 'Page Not Found' });

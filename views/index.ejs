@@ -42,9 +42,21 @@
     <!-- End Google Tag Manager (noscript) -->
     <!-- Preloader -->
     <div class="preloader" id="preloader">
-        <div class="spinner-grow" role="status">
+        <div id="preloader-lottie" style="width:260px; height:260px; margin:auto;">
             <span class="visually-hidden">Loading...</span>
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                lottie.loadAnimation({
+                    container: document.getElementById('preloader-lottie'),
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: '/json/loading.json'
+                });
+            });
+        </script>
     </div>
 
     <!-- Search Form Overlay -->

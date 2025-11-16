@@ -17,31 +17,26 @@ router.get('/', async (req, res) => {
         const mainbanners = await MainBanner.find({ isActive: true }).sort({ createdAt: -1 });
 
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
-            .lean();
+    .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+    .lean();
 
-        // Fixed Departure category id
         const fixedDepartureCategoryId = '6848056f80e92de2c956def0';
 
-        // Get all active packages
         const packages = await Package.find({ isActive: true })
-            .populate({
-                path: 'category',
-                select: 'name imageUrl'
-            })
-            .populate({
-                path: 'subCategory',
-                select: 'name imageUrl',
-                match: { isActive: true }
-            })
-            .lean();
+        .populate({
+            path: 'category',
+            select: 'name slug imageUrl'
+        })
+        .populate({
+            path: 'subCategory',
+            select: 'name slug imageUrl',
+            match: { isActive: true }
+        }) .lean();
 
-        // Separate Fixed Departure packages
+      
         const fixedDeparturePackages = packages.filter(pkg =>
             pkg.category && pkg.category._id && pkg.category._id.toString() === fixedDepartureCategoryId
         );
-
-        // All other packages (excluding Fixed Departure)
         const otherPackages = packages.filter(pkg =>
             !(pkg.category && pkg.category._id && pkg.category._id.toString() === fixedDepartureCategoryId)
         );
@@ -52,7 +47,6 @@ router.get('/', async (req, res) => {
 
         const videos = await Video.find().sort({ createdAt: -1 }).limit(3);
 
-        // For each category, include all packages (including Fixed Departure)
         const categoryMap = categories.map(category => {
             const categoryPackages = packages.filter(pkg =>
                 pkg.category?._id.toString() === category._id.toString()
@@ -61,7 +55,10 @@ router.get('/', async (req, res) => {
             const directPackages = categoryPackages.filter(pkg => !pkg.subCategory);
 
             return {
-                ...category,
+                _id: category._id,
+                name: category.name,
+                slug: category.slug,  
+                imageUrl: category.imageUrl,
                 subCategories: category.subCategories.filter(sub => sub.isActive),
                 packages: categoryPackages,
                 directPackages: directPackages,
@@ -69,7 +66,6 @@ router.get('/', async (req, res) => {
             };
         });
 
-        // processedPackages should include all packages (not just otherPackages)
         const processedPackages = packages.map(pkg => ({
             ...pkg,
             categoryName: pkg.category?.name || 'Deleted Category',
@@ -118,8 +114,8 @@ router.get('/', async (req, res) => {
 router.get('/about', async (req, res) => {
     try {
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
-            .lean();
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+        .lean();
 
         const blogs = await Blog.find().sort({ createdAt: -1 }).limit(3);
         const mainbanners = await MainBanner.find({ isActive: true }).sort({ createdAt: -1 });
@@ -147,8 +143,8 @@ router.get('/about', async (req, res) => {
                 ...category,
                 subCategories: category.subCategories.filter(sub => sub.isActive),
                 packages: categoryPackages,
-                directPackages: directPackages, // ✅ for dropdown logic
-                locationCount: categoryPackages.length // ✅ keep this if you use it
+                directPackages: directPackages, 
+                locationCount: categoryPackages.length 
             };
         });
         res.render('about', {
@@ -168,16 +164,15 @@ router.get('/blogs', async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
 
-        // Fetch blogs with pagination
+
         const blogs = await Blog.find()
             .sort({ createdAt: -1 })
             .skip((page - 1) * limit)
             .limit(parseInt(limit));
 
-        // Fetch categories
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
-            .lean();
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+        .lean();
         const packages = await Package.find({ isActive: true })
             .populate({
                 path: 'category',
@@ -200,11 +195,11 @@ router.get('/blogs', async (req, res) => {
                 ...category,
                 subCategories: category.subCategories.filter(sub => sub.isActive),
                 packages: categoryPackages,
-                directPackages: directPackages, // ✅ for dropdown logic
-                locationCount: categoryPackages.length // ✅ keep this if you use it
+                directPackages: directPackages,
+                locationCount: categoryPackages.length 
             };
         });
-        // Get total number of blogs for pagination
+ 
         const totalBlogs = await Blog.countDocuments();
 
         res.render('blogs', {
@@ -221,19 +216,17 @@ router.get('/blogs', async (req, res) => {
 });
 router.get('/gallery', async (req, res) => {
     try {
-        // Pagination for gallery and videos
+    
         const { page = 1 } = req.query;
         const galleryLimit = 10;
         const videoLimit = 9;
         const galleryPage = parseInt(page) || 1;
         const videoPage = parseInt(req.query.videoPage) || 1;
 
-        // Fetch categories
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
-            .lean();
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+        .lean();
 
-        // Fetch packages
         const packages = await Package.find({ isActive: true })
             .populate({
                 path: 'category',
@@ -246,7 +239,6 @@ router.get('/gallery', async (req, res) => {
             })
             .lean();
 
-        // Map categories
         const categoryMap = categories.map(category => {
             const categoryPackages = packages.filter(pkg =>
                 pkg.category?._id.toString() === category._id.toString()
@@ -262,13 +254,12 @@ router.get('/gallery', async (req, res) => {
             };
         });
 
-        // Gallery pagination
+      
         const totalGalleryItems = await Gallery.countDocuments();
         const gallery = await Gallery.find()
             .skip((galleryPage - 1) * galleryLimit)
             .limit(galleryLimit);
 
-        // Videos pagination
         const totalVideos = await Video.countDocuments();
         const videos = await Video.find()
             .sort({ createdAt: -1 })
@@ -294,12 +285,12 @@ router.get('/gallery', async (req, res) => {
 
 router.get('/contact', async (req, res) => {
     try {
-        // Fetch categories
+       
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
-            .lean();
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+        .lean();
 
-        // Fetch packages
+ 
         const packages = await Package.find({ isActive: true })
             .populate({
                 path: 'category',
@@ -312,7 +303,7 @@ router.get('/contact', async (req, res) => {
             })
             .lean();
 
-        // Process category map
+    
         const categoryMap = categories.map(category => {
             const categoryPackages = packages.filter(pkg =>
                 pkg.category?._id.toString() === category._id.toString()
@@ -329,7 +320,7 @@ router.get('/contact', async (req, res) => {
             };
         });
 
-        // Render contact page with categories
+     
         res.render('contact', {
             title: 'Contact Us',
             categories: categoryMap
@@ -343,8 +334,8 @@ router.get('/contact', async (req, res) => {
 router.get('/packages', async (req, res) => {
     try {
         const {
-            category,
-            subCategory,
+            category: categorySlug,
+            subCategory: subCategorySlug,
             search,
             minPrice,
             maxPrice,
@@ -357,86 +348,97 @@ router.get('/packages', async (req, res) => {
 
         const skip = (parseInt(page) - 1) * parseInt(limit);
 
-        // Build Mongoose query object
+    
         const queryObj = { isActive: true };
 
-        // Get all categories to filter/search by name and for side nav display
         const allCategories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories')
-            .lean()
-            .sort({ createdAt: -1 });
+            .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+            .lean();
 
-        // Handle category name(s) filter
+ 
+        let selectedCategorySlugs = [];
         let selectedCategoryNames = [];
-        if (category) {
-            const categoryNamesArr = Array.isArray(category)
-                ? category
-                : String(category).split(',').map(n => n.trim()).filter(Boolean);
-            if (categoryNamesArr.length) {
-                const matchedCategoryDocs = allCategories.filter(cat => categoryNamesArr.includes(cat.name));
+        let categoryIdsToFilter = [];
+        if (categorySlug) {
+            const categorySlugsArr = Array.isArray(categorySlug)
+                ? categorySlug
+                : String(categorySlug).split(',').map(s => s.trim()).filter(Boolean);
+
+            if (categorySlugsArr.length) {
+                const matchedCategoryDocs = allCategories.filter(cat => categorySlugsArr.includes(cat.slug));
                 const catIds = matchedCategoryDocs.map(cat => String(cat._id));
                 if (catIds.length) {
                     queryObj.category = { $in: catIds };
+                    categoryIdsToFilter = catIds;
+                    selectedCategorySlugs = matchedCategoryDocs.map(cat => cat.slug);
                     selectedCategoryNames = matchedCategoryDocs.map(cat => cat.name);
                 }
             }
         }
 
-        // Handle subCategory name(s) filter (resolve subcategory _ids first)
+   
+        let selectedSubCategorySlugs = [];
         let selectedSubCategoryNames = [];
-        if (subCategory) {
-            const subCatNamesArr = Array.isArray(subCategory)
-                ? subCategory
-                : String(subCategory).split(',').map(n => n.trim()).filter(Boolean);
+        if (subCategorySlug) {
+            const subCatSlugsArr = Array.isArray(subCategorySlug)
+                ? subCategorySlug
+                : String(subCategorySlug).split(',').map(s => s.trim()).filter(Boolean);
 
             let allSubCats = [];
-            if (queryObj.category && Array.isArray(queryObj.category.$in)) {
-                // from selected categories only
-                const filteredCats = allCategories.filter(cat => queryObj.category.$in.includes(String(cat._id)));
+            if (categoryIdsToFilter.length > 0) {
+   
+                const filteredCats = allCategories.filter(cat => categoryIdsToFilter.includes(String(cat._id)));
                 filteredCats.forEach(cat => {
                     (cat.subCategories || []).forEach(sub => {
-                        allSubCats.push(sub);
+                        allSubCats.push({ ...sub, parentCategory: cat });
                     });
                 });
             } else {
-                // from all categories
+        
                 allCategories.forEach(cat => {
                     (cat.subCategories || []).forEach(sub => {
-                        allSubCats.push(sub);
+                        allSubCats.push({ ...sub, parentCategory: cat });
                     });
                 });
             }
 
             const matchedSubCatIds = [];
-            subCatNamesArr.forEach(name => {
-                const found = allSubCats.find(sc => sc.name === name && sc.isActive !== false);
-                if (found) matchedSubCatIds.push(found._id);
+            const matchedSubCatNames = [];
+            const matchedSubCatSlugs = [];
+            subCatSlugsArr.forEach(slug => {
+                const found = allSubCats.find(sc => sc.slug === slug && sc.isActive !== false);
+                if (found) {
+                    matchedSubCatIds.push(found._id);
+                    matchedSubCatNames.push(found.name);
+                    matchedSubCatSlugs.push(found.slug);
+                }
             });
 
             if (matchedSubCatIds.length) {
                 queryObj.subCategory = { $in: matchedSubCatIds };
-                selectedSubCategoryNames = subCatNamesArr;
+                selectedSubCategorySlugs = matchedSubCatSlugs;
+                selectedSubCategoryNames = matchedSubCatNames;
             } else {
-                // If searching for a subcategory but no valid ones, set impossible filter
-                if (subCatNamesArr.length) {
+             
+                if (subCatSlugsArr.length) {
                     queryObj.subCategory = { $in: [] };
                 }
             }
         }
 
-        // Duration/tourType/month (opt: month currently just string match on a field, if you want)
+
         if (duration) queryObj.duration = duration;
         if (tourType) queryObj.tourType = tourType;
-        if (month) queryObj.month = month; // Only if you have such field
+        if (month) queryObj.month = month;
 
-        // Price range
+ 
         if (minPrice || maxPrice) {
             queryObj.packagePrice = {};
             if (minPrice) queryObj.packagePrice.$gte = +minPrice;
             if (maxPrice) queryObj.packagePrice.$lte = +maxPrice;
         }
 
-        // Search in key text fields
+   
         let searchRegex = null;
         if (search && String(search).length >= 3) {
             searchRegex = new RegExp(search, 'i');
@@ -452,35 +454,35 @@ router.get('/packages', async (req, res) => {
             };
         }
 
-        // Combine main and search filter
+   
         const finalQuery = Object.keys(searchFilter).length
             ? { $and: [queryObj, searchFilter] }
             : queryObj;
 
-        // Main Package query (populate category/subCategory for UI)
+
         const [totalPackages, packages, categoriesForList] = await Promise.all([
             Package.countDocuments(finalQuery),
             Package.find(finalQuery)
-                .populate({ path: 'category', select: 'name imageUrl' })
-                .populate({ path: 'subCategory', select: 'name imageUrl' })
+                .populate({ path: 'category', select: 'name slug imageUrl' })
+                .populate({ path: 'subCategory', select: 'name slug imageUrl' })
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(parseInt(limit))
                 .lean(),
-            // For filter/category sidebar/buttons
+       
             Category.find({ isActive: true })
-                .select('name imageUrl subCategories')
+                .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
                 .lean()
                 .sort({ createdAt: -1 })
         ]);
 
-        // Filter category list for only active subCategories
+   
         const uiCategories = categoriesForList.map(cat => ({
             ...cat,
             subCategories: (cat.subCategories || []).filter(sub => sub.isActive)
         }));
 
-        // For category tab counts (just based on current page of packages, not total in db)
+    
         const pageCats = {};
         packages.forEach(pkg => {
             if (pkg.category && pkg.category.name) {
@@ -488,7 +490,6 @@ router.get('/packages', async (req, res) => {
             }
         });
 
-        // Send to EJS renderer
         res.render('packages', {
             title: 'Tour Packages',
             packages,
@@ -497,13 +498,13 @@ router.get('/packages', async (req, res) => {
                 packageCount: pageCats[cat.name] || 0,
             })),
             currentCategory:
-                selectedCategoryNames.length === 1
-                    ? selectedCategoryNames[0]
-                    : (selectedCategoryNames.length ? selectedCategoryNames : null),
+                selectedCategorySlugs.length === 1
+                    ? selectedCategorySlugs[0]
+                    : (selectedCategorySlugs.length ? selectedCategorySlugs : null),
             currentSubCategory:
-                selectedSubCategoryNames.length === 1
-                    ? selectedSubCategoryNames[0]
-                    : (selectedSubCategoryNames.length ? selectedSubCategoryNames : null),
+                selectedSubCategorySlugs.length === 1
+                    ? selectedSubCategorySlugs[0]
+                    : (selectedSubCategorySlugs.length ? selectedSubCategorySlugs : null),
             searchTerm: search,
             currentPage: parseInt(page),
             totalPages: Math.ceil(totalPackages / parseInt(limit)),
@@ -518,19 +519,13 @@ router.get('/packages', async (req, res) => {
   
 
 // Package details page
-router.get('/package/:title', async (req, res) => {
+router.get('/package/:slug', async (req, res) => {
     try {
-        const rawTitle = req.params.title;
-        let tourPackage = await Package.findOne({ title: decodeURIComponent(rawTitle) })
-            .populate('category', 'name')
-            .populate('subCategory', 'name');
+        const slug = req.params.slug;
 
-        if (!tourPackage) {
-            const slugTitle = decodeURIComponent(rawTitle).replace(/-/g, ' ');
-            tourPackage = await Package.findOne({ title: new RegExp('^' + slugTitle + '$', 'i') })
-                .populate('category', 'name')
-                .populate('subCategory', 'name');
-        }
+        const tourPackage = await Package.findOne({ slug })
+            .populate('category', 'name slug')
+            .populate('subCategory', 'name slug');
 
         if (!tourPackage) {
             return res.status(404).render('comming-soon', {
@@ -542,47 +537,43 @@ router.get('/package/:title', async (req, res) => {
             _id: { $ne: tourPackage._id },
             isActive: true
         };
-        if (tourPackage.category && tourPackage.category._id) {
+
+        if (tourPackage.category?._id) {
             otherPackagesQuery.category = tourPackage.category._id;
         }
-        if (tourPackage.subCategory && tourPackage.subCategory._id) {
+
+        if (tourPackage.subCategory?._id) {
             otherPackagesQuery.subCategory = tourPackage.subCategory._id;
         }
 
         let otherPackages = await Package.find(otherPackagesQuery)
             .limit(3)
-            .populate('category', 'name')
-            .populate('subCategory', 'name')
+            .populate('category', 'name slug')
+            .populate('subCategory', 'name slug')
             .lean();
 
+      
         if (otherPackages.length < 3) {
-            const fillCount = 3 - otherPackages.length;
-            const additionalPackages = await Package.find({
-                _id: { $nin: [tourPackage._id, ...otherPackages.map(pkg => pkg._id)] },
-                isActive: true,
+            const remaining = 3 - otherPackages.length;
+            const more = await Package.find({
+                _id: { $nin: [tourPackage._id, ...otherPackages.map(p => p._id)] },
+                isActive: true
             })
-            .sort({ createdAt: -1 })
-            .limit(fillCount)
-            .populate('category', 'name')
-            .populate('subCategory', 'name')
-            .lean();
-            otherPackages = otherPackages.concat(additionalPackages);
+                .sort({ createdAt: -1 })
+                .limit(remaining)
+                .lean();
+
+            otherPackages = [...otherPackages, ...more];
         }
 
+    
         const categoriesRaw = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
-            .lean();
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+        .lean();
 
         const allPackages = await Package.find({ isActive: true })
-            .populate({
-                path: 'category',
-                select: 'name imageUrl'
-            })
-            .populate({
-                path: 'subCategory',
-                select: 'name imageUrl',
-                match: { isActive: true }
-            })
+            .populate('category', 'name slug imageUrl')
+            .populate('subCategory', 'name slug imageUrl')
             .lean();
 
         const categories = categoriesRaw.map(cat => {
@@ -590,13 +581,11 @@ router.get('/package/:title', async (req, res) => {
                 pkg.category?._id.toString() === cat._id.toString()
             );
 
-            const directPackages = categoryPackages.filter(pkg => !pkg.subCategory);
-
             return {
                 ...cat,
-                subCategories: cat.subCategories.filter(sub => sub.isActive),
-                directPackages,
+                subCategories: cat.subCategories.filter(s => s.isActive),
                 packages: categoryPackages,
+                directPackages: categoryPackages.filter(p => !p.subCategory),
                 locationCount: categoryPackages.length
             };
         });
@@ -604,37 +593,38 @@ router.get('/package/:title', async (req, res) => {
         res.render('packageDetails', {
             title: tourPackage.title,
             tourPackage,
-            categories, 
+            categories,
             otherPackages
         });
-    } catch (error) {
-        console.error(error);
+
+    } catch (err) {
+        console.error(err);
         res.status(500).send('Server Error');
     }
 });
 
 router.get('/package-details', async (req, res) => {
     try {
-        const { category: categoryName, subCategory: subCategoryName } = req.query;
+        const { category: categorySlug, subCategory: subCategorySlug } = req.query;
 
-        if (!categoryName || !subCategoryName) {
+        if (!categorySlug || !subCategorySlug) {
             return res.status(400).render('comming-soon', {
-                message: 'Category name and subcategory name are required'
+                message: 'Category slug and subcategory slug are required'
             });
         }
 
         const category = await Category.findOne(
-            { 
-                name: categoryName,
+            {
+                slug: categorySlug,
                 isActive: true,
-                'subCategories': { 
-                  $elemMatch: { 
-                    name: subCategoryName, 
-                    isActive: true 
-                  } 
+                'subCategories': {
+                    $elemMatch: {
+                        slug: subCategorySlug,
+                        isActive: true
+                    }
                 }
             },
-            { name: 1, imageUrl: 1, subCategories: 1 }
+            { name: 1, slug: 1, imageUrl: 1, subCategories: 1 }
         ).lean();
 
         if (!category) {
@@ -643,9 +633,8 @@ router.get('/package-details', async (req, res) => {
             });
         }
 
-        // Find the subcategory object by name
         const subCategoryData = category.subCategories.find(
-            (sub) => sub.name.toLowerCase() === subCategoryName.toLowerCase() && sub.isActive
+            (sub) => sub.slug === subCategorySlug && sub.isActive
         );
 
         if (!subCategoryData) {
@@ -654,14 +643,13 @@ router.get('/package-details', async (req, res) => {
             });
         }
 
-        // Find first matching package with both category and subcategory name (isActive only)
         const tourPackage = await Package.findOne({
             category: category._id,
             subCategory: subCategoryData._id,
             isActive: true
         })
-            .populate('category', 'name')
-            .populate('subCategory', 'name');
+            .populate('category', 'name slug')
+            .populate('subCategory', 'name slug');
 
         if (!tourPackage) {
             return res.status(404).render('comming-soon', {
@@ -669,7 +657,6 @@ router.get('/package-details', async (req, res) => {
             });
         }
 
-        // Find other packages from this subcategory, but exclude the current one (max 3)
         let otherPackages = await Package.find({
             category: category._id,
             subCategory: subCategoryData._id,
@@ -677,39 +664,38 @@ router.get('/package-details', async (req, res) => {
             _id: { $ne: tourPackage._id }
         })
             .limit(3)
-            .populate('category', 'name')
-            .populate('subCategory', 'name')
+            .populate('category', 'name slug')
+            .populate('subCategory', 'name slug')
             .lean();
 
-        // If not enough, fill up to 3 from other active packages (exclude current & already included)
         if (otherPackages.length < 3) {
             const fillCount = 3 - otherPackages.length;
             const additionalPackages = await Package.find({
                 _id: { $nin: [tourPackage._id, ...otherPackages.map(pkg => pkg._id)] },
                 isActive: true,
             })
-            .sort({ createdAt: -1 })
-            .limit(fillCount)
-            .populate('category', 'name')
-            .populate('subCategory', 'name')
-            .lean();
+                .sort({ createdAt: -1 })
+                .limit(fillCount)
+                .populate('category', 'name slug')
+                .populate('subCategory', 'name slug')
+                .lean();
 
             otherPackages = otherPackages.concat(additionalPackages);
         }
 
-        // Build categories for navigation (same as in other routes)
+      
         const categoriesRaw = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
+            .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
             .lean();
 
         const allPackages = await Package.find({ isActive: true })
             .populate({
                 path: 'category',
-                select: 'name imageUrl'
+                select: 'name slug imageUrl'
             })
             .populate({
                 path: 'subCategory',
-                select: 'name imageUrl',
+                select: 'name slug imageUrl',
                 match: { isActive: true }
             })
             .lean();
@@ -736,7 +722,8 @@ router.get('/package-details', async (req, res) => {
             subCategory: subCategoryData,
             parentCategory: {
                 _id: category._id,
-                name: category.name
+                name: category.name,
+                slug: category.slug
             },
             categories,
             otherPackages
@@ -755,7 +742,6 @@ router.get('/blogdetails', async (req, res) => {
             return res.status(400).send('Blog title is required');
         }
 
-        // Search blog by exact title match
         const blog = await Blog.findOne({ title }).lean();
 
         if (!blog) {
@@ -763,8 +749,8 @@ router.get('/blogdetails', async (req, res) => {
         }
 
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
-            .lean();
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+        .lean();
 
         const relatedBlogs = await Blog.find({ title: { $ne: title } })
             .sort({ createdAt: -1 })
@@ -785,12 +771,11 @@ router.get('/blogdetails', async (req, res) => {
 
 router.get('/customTours', async (req, res) => {
     try {
-        // Fetch categories
+  
         const categories = await Category.find({ isActive: true })
-            .select('name imageUrl subCategories').sort({ createdAt: -1 })
-            .lean();
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
+        .lean();
 
-        // Fetch packages
         const packages = await Package.find({ isActive: true })
             .populate({
                 path: 'category',
@@ -803,7 +788,6 @@ router.get('/customTours', async (req, res) => {
             })
             .lean();
 
-        // Process category map
         const categoryMap = categories.map(category => {
             const categoryPackages = packages.filter(pkg =>
                 pkg.category?._id.toString() === category._id.toString()
@@ -820,7 +804,7 @@ router.get('/customTours', async (req, res) => {
             };
         });
 
-        // Render contact page with categories
+      
         res.render('customTours', {
             title: 'customTours',
             categories: categoryMap

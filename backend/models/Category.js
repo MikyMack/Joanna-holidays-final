@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify'); 
 
-// Subcategory Schema (embedded in Category)
+
 const SubcategorySchema = new mongoose.Schema({
     name: { 
         type: String, 
         required: true,
         trim: true
+    },
+    slug: {
+        type: String,
+        required: true
     },
     imageUrl: { 
         type: String, 
@@ -17,13 +22,26 @@ const SubcategorySchema = new mongoose.Schema({
     }
 }, { _id: true }); 
 
-// Category Schema
+
+SubcategorySchema.pre('validate', function(next) {
+    if (this.isModified('name') || !this.slug) {
+    
+        this.slug = slugify(this.name, { lower: true, strict: true });
+    }
+    next();
+});
+
 const CategorySchema = new mongoose.Schema({
     name: { 
         type: String, 
         required: true, 
         unique: true,
         trim: true
+    },
+    slug: { 
+        type: String, 
+        required: true, 
+        unique: true 
     },
     imageUrl: { 
         type: String, 
@@ -40,17 +58,45 @@ const CategorySchema = new mongoose.Schema({
     toJSON: { virtuals: true }
 });
 
-// Add a static method to find a category by subcategory ID
+
+CategorySchema.pre('validate', async function(next) {
+    if (this.isModified('name') || !this.slug) {
+        let baseSlug = slugify(this.name, { lower: true, strict: true });
+        let slug = baseSlug;
+        let count = 1;
+       
+        while (
+            await mongoose.models.Category.findOne({ slug, _id: { $ne: this._id } })
+        ) {
+            slug = `${baseSlug}-${count++}`;
+        }
+        this.slug = slug;
+    }
+
+    if (this.subCategories && Array.isArray(this.subCategories)) {
+        for (let sub of this.subCategories) {
+            if (!sub.slug || (sub.isModified && sub.isModified('name'))) {
+                sub.slug = slugify(sub.name, { lower: true, strict: true });
+            }
+        }
+    }
+
+    next();
+});
+
+
 CategorySchema.statics.findBySubcategoryId = async function(subcategoryId) {
     return this.findOne({ 'subCategories._id': subcategoryId });
 };
 
-// Virtual property to get active subcategories only
+
 CategorySchema.virtual('activeSubCategories').get(function() {
     return this.subCategories.filter(sub => sub.isActive);
 });
 
-// Create index for better performance on subcategory queries
+
 CategorySchema.index({ 'subCategories._id': 1 });
+CategorySchema.index({ slug: 1 });
+CategorySchema.index({ 'subCategories.slug': 1 });
 
 module.exports = mongoose.model('Category', CategorySchema);

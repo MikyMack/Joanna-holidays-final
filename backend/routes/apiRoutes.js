@@ -39,7 +39,7 @@ router.patch('/toggle-package-status/:id', packageController.togglePackageStatus
 router.get('/by-category/:categoryId', packageController.getPackagesByCategory);
 router.get('/by-subcategory/:subCategoryId', packageController.getPackagesBySubCategory);
 
-// Search and filter endpoints
+// Search
 router.get('/search-packages', packageController.filterPackages);
 
 // 📰 Blogs Routes
@@ -57,7 +57,7 @@ router.put('/banners/:id', upload.array('images', 5), bannerController.updateBan
 router.delete('/banners/:id', bannerController.deleteBanner);
 router.patch('/banners/:id/status', bannerController.updateBannerStatus);
 
-// Testimonials
+
 router.post('/admin-testimonials', upload.single('image'), testimonialController.createTestimonial);
 router.get('/testimonials', testimonialController.listTestimonials);
 router.get('/admin-testimonials/:id', testimonialController.getTestimonialForEdit);
@@ -65,7 +65,7 @@ router.put('/admin-testimonials/:id', upload.single('image'), testimonialControl
 router.delete('/admin-testimonials/:id', testimonialController.deleteTestimonial);
 router.patch('/admin-testimonials/toggle-status/:id', testimonialController.toggleTestimonialStatus);
 
-// routes/apiRoutes.js
+
 router.post('/book', async (req, res) => {
     try {
       const booking = req.body;

@@ -21,7 +21,7 @@ userSchema.methods.comparePassword = function(candidatePassword) {
 
 const User = mongoose.model('User', userSchema);
 
-// Create a default admin user
+
 (async () => {
     const existingAdmin = await User.findOne({ username: 'admin@Joanna.com' });
     if (!existingAdmin) {

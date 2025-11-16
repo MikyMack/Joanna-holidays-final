@@ -12,7 +12,7 @@ const authController =require('../controllers/authController');
 const Gallery = require('../models/Gallery');
 const Blogs = require('../models/Blog');
 
-// Admin Login Page
+
 app.get('/login', (req, res) => {
     res.render('admin-login', { title: 'Admin Login' });
 });

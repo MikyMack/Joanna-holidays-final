@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const PackageSchema = new mongoose.Schema({
     title: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
     destination: { type: String, required: true },
     category: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -41,9 +43,24 @@ const PackageSchema = new mongoose.Schema({
     }],
     isActive: { type: Boolean, default: true }
 }, { timestamps: true });
-// In your Package model
+
+
+PackageSchema.pre('validate', async function (next) {
+    if (this.isModified('title') || !this.slug) {
+
+        let baseSlug = slugify(this.title, { lower: true, strict: true });
+        let slug = baseSlug;
+
+        let count = 1;
+        while (await mongoose.models.Package.findOne({ slug, _id: { $ne: this._id } })) {
+            slug = `${baseSlug}-${count++}`;
+        }
+        this.slug = slug;
+    }
+    next();
+});
+
 PackageSchema.index({ category: 1, subCategory: 1, isActive: 1 });
 PackageSchema.index({ packagePrice: 1 });
-
 
 module.exports = mongoose.model('Package', PackageSchema);

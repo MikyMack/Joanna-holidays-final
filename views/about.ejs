@@ -18,7 +18,7 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KV49GR89');</script>
      <link rel="canonical" href="https://www.joannaholidays.com/" />
-    <!-- End Google Tag Manager -->
+    <!-- End Google Tag Manager -->
    <!-- Stylesheet -->
    <link rel="stylesheet" href="/css/animate.css">
    <link rel="stylesheet" href="/css/tabler-icons.min.css">
@@ -34,7 +34,7 @@
     <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KV49GR89"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <!-- End Google Tag Manager (noscript) -->
    <!-- Search Form Overlay -->
    <div class="search-bg-overlay" id="searchOverlay"></div>
 
@@ -97,7 +97,7 @@
                             %>
                                 <% if (hasSubCategories || hasDirectPackages) { %>
                                     <li class="touria-dd">
-                                        <a href="/packages?category=<%= category.slug %>">
+                                        <a href="/packages/<%= category.slug %>">
                                             <%= category.name %>
                                             <% if (hasSubCategories || hasDirectPackages) { %>
                                                 <i class="ti ti-chevron-right"></i>
@@ -107,7 +107,7 @@
                                             <% category.subCategories &&
                                                 category.subCategories.forEach(subCategory => { %>
                                                 <li>
-                                                    <a href="/package-details?category=<%= category.slug %>&subCategory=<%= subCategory.slug %>">
+                                                    <a href="/packages/<%= category.slug %>/<%= subCategory.slug %>">
                                                         <%= subCategory.name %>
                                                     </a>
                                                 </li>
@@ -124,7 +124,7 @@
                                     </li>
                                 <% } else { %>
                                     <li>
-                                        <a href="/packages?category=<%= category.slug %>">
+                                        <a href="/packages/<%= category.slug %>">
                                             <%= category.name %>
                                         </a>
                                     </li>
@@ -894,7 +894,7 @@
                             var categoryNameParam =category.slug; 
                         %>
                             <li>
-                                <a href="/packages?category=<%= categoryNameParam %>">
+                                <a href="/packages/<%= categoryNameParam %>">
                                     <%= category.name %>
                                 </a>
                             </li>
@@ -951,11 +951,11 @@
    </div>
 </footer>
 <nav id="mobile-bottom-navbar" class="mobile-bottom-navbar d-md-none">
-    <a href="/packages?category=international-tours" class="nav-item" title="International">
+    <a href="/packages/international-tours" class="nav-item" title="International">
         <span class="iconify" data-icon="mdi:airplane" data-inline="false"></span>
         <span class="nav-label">International</span>
     </a>
-    <a href="/packages?category=domestic-tours" class="nav-item" title="Domestic">
+    <a href="/packages/domestic-tours" class="nav-item" title="Domestic">
         <span class="iconify" data-icon="mdi:home-city" data-inline="false"></span>
         <span class="nav-label">Domestic</span>
     </a>

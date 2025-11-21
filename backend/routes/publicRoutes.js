@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 const Category = require('../models/Category');
 const Package = require('../models/Package');
 const Gallery = require('../models/Gallery');
@@ -69,7 +70,6 @@ router.get('/sitemap.xml', async (req, res) => {
         res.send(xml);
 
     } catch (error) {
-        console.error('Sitemap Error:', error);
         res.status(500).send('Error generating sitemap');
     }
 });
@@ -94,6 +94,16 @@ router.get('/', async (req, res) => {
         );
 
         const blogs = await Blog.find().sort({ createdAt: -1 }).limit(3);
+        
+        // Auto-fix missing slugs for old blogs
+        for (const blog of blogs) {
+            if (!blog.slug) {
+                blog.slug = slugify(blog.title, { lower: true, strict: true });
+                // Update database directly
+                await Blog.updateOne({ _id: blog._id }, { $set: { slug: blog.slug } });
+            }
+        }
+
         const testimonials = await Testimonial.find().sort({ createdAt: -1 }).limit(10);
         const videos = await Video.find().sort({ createdAt: -1 }).limit(3);
 
@@ -151,7 +161,6 @@ router.get('/', async (req, res) => {
             query: req.query
         });
     } catch (error) {
-        console.error(error);
         res.status(500).send('Error loading home page data');
     }
 });
@@ -162,6 +171,15 @@ router.get('/about', async (req, res) => {
             .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive')
             .lean();
         const blogs = await Blog.find().sort({ createdAt: -1 }).limit(3);
+        
+        // Auto-fix missing slugs
+        for (const blog of blogs) {
+            if (!blog.slug) {
+                blog.slug = slugify(blog.title, { lower: true, strict: true });
+                await Blog.updateOne({ _id: blog._id }, { $set: { slug: blog.slug } });
+            }
+        }
+
         const mainbanners = await MainBanner.find({ isActive: true }).sort({ createdAt: -1 });
         const gallery = await Gallery.find().sort({ createdAt: -1 }).limit(20);
         const testimonials = await Testimonial.find().sort({ createdAt: -1 }).limit(10);
@@ -183,7 +201,6 @@ router.get('/about', async (req, res) => {
         });
         res.render('about', { title: 'About Us', categories: categoryMap, blogs, gallery, testimonials, mainbanners });
     } catch (error) {
-        console.error(error);
         res.status(500).send('Error loading about us page data');
     }
 });
@@ -192,6 +209,15 @@ router.get('/blogs', async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
         const blogs = await Blog.find().sort({ createdAt: -1 }).skip((page - 1) * limit).limit(parseInt(limit));
+        
+        // Auto-fix missing slugs
+        for (const blog of blogs) {
+            if (!blog.slug) {
+                blog.slug = slugify(blog.title, { lower: true, strict: true });
+                await blog.save(); // Using save on document instance
+            }
+        }
+
         const categories = await Category.find({ isActive: true })
             .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive').lean();
         const packages = await Package.find({ isActive: true })
@@ -219,7 +245,6 @@ router.get('/blogs', async (req, res) => {
             totalPages: Math.ceil(totalBlogs / limit)
         });
     } catch (error) {
-        console.error(error);
         res.status(500).send('Error loading blogs page data');
     }
 });
@@ -239,8 +264,15 @@ router.get('/blogs/:slug', async (req, res) => {
 
         const relatedBlogs = await Blog.find({ _id: { $ne: blog._id } })
             .sort({ createdAt: -1 })
-            .limit(3)
-            .lean();
+            .limit(3);
+            
+        // Auto-fix related blogs too
+        for (const rBlog of relatedBlogs) {
+            if (!rBlog.slug) {
+                rBlog.slug = slugify(rBlog.title, { lower: true, strict: true });
+                await rBlog.save();
+            }
+        }
 
         res.render('blogdetails', {
             title: blog.metaTitle || blog.title,
@@ -249,7 +281,6 @@ router.get('/blogs/:slug', async (req, res) => {
             categories
         });
     } catch (error) {
-        console.error(error);
         res.status(500).send('Error loading blog details page data');
     }
 });
@@ -261,6 +292,12 @@ router.get('/blogdetails', async (req, res) => {
         const blog = await Blog.findOne({ title }).select('slug').lean();
         if (blog && blog.slug) {
             return res.redirect(301, `/blogs/${blog.slug}`);
+        }
+        // Fallback: try to generate slug from title and see if it exists
+        const slug = slugify(title, { lower: true, strict: true });
+        const blogBySlug = await Blog.findOne({ slug }).lean();
+        if(blogBySlug) {
+             return res.redirect(301, `/blogs/${blogBySlug.slug}`);
         }
     }
     res.redirect(301, '/blogs');
@@ -307,7 +344,6 @@ router.get('/gallery', async (req, res) => {
             videoTotalPages: Math.ceil(totalVideos / videoLimit)
         });
     } catch (error) {
-        console.error(error);
         res.status(500).send('Error loading gallery page data');
     }
 });
@@ -334,7 +370,6 @@ router.get('/contact', async (req, res) => {
 
         res.render('contact', { title: 'Contact Us', categories: categoryMap });
     } catch (error) {
-        console.error(error);
         res.status(500).send('Error loading contact page data');
     }
 });
@@ -349,7 +384,6 @@ router.get('/packages/:categorySlug', async (req, res, next) => {
         req.query.category = categorySlug;
         return renderPackagesPage(req, res);
     } catch (error) {
-        console.error(error);
         res.status(500).send('Server Error');
     }
 });
@@ -430,7 +464,6 @@ router.get('/packages/:categorySlug/:subCategorySlug', async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
         res.status(500).send('Server Error');
     }
 });
@@ -533,7 +566,6 @@ async function renderPackagesPage(req, res) {
             query: req.query,
         });
     } catch (error) {
-        console.error('Error in /packages render:', error);
         res.status(500).send('Server Error');
     }
 }
@@ -570,7 +602,6 @@ router.get('/package/:slug', async (req, res) => {
         });
         res.render('packageDetails', { title: tourPackage.title, tourPackage, categories, otherPackages });
     } catch (err) {
-        console.error(err);
         res.status(500).send('Server Error');
     }
 });
@@ -585,7 +616,6 @@ router.get('/package-details', async (req, res) => {
             return res.status(400).render('comming-soon', { message: 'Category slug and subcategory slug are required' });
         }
     } catch (error) {
-        console.error(error);
         res.status(500).send('Server Error');
     }
 });
@@ -607,7 +637,6 @@ router.get('/customTours', async (req, res) => {
         });
         res.render('customTours', { title: 'customTours', categories: categoryMap });
     } catch (error) {
-        console.error(error);
         res.status(500).send('Error loading customTours page data');
     }
 });

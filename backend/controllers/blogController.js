@@ -1,5 +1,6 @@
 const Blog = require('../models/Blog');
 const cloudinary = require('../utils/cloudinary');
+const mongoose = require('mongoose');
 
 exports.createBlog = async (req, res) => {
     try {
@@ -41,7 +42,11 @@ exports.getAllBlogs = async (req, res) => {
 
 exports.getBlogById = async (req, res) => {
     try {
-        const blog = await Blog.findById(req.params.id);
+        const id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid Blog ID" });
+        }
+        const blog = await Blog.findById(id);
         if (!blog) return res.status(404).json({ message: "Blog not found" });
         res.status(200).json(blog);
     } catch (error) {
@@ -51,12 +56,23 @@ exports.getBlogById = async (req, res) => {
 
 exports.updateBlog = async (req, res) => {
     try {
+        const id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid Blog ID" });
+        }
+
         const { title, metaTitle, metaDescription, metaKeywords, content, author } = req.body;
-        const blog = await Blog.findById(req.params.id);
+        const blog = await Blog.findById(id);
         if (!blog) return res.status(404).json({ message: "Blog not found" });
 
         if (req.file) {
-            await cloudinary.uploader.destroy(blog.cloudinary_id);
+            if (blog.cloudinary_id) {
+                try {
+                    await cloudinary.uploader.destroy(blog.cloudinary_id);
+                } catch (err) {
+                    console.error("Cloudinary delete error (ignored):", err.message);
+                }
+            }
             const result = await cloudinary.uploader.upload(req.file.path);
             blog.imageUrl = result.secure_url;
             blog.cloudinary_id = result.public_id;
@@ -78,13 +94,31 @@ exports.updateBlog = async (req, res) => {
 
 exports.deleteBlog = async (req, res) => {
     try {
-        const blog = await Blog.findById(req.params.id);
-        if (!blog) return res.status(404).json({ message: "Blog not found" });
+        const id = req.params.id;
+        
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid Blog ID format" });
+        }
 
-        await cloudinary.uploader.destroy(blog.cloudinary_id);
-        await blog.remove();
+        const blog = await Blog.findById(id);
+        
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+
+        if (blog.cloudinary_id) {
+            try {
+                await cloudinary.uploader.destroy(blog.cloudinary_id);
+            } catch (err) {
+                console.error("Failed to delete image from Cloudinary:", err.message);
+            }
+        }
+
+        await Blog.findByIdAndDelete(id);
+        
         res.status(200).json({ message: "Blog deleted successfully" });
     } catch (error) {
+        console.error("Delete Blog Error:", error);
         res.status(500).json({ message: "Error deleting blog", error: error.message });
     }
 };

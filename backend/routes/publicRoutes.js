@@ -95,11 +95,9 @@ router.get('/', async (req, res) => {
 
         const blogs = await Blog.find().sort({ createdAt: -1 }).limit(3);
         
-        // Auto-fix missing slugs for old blogs
         for (const blog of blogs) {
             if (!blog.slug) {
                 blog.slug = slugify(blog.title, { lower: true, strict: true });
-                // Update database directly
                 await Blog.updateOne({ _id: blog._id }, { $set: { slug: blog.slug } });
             }
         }
@@ -172,7 +170,6 @@ router.get('/about', async (req, res) => {
             .lean();
         const blogs = await Blog.find().sort({ createdAt: -1 }).limit(3);
         
-        // Auto-fix missing slugs
         for (const blog of blogs) {
             if (!blog.slug) {
                 blog.slug = slugify(blog.title, { lower: true, strict: true });
@@ -210,11 +207,10 @@ router.get('/blogs', async (req, res) => {
         const { page = 1, limit = 10 } = req.query;
         const blogs = await Blog.find().sort({ createdAt: -1 }).skip((page - 1) * limit).limit(parseInt(limit));
         
-        // Auto-fix missing slugs
         for (const blog of blogs) {
             if (!blog.slug) {
                 blog.slug = slugify(blog.title, { lower: true, strict: true });
-                await blog.save(); // Using save on document instance
+                await blog.save(); 
             }
         }
 
@@ -288,7 +284,6 @@ router.get('/blogs/:slug', async (req, res) => {
 router.get('/blogdetails', async (req, res) => {
     const { title } = req.query;
     if (title) {
-        // Legacy support: Try to find by title and redirect to slug if found
         const blog = await Blog.findOne({ title }).select('slug').lean();
         if (blog && blog.slug) {
             return res.redirect(301, `/blogs/${blog.slug}`);
@@ -453,14 +448,16 @@ router.get('/packages/:categorySlug/:subCategorySlug', async (req, res) => {
                 locationCount: categoryPackages.length
             };
         });
-
+        const allCategories = await Category.find({ isActive: true })
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive').lean();
         res.render('packageDetails', {
             title: tourPackage.title || subCategoryData.name,
             tourPackage,
             subCategory: subCategoryData,
             parentCategory: { _id: category._id, name: category.name, slug: category.slug },
             categories,
-            otherPackages
+            otherPackages,
+            allCategories
         });
 
     } catch (error) {
@@ -600,7 +597,9 @@ router.get('/package/:slug', async (req, res) => {
                 locationCount: categoryPackages.length
             };
         });
-        res.render('packageDetails', { title: tourPackage.title, tourPackage, categories, otherPackages });
+        const allCategories = await Category.find({ isActive: true })
+        .select('name slug imageUrl subCategories.name subCategories.slug subCategories.isActive').lean();
+        res.render('packageDetails', { title: tourPackage.title, tourPackage, categories, otherPackages,allCategories });
     } catch (err) {
         res.status(500).send('Server Error');
     }

@@ -91,13 +91,13 @@
                     <li class="touria-dd">
                         <a href="/packages">Packages <i class="ti ti-chevron-down"></i></a>
                         <ul class="touria-dd-menu">
-                            <% categories.forEach(category => {
+                            <% allCategories.forEach(category => {
                                 const hasSubCategories = category.subCategories && category.subCategories.length > 0;
                                 const hasDirectPackages = category.directPackages && category.directPackages.length > 0;
                             %>
                                 <% if (hasSubCategories || hasDirectPackages) { %>
                                     <li class="touria-dd">
-                                        <a href="/packages?category=<%= category.slug %>">
+                                        <a href="/packages/<%= category.slug %>">
                                             <%= category.name %>
                                             <% if (hasSubCategories || hasDirectPackages) { %>
                                                 <i class="ti ti-chevron-right"></i>
@@ -107,7 +107,7 @@
                                             <% category.subCategories &&
                                                 category.subCategories.forEach(subCategory => { %>
                                                 <li>
-                                                    <a href="/package-details?category=<%= category.slug %>&subCategory=<%= subCategory.slug %>">
+                                                    <a href="/packages/<%= category.slug %>/<%= subCategory.slug %>">
                                                         <%= subCategory.name %>
                                                     </a>
                                                 </li>
@@ -124,7 +124,7 @@
                                     </li>
                                 <% } else { %>
                                     <li>
-                                        <a href="/packages?category=<%= category.slug %>">
+                                        <a href="/packages/<%= category.slug %>">
                                             <%= category.name %>
                                         </a>
                                     </li>
